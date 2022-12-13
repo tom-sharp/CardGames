@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="SysLib.Net5.1.0">
+      <HintPath>..\..\..\_csLibs\SysLib.Net5.1.0\bin\Debug\net5.0\SysLib.Net5.1.0.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
