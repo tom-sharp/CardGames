@@ -35,7 +35,7 @@ namespace Games.Card
 		/// <summary>
 		/// return the suite the card belongs to
 		/// </summary>
-		public CardSuite Suite { get; } // 0=Joker, 1=Hears, Diamonds, Spades, Clubs
+		public CardSuite Suite { get; }
 
 
 		/// <summary>
@@ -77,11 +77,6 @@ namespace Games.Card
 
 	}
 
-
-
-
-
-	public enum CardSuite { Joker = 0, Heart, Diamond, Spade, Club }
 
 
 }

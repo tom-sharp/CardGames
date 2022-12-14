@@ -8,18 +8,18 @@ namespace CardGames
 		static void Main(string[] args)
 		{
 			Console.WriteLine("CardGames");
-			var carddeck = new Deck();
+			var carddeck = new CardDeck();
 			Card card = null;
 			while (true) {
-				card = carddeck.Next();
+				card = carddeck.NextCard();
 				if (card == null) break;
 				Console.Write($"{card.Symbol}  ");
 			}
 			Console.WriteLine("\nShuffle...");
-			carddeck.Shuffle();
+			carddeck.ShuffleCards();
 			while (true)
 			{
-				card = carddeck.Next();
+				card = carddeck.NextCard();
 				if (card == null) break;
 				Console.Write($"{card.Symbol}  ");
 			}

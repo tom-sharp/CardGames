@@ -12,9 +12,10 @@ namespace Games.Card
 	/// the base 52 cards will hold 13 cards of each of the four suits Hearts, Diamonds, Spades and Clubs
 	/// ranked from 2-14 
 	/// </summary>
-	public class Deck
+	public class CardDeck
 	{
-		public Deck(int jokers = 0)
+
+		public CardDeck(int jokers = 0)
 		{
 			int cards = 52, card = 0;
 			if (jokers > 0)
@@ -36,18 +37,30 @@ namespace Games.Card
 		}
 
 
-		// return next card in deck or null if no more undrawn cards
-		public Card Next() {
+		/// return next card in deck or null if no more undrawn cards
+		/// if firstcard is set to true the current card pointer will reset to the first card before returning card
+		public Card NextCard(bool firstcard = false) {
+			if (firstcard) this.nextcard = 0;
 			if (nextcard < this.deck.Length) return deck[nextcard++];
 			return null;
 		}
 
-		// will shuffle deck of cards and position card pointer to the first card
-		public void Shuffle() {
+
+		/// will shuffle deck of cards and position card pointer to the first card
+		public void ShuffleCards() {
 			var rnd = new CRandom();
 			rnd.Shuffle<Card>(deck);
 			nextcard = 0;
 		}
+
+
+		/// return total number of cards in deck
+		public int CardsTotal { get { return deck.Length; } }
+
+
+		/// return number of undrawn cards 
+		public int CardsLeft { get { return deck.Length - nextcard; } }
+
 
 		int nextcard = 0;
 		private Card[] deck = null;
