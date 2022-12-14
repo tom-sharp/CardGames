@@ -7,6 +7,7 @@ namespace CardGames
 	{
 		static void Main(string[] args)
 		{
+			var Texas = new TexasHoldem();
 			var carddeck = new CardDeck();
 			Card card = null;
 
@@ -48,7 +49,8 @@ namespace CardGames
 			Console.WriteLine("\nEnd");
 			Console.WriteLine($"Stack Total cards = {cardstack.CardsTotal} Undrawn = {cardstack.CardsLeft}");
 
-
+			// TEXAS
+			Texas.Run();
 
 		}
 	}
