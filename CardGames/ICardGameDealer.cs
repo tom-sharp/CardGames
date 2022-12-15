@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	interface ICardDealer : ICardPlayer
+	interface ICardGameDealer 
 	{
+
+		public bool Run(ICardGamePlayer[] players);
+
+
 	}
 }

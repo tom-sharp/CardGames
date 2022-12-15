@@ -6,14 +6,12 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public class TexasHoldEmPlayer : ICardPlayer
+	public class TexasHoldEmPlayer : CardGamePlayer, ICardGamePlayer
 	{
 		public TexasHoldEmPlayer(string name = null, int tokens = 0)
 		{
-			if (name == null) Name = "";
-			else Name = name;
-			if (tokens > 0) Tokens = tokens;
-			else Tokens = 0;
+			if (name == null) Name = "Player"; else Name = name;
+			if (tokens < 0) Tokens = 0; else Tokens = tokens;
 		}
 		public void Reset()
 		{
@@ -29,8 +27,10 @@ namespace Games.Card
 			return true;
 		}
 
-		public string Name { get; set; }
-		public int Tokens { get; set; }
+		public void Run()
+		{
+			throw new NotImplementedException();
+		}
 
 	}
 }

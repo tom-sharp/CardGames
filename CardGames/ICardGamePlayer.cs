@@ -6,17 +6,26 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardPlayer
+	public interface ICardGamePlayer
 	{
-
+	
 		public void Reset();
 
 		public bool TakePrivateCard(Card card);
 
 		public bool TakePublicCard(Card card);
 
-		public string Name { get; }
-		public int Tokens { get; }
+		public void Run();
+
+
+		public string Name { get; set;}
+
+		public int Tokens { get; set; }
+
+		public bool Active { get; set; }
+
+
+		public int BetTokens { get; set; }
 
 	}
 }

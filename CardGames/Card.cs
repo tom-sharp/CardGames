@@ -11,7 +11,7 @@ namespace Games.Card
 	/// A card can have one of four suits (hearts, diamonds, spades and clubs)
 	/// Each suite consists of 13 cards ranked from 2-10, knight, queen, king and ace.
 	/// Where knight is valued as 11, qeen as 12, king as 13 and Ace may be 1 or 14,
-	/// depending on the card game. There migt also be jokers included in some
+	/// depending on the card game. There might also be jokers included in some
 	/// cardgames and may be from 1-6 depending on the game requirements.
 	/// 
 	/// 2-10, J, Q, K, A
@@ -27,7 +27,7 @@ namespace Games.Card
 			}
 			else
 			{
-				this.Suite = 0; this.Rank = 0;		// Joker or invalid card
+				this.Suite = CardSuite.Joker; this.Rank = 0;	// Joker or invalid card
 			}
 		}
 
@@ -66,10 +66,10 @@ namespace Games.Card
 				}
 				switch (this.Suite)
 				{
-					case CardSuite.Heart: return $"H{rank}";
-					case CardSuite.Diamond: return $"D{rank}";
-					case CardSuite.Spade: return $"S{rank}";
-					case CardSuite.Club: return $"C{rank}";
+					case CardSuite.Heart: return $"{rank}H";
+					case CardSuite.Diamond: return $"{rank}D";
+					case CardSuite.Spade: return $"{rank}S";
+					case CardSuite.Club: return $"{rank}C";
 				}
 				return $"**";
 			}

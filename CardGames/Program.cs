@@ -7,7 +7,6 @@ namespace CardGames
 	{
 		static void Main(string[] args)
 		{
-			var Texas = new TexasHoldem();
 			var carddeck = new CardDeck();
 			Card card = null;
 
@@ -50,7 +49,13 @@ namespace CardGames
 			Console.WriteLine($"Stack Total cards = {cardstack.CardsTotal} Undrawn = {cardstack.CardsLeft}");
 
 			// TEXAS
-			Texas.Run();
+			var gametable = new CardGameTable(tableseats: 8, new TexasHoldEmDealer());
+			gametable.AddPlayer(new TexasHoldEmPlayer("Player1", tokens: 1000)); ;
+			gametable.AddPlayer(new TexasHoldEmPlayer("Player2", tokens: 1000));
+			gametable.AddPlayer(new TexasHoldEmPlayer("Player3", tokens: 1000));
+			gametable.AddPlayer(new TexasHoldEmPlayer("Player4", tokens: 1000));
+			gametable.AddPlayer(new TexasHoldEmPlayer("Player5", tokens: 1000));
+			gametable.Run();
 
 		}
 	}
