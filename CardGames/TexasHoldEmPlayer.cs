@@ -8,10 +8,8 @@ namespace Games.Card
 {
 	public class TexasHoldEmPlayer : CardGamePlayer, ICardGamePlayer
 	{
-		public TexasHoldEmPlayer(string name = null, int tokens = 0)
+		public TexasHoldEmPlayer()
 		{
-			if (name == null) Name = "Player"; else Name = name;
-			if (tokens < 0) Tokens = 0; else Tokens = tokens;
 		}
 		public void Reset()
 		{
@@ -29,8 +27,11 @@ namespace Games.Card
 
 		public void Run()
 		{
-			throw new NotImplementedException();
+
 		}
+
+
+
 
 	}
 }

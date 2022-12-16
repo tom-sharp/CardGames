@@ -49,13 +49,13 @@ namespace CardGames
 			Console.WriteLine($"Stack Total cards = {cardstack.CardsTotal} Undrawn = {cardstack.CardsLeft}");
 
 			// TEXAS
-			var gametable = new CardGameTable(tableseats: 8, new TexasHoldEmDealer());
-			gametable.AddPlayer(new TexasHoldEmPlayer("Player1", tokens: 1000)); ;
-			gametable.AddPlayer(new TexasHoldEmPlayer("Player2", tokens: 1000));
-			gametable.AddPlayer(new TexasHoldEmPlayer("Player3", tokens: 1000));
-			gametable.AddPlayer(new TexasHoldEmPlayer("Player4", tokens: 1000));
-			gametable.AddPlayer(new TexasHoldEmPlayer("Player5", tokens: 1000));
-			gametable.Run();
+			var texastable = new TexasHoldEmTable(tableseats: 8);
+			texastable.JoinTable(new CardPlayer(name: "Player1", tokens: 1000));
+			texastable.JoinTable(new CardPlayer(name: "Player2", tokens: 1000));
+			texastable.JoinTable(new CardPlayer(name: "Player3", tokens: 1000));
+			texastable.JoinTable(new CardPlayer(name: "Player4", tokens: 1000));
+			texastable.JoinTable(new CardPlayer(name: "Player5", tokens: 1000));
+			texastable.Run();
 
 		}
 	}

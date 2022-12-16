@@ -48,23 +48,24 @@ namespace Games.Card
 
 		public TexasHoldEmDealer() {
 			this.cardStack = new CardStack(decks: 1);
+			this.player = new TexasHoldEmPlayer();
 			this.firstCardSeat = 0;
 			this.lastBetRaiseSeat = 0;
 		}
 
 
-		public bool Run(ICardGamePlayer[] players)
+		public bool Run(CardGameTableSeat[] players)
 		{
-			if (ActivatePlayers(players) < 2) return false;				// minimum two players req to start playing
-			if (players[0] == null) players[0] = new TexasHoldEmPlayer(name: "Dealer");     // player used by dealer
-
 			// Game Round
-			if (!PlaceInitialBets(players)) return false;
+			if (ActivatePlayers(players) < 2) return false;			// minimum two players req to start playing
+			if (!PlaceInitialBets(players)) return false;			// failed placing initial bets abort round
 			this.cardStack.ShuffleCards();
+			DealPlayerCards(players);
+			DealPlayerCards(players);
 
 			// GAME CODE HERE
 			// 1. track seat first card reciever
-			// 2. forced bet for the two first players
+			// 2. forced bet for the two first players - trac last raise
 			// 3. deal cards, two private for each player
 			// 4. take bets
 			// 5. deal three common public cards
@@ -81,7 +82,7 @@ namespace Games.Card
 			int counter = 0;
 			foreach (var p in players) { 
 				Console.Write($" Seat {counter,2}. ");
-				if (p == null) Console.WriteLine("Empty");
+				if (p.IsFree()) Console.WriteLine("Empty");
 				else Console.WriteLine($"{p.Name,-15}  {p.Tokens,10}  {p.Active}");
 				counter++;
 			}
@@ -90,33 +91,49 @@ namespace Games.Card
 		}
 
 
+		// Loop through all seats and make players ready. Return total number of players
+		private int ActivatePlayers(CardGameTableSeat[] players)
+		{
+			int count = 0, pos = 0;
+			if (players == null) return 0;
+			while (pos < players.Length) { if (!players[pos].IsFree()) { players[pos].NewRound(); count++; } pos++; }
+			return count;
+		}
+
+
 		// this will advance trackers for first card seat as well as last bet Raise seat
-		// expected that at least two active players exiist to call this function
-		private bool PlaceInitialBets(ICardGamePlayer[] players)
+		// expected that at least two active players exist to call this function
+		private bool PlaceInitialBets(CardGameTableSeat[] players)
 		{
 			this.firstCardSeat = NextActivePlayer(players, this.firstCardSeat);
 			this.lastBetRaiseSeat = NextActivePlayer(players, this.firstCardSeat);
 			if ((this.firstCardSeat == 0) || (this.lastBetRaiseSeat == 0)) return false;
 
-			// MORE CODE HERE - take bets from players
+			players[firstCardSeat].RequiredBet(tokens: 1);
+			players[lastBetRaiseSeat].RequiredBet(tokens: 2);
 
+			return true;
+		}
+
+		// Deal around the table 1 card
+		private bool DealPlayerCards(CardGameTableSeat[] players) {
+			int seat = this.firstCardSeat;
+			if (this.cardStack.CardsLeft < 15) this.cardStack.ShuffleCards();
+			players[seat].TakePrivateCard(this.cardStack.NextCard());
+			seat = NextActivePlayer(players, this.firstCardSeat);
+			while (seat != this.firstCardSeat) {
+				players[seat].TakePrivateCard(this.cardStack.NextCard());
+				seat = NextActivePlayer(players, seat);
+			}
 			return true;
 		}
 
 
 
 
-		// Loop through all seats and make players acitve. Return total number of players
-		private int ActivatePlayers(ICardGamePlayer[] players) {
+		private int CountActivePlayers(CardGameTableSeat[] players)	{
 			int count = 0, pos = 1;
-			if (players == null) return 0;
-			while (pos < players.Length) { if (players[pos] != null) { players[pos].Active = true; count++; } pos++; }
-			return count;
-		}
-
-		private int CountActivePlayers(ICardGamePlayer[] players)	{
-			int count = 0, pos = 1;
-			while (pos < players.Length) { if ((players[pos] != null) && players[pos].Active) count++; pos++; }
+			while (pos < players.Length) { if (players[pos].Active) count++; pos++; }
 			return count;
 		}
 
@@ -124,7 +141,7 @@ namespace Games.Card
 		// look through list of layers starting at seat startposition, and return next seat number after
 		// startposition that have an active player. NOTE that dealer seat is excluded in search and if there is no active
 		// player 0 will be returned.
-		private int NextActivePlayer(ICardGamePlayer[] players, int startposition) {
+		private int NextActivePlayer(CardGameTableSeat[] players, int startposition) {
 			int pos = startposition + 1;
 
 			if (players.Length < 2) return 0;	// only dealer seat exist
@@ -139,7 +156,7 @@ namespace Games.Card
 
 
 		CardStack cardStack;
-
+		TexasHoldEmPlayer player = null;
 		int firstCardSeat;			// player seat that recieces the first card in a deal around the table
 		int lastBetRaiseSeat;		// player that placed the last bet and raised, requiring other to place bets
 	}

@@ -6,11 +6,6 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
-	{
+	public enum CardPlayerType { Human = 0, Robot }
 
-		public bool Run(CardGameTableSeat[] players);
-
-
-	}
 }

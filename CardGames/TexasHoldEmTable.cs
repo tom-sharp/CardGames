@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
+	class TexasHoldEmTable : CardGameTable
 	{
+		public TexasHoldEmTable(int tableseats) : base(tableseats, new TexasHoldEmDealer())
+		{
 
-		public bool Run(CardGameTableSeat[] players);
-
-
+		}
 	}
 }
