@@ -55,7 +55,9 @@ namespace CardGames
 			texastable.JoinTable(new CardPlayer(name: "Player3", tokens: 1000));
 			texastable.JoinTable(new CardPlayer(name: "Player4", tokens: 1000));
 			texastable.JoinTable(new CardPlayer(name: "Player5", tokens: 1000));
+			texastable.LeaveTable(seat: 2);
 			texastable.Run();
+
 
 		}
 	}

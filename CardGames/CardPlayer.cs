@@ -11,6 +11,7 @@ namespace Games.Card
 		public CardPlayer(CardPlayerType playertype = CardPlayerType.Robot, string name = null, int tokens = 0)
 		{
 			if (name != null) Name = name; else Name = "Player";
+			TableSeat = -1;
 			Tokens = tokens;
 			PlayerType = playertype;
 		}
@@ -19,6 +20,9 @@ namespace Games.Card
 		public void UpdateTokenWallet(int tokens) {
 			Tokens += tokens;
 		}
+
+		// table seat number that player is using (used only join/leave table)
+		public int TableSeat { get; set; }
 
 		public string Name { get; }
 

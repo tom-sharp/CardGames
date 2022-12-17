@@ -10,9 +10,9 @@ namespace Games.Card
 	{
 		public CardGameDealer()
 		{
-
 		}
 
+		abstract public bool Run(CardGameTableSeat[] players);
 
 		public string Name { get; set; }
 
@@ -22,6 +22,7 @@ namespace Games.Card
 
 
 		public int BetTokens { get; set; }
+
 
 	}
 }

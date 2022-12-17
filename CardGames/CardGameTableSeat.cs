@@ -29,6 +29,8 @@ namespace Games.Card
 		}
 
 		public bool Leave() {
+			if (this.Player == null) return true;
+			this.Player.TableSeat = 0;
 			Comment = $"{Name} left game";
 			Player = null;
 			return true;
@@ -44,11 +46,17 @@ namespace Games.Card
 		}
 
 
-		public bool RequiredBet(int tokens) {
+		public bool PlaceBet(int tokens) {
 			if (this.Player == null) return false;
 			Bets += tokens;
 			this.Player.UpdateTokenWallet(-tokens);
 			return true;
+		}
+
+		public void ReturnBet() {
+			if (this.Player == null) return;
+			this.Player.UpdateTokenWallet(Bets);
+			Bets = 0;
 		}
 
 		public void TakePrivateCard(Card card) {
@@ -59,6 +67,10 @@ namespace Games.Card
 		public void TakePublicCard(Card card) {
 			if (card == null) return;
 			this.PublicCards.Add(card);
+		}
+
+		public CList<Card> ShowCards() {
+			return new CList<Card>().Add(this.PrivateCards).Add(this.PublicCards);
 		}
 
 		public bool Active { get; private set; }

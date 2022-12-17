@@ -11,19 +11,17 @@ namespace Games.Card
 		public TexasHoldEmPlayer()
 		{
 		}
+
+
+		public bool TablePlayers(CardGameTableSeat[] players) {
+			if ((this.tableplayers = players) == null) return false;
+			return true;
+		}
+
 		public void Reset()
 		{
 		}
 
-		public bool TakePrivateCard(Card card)
-		{
-			return true;
-		}
-
-		public bool TakePublicCard(Card card)
-		{
-			return true;
-		}
 
 		public void Run()
 		{
@@ -31,7 +29,7 @@ namespace Games.Card
 		}
 
 
-
+		CardGameTableSeat[] tableplayers = null;
 
 	}
 }

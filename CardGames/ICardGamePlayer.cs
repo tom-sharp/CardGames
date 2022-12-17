@@ -11,9 +11,6 @@ namespace Games.Card
 	
 		public void Reset();
 
-		public bool TakePrivateCard(Card card);
-
-		public bool TakePublicCard(Card card);
 
 		public void Run();
 

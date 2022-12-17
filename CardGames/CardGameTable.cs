@@ -22,6 +22,7 @@ namespace Games.Card
 			else this.tableseats = new CardGameTableSeat[1];
 			for (int seat = 0; seat < this.tableseats.Length; seat++) { this.tableseats[seat] = new CardGameTableSeat(); }
 			this.tableseats[0].Join(new CardPlayer(name: "Dealer"));
+			this.RoundsPlayed = 0;
 		}
 
 		public bool JoinTable(CardPlayer player) {
@@ -30,11 +31,17 @@ namespace Games.Card
 			while (seat < tableseats.Length) {
 				if (tableseats[seat].IsFree()) {
 					if (!tableseats[seat].Join(player)) return false;
+					player.TableSeat = seat;
 					return true;
 				}
 				seat++;
 			}
 			return false;
+		}
+
+		public void LeaveTable(CardPlayer player) {
+			if (player == null) return;
+			LeaveTable(player.TableSeat);
 		}
 
 		public void LeaveTable(int seat) {
@@ -44,7 +51,8 @@ namespace Games.Card
 
 		public void Run() {
 			if (this.carddealer == null) return;
-			while (this.carddealer.Run(tableseats)) { 
+			while (this.carddealer.Run(tableseats)) {
+				RoundsPlayed++;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method alwas return true unless there is a problem to continue
@@ -53,6 +61,9 @@ namespace Games.Card
 		}
 
 		public int TokenPot { get; private set; }
+
+		// Statistics
+		public int RoundsPlayed { get; set; }
 
 
 		ICardGameDealer carddealer = null; 
