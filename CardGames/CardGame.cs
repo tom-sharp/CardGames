@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
+	public static class CardGame
 	{
-
-		public bool Run(CardGameTable gametable);
-
-
+		public static readonly int DealerSeatNumber = 0;
 	}
 }

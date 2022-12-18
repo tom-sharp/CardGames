@@ -53,6 +53,23 @@ namespace Games.Card
 			return true;
 		}
 
+		public int CollectBet() {
+			int bet = Bets;
+			Bets = 0;
+			return bet;
+		}
+
+		public bool AskBet(int tokens) {
+
+			// Templorary function - this should be handled i TexasPlayer class
+			// more evaluatin and possible to raise / fold. Here ONLY accept request, all users call
+
+			if (this.Player == null) return false;
+			Bets += tokens;
+			this.Player.UpdateTokenWallet(-tokens);
+			return true;
+		}
+
 		public void ReturnBet() {
 			if (this.Player == null) return;
 			this.Player.UpdateTokenWallet(Bets);

@@ -8,9 +8,9 @@ namespace Games.Card
 {
 	class TexasHoldEmTable : CardGameTable
 	{
-		public TexasHoldEmTable(int tableseats) : base(tableseats, new TexasHoldEmDealer())
+		public TexasHoldEmTable(int tableseats) : base(tableseats)
 		{
-
+			this.carddealer = new TexasHoldEmDealer(this);
 		}
 	}
 }

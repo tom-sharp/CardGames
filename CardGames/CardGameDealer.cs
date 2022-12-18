@@ -8,11 +8,12 @@ namespace Games.Card
 {
 	public abstract class CardGameDealer
 	{
-		public CardGameDealer()
+		public CardGameDealer(CardGameTable gametable)
 		{
+			this.gametable = gametable;
 		}
 
-		abstract public bool Run(CardGameTableSeat[] players);
+		abstract public bool Run(CardGameTable gametable);
 
 		public string Name { get; set; }
 
@@ -23,6 +24,7 @@ namespace Games.Card
 
 		public int BetTokens { get; set; }
 
+		protected CardGameTable gametable = null;
 
 	}
 }
