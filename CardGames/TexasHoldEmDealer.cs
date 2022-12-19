@@ -49,7 +49,7 @@ namespace Games.Card
 		public TexasHoldEmDealer(CardGameTable gametable) :base(gametable) {
 			this.cardStack = new CardStack(decks: 1);
 			this.texasplayer = new TexasHoldEmPlayer(gametable);
-			this.tableseatrank = new CList<TexasHoldEmRank>();
+			this.tableseatrank = new CList<TexasHoldEmHandRank>();
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 		}
@@ -100,6 +100,17 @@ namespace Games.Card
 			Console.WriteLine($"Texas Hold'em");
 			int counter = 0;
 			CList<Card> playerhand;
+
+			Console.Write($" Seat {counter,2}. ");
+			Console.Write($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
+			playerhand = this.gametable.DealerSeat.ShowCards();
+			foreach (var card in playerhand)
+			{
+				Console.Write($"  {card.Symbol}");
+			}
+			Console.Write("\n");
+			counter++;
+
 			foreach (var p in this.gametable.TableSeats) { 
 				Console.Write($" Seat {counter,2}. ");
 				if (!p.IsFree()) {
@@ -131,7 +142,7 @@ namespace Games.Card
 			{
 				if (!seat.IsFree()) {
 					seat.NewRound();
-					this.tableseatrank.Add(new TexasHoldEmRank() { TableSeat = seat });
+					this.tableseatrank.Add(new TexasHoldEmHandRank() { TableSeat = seat });
 					count++;
 				}
 			}
@@ -227,14 +238,11 @@ namespace Games.Card
 		}
 
 		private void FindWinner() {
-			TexasHoldEmRank handrank;
 			foreach (var rank in this.tableseatrank) {
 				if (rank.TableSeat.Active)
 				{
-					if (rank.TableSeat == this.gametable.DealerSeat) handrank = this.texasplayer.RankHand(rank.TableSeat.ShowCards());
-					else handrank = this.texasplayer.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
-					rank.Hand = handrank.Hand;
-					rank.Value = handrank.Value;
+					if (rank.TableSeat == this.gametable.DealerSeat) rank.RankHand(rank.TableSeat.ShowCards());
+					else rank.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
 				}
 
 			}
@@ -247,7 +255,7 @@ namespace Games.Card
 			
 		}
 
-		private bool SortRank(TexasHoldEmRank rank1, TexasHoldEmRank rank2) {
+		private bool SortRank(TexasHoldEmHandRank rank1, TexasHoldEmHandRank rank2) {
 			if (rank1.Hand < rank2.Hand) return true;
 			if (rank1.Hand == rank2.Hand) { if (rank1.Value < rank2.Value) return true; }
 			return false;
@@ -255,7 +263,7 @@ namespace Games.Card
 
 		CardStack cardStack;
 		TexasHoldEmPlayer texasplayer = null;
-		CList<TexasHoldEmRank> tableseatrank = null;
+		CList<TexasHoldEmHandRank> tableseatrank = null;
 
 		int requiredbet;
 		CardGameTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
