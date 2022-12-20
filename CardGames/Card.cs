@@ -21,13 +21,19 @@ namespace Games.Card
 
 		public Card(CardSuite suite, int rank)
 		{
-			if ((suite != CardSuite.Joker) && (rank > 1) && (rank <= 14))
+			this.jokercard = false;
+			if (suite == CardSuite.Joker) 
 			{
-				this.Suite = suite; this.Rank = rank;	// Valid card
+				this.jokercard = true;
+				this.cardsuite = suite; this.cardrank = 0;					// Joker card
 			}
-			else
+			else if ((suite != CardSuite.Blank) && (rank > 1) && (rank <= 14))
 			{
-				this.Suite = CardSuite.Joker; this.Rank = 0;	// Joker or invalid card
+				this.cardsuite = suite; this.cardrank = rank;				// Valid card
+			}
+			else 
+			{ 
+				this.cardsuite = CardSuite.Blank; this.cardrank = 0;	   // Invalid card
 			}
 		}
 
@@ -35,13 +41,23 @@ namespace Games.Card
 		/// <summary>
 		/// return the suite the card belongs to
 		/// </summary>
-		public CardSuite Suite { get; }
+		public CardSuite Suite { get { return this.cardsuite; } }
 
 
 		/// <summary>
 		/// return the card rank within the suite
 		/// </summary>
-		public int Rank { get; }
+		public int Rank { get { return this.cardrank; } }
+
+
+		public Card SetJoker(CardSuite suite = CardSuite.Joker, int rank = 0) {
+			if (this.jokercard) {
+				this.cardsuite = suite;
+				if ((rank >= 0) && (rank <= 14)) this.cardrank = rank;
+				else this.cardrank = 0;
+			}
+			return this;
+		}
 
 
 		/// <summary>
@@ -55,6 +71,7 @@ namespace Games.Card
 			get
 			{
 				string rank;
+				if (this.jokercard) return "**";
 				switch (this.Rank)
 				{
 					case 10: rank = "0"; break;
@@ -71,9 +88,13 @@ namespace Games.Card
 					case CardSuite.Spade: return $"{rank}S";
 					case CardSuite.Club: return $"{rank}C";
 				}
-				return $"**";
+				return $"--";	// blank card (invalid)
 			}
 		}
+
+		bool jokercard;
+		CardSuite cardsuite;
+		int cardrank;
 
 	}
 

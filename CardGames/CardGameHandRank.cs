@@ -181,16 +181,11 @@ namespace Games.Card
 			return value;
 		}
 
-		protected int IsHighCard(CList<Card> cards)
+		protected Int64 IsHighCard(CList<Card> cards)
 		{
-			int value = 0;
+			Int64 value = RankCards(cards);
 
 			cards.Sort(SortCardsOnRankFunc);
-
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-			}
 
 			if (value > 0)
 			{
@@ -201,6 +196,30 @@ namespace Games.Card
 
 			return value;
 		}
+
+		// Return the card rank value of a set of cards.
+		// Jokers are supported and ranks as Ace. Support up to 7 cards of the same rank
+		// 14 - 1 * 3 = 13 *3 = 39.40.41 42
+		private Int64 RankCards(CList<Card> cards) {
+			Int64 rank = 0;
+			if (cards == null) return rank;
+			foreach (var card in cards) { 
+				if ((card != null) && (card.Rank > 0) && (card.Rank < 15)) {
+					if (card.Rank > 0) rank += (0x00000001 << ((card.Rank - 1) * 3));
+					else if (card.Suite == CardSuite.Joker) rank += (0x00000001 << 39);	// jokers are ranked as ace
+				}
+			}
+			return rank;
+		}
+
+		// Return the Hand rank value based on card rank value (card rank expected to be 2-14)
+		private Int64 RankHand(int cardrank) {
+			Int64 rank = 0;
+			if ((cardrank > 0) && (cardrank < 15)) rank = (0x00000001 << (((cardrank - 1) * 3) + handbitstart));
+			return rank;
+		}
+
+
 
 		private bool SortCardsOnRankFunc(Card card1, Card card2)
 		{
@@ -214,6 +233,10 @@ namespace Games.Card
 			if (card1.Rank < card2.Rank) return true;
 			return false;
 		}
+
+
+		int handbitstart = 42;
+
 
 	}
 }
