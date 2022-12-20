@@ -58,7 +58,6 @@ namespace CardGames
 			texastable.LeaveTable(seat: 2);
 			texastable.Run();
 
-
 		}
 	}
 }

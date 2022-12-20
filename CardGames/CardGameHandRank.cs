@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Syslib;
 
+
 namespace Games.Card
 {
 	public abstract class CardGameHandRank : ICardGameHandRank
@@ -21,7 +22,7 @@ namespace Games.Card
 		public abstract void RankHand(CList<Card> cards);
 
 
-		protected int IsRoyalStraightFlush(CList<Card> cards)
+		protected Int64 IsRoyalStraightFlush(CList<Card> cards)
 		{
 			// Higest of all rank: required 10, J, Q, K, A in hearts - no need for individual value rank
 			if (cards.FirstOrDefault(c => c.Suite == CardSuite.Heart && c.Rank == 10) == null) return 0;
@@ -33,150 +34,202 @@ namespace Games.Card
 		}
 
 
-		protected int IsStraightFlush(CList<Card> cards) { return 0; }
-		protected int IsFourOfAKind(CList<Card> cards) { return 0; }
-		protected int IsFullHouse(CList<Card> cards) { return 0; }
-
-		protected int IsFlush(CList<Card> cards) {
-			int value = 0, rank = 0, count = 0;
+		protected Int64 IsStraightFlush(CList<Card> cards) {
+			Int64 value = 0;
+			int count = 0, flush1 = 0, flush2 = 0, flush3 = 0, flush4 = 0, flush5 = 0;
 			CardSuite suite = CardSuite.Blank;
 
+			if (cards == null) return value;
 			cards.Sort(SortCardsOnSuiteRankFunc);
 
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-				if (suite == card.Suite) { rank |= (0x0001 << card.Rank); if (++count == 5) suite = CardSuite.Blank; }
-				else { if (count < 5) { suite = card.Suite; count = 1; rank = (0x0001 << card.Rank); } }
-			}
-			if (count == 5) { rank <<= 13; value |= rank; } else value = 0;
-
-
-			if (value > 0)
-			{
-				Console.Write("\n Flush Rank (sorted): ");
-				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards + flush )\n");
-			}
-
-
-			return value;
-		}
-
-		protected int IsStraight(CList<Card> cards) {
-			int value = 0, rank = 0, count = 0;
-
-			cards.Sort(SortCardsOnRankFunc);
-
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-				if (rank == card.Rank) { if (++count == 5) rank += 13; else rank = card.Rank - 1; } 
-				else { if (rank < 15) { rank = card.Rank - 1; count = 1; } }
-			}
-			if (rank > 14) { value |= (0x0001 << rank); } else value = 0;
-
-
-			if (value > 0)
-			{
-				Console.Write("\n Straight Rank (sorted): ");
-				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards + straight )\n");
-			}
-
-
-			return value;
-		}
-
-
-		protected int IsThreeOfAKind(CList<Card> cards) {
-			int value = 0, rank = 0, count = 0;
-
-			cards.Sort(SortCardsOnRankFunc);
-
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-				if (rank == card.Rank) { if (++count == 3) rank += 13; } 
-				else { if (rank < 15) { rank = card.Rank; count = 1; } }
-			}
-			if (rank > 14) { value |= (0x0001 << rank); } else value = 0;
-
-
-			if (value > 0)
-			{
-				Console.Write("\n ThreeOfAKind Rank (sorted): ");
-				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards + threeofakind )\n");
-			}
-
-
-			return value;
-		}
-
-
-
-		protected int IsTwoPair(CList<Card> cards)
-		{
-			// using bit 0-14 to rank high card and bit and bit 15-27 to rank pair.
-			int value = 0, pair1 = 0, pair2 = 0;
-
-			cards.Sort(SortCardsOnRankFunc);
-
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-				if (pair1 > 14)
-				{
-					if ((pair2 == card.Rank) && (pair2 < 15)) { pair2 += 13; } 
-					else { if (pair2 < 15) pair2 = card.Rank; }
+			foreach (var card in cards)	{
+				if (suite == card.Suite) {
+					count++;
+					switch (count) {
+						case 1: flush1 = card.Rank; break;
+						case 2: flush2 = card.Rank; if (flush2 != flush1 - 1) { flush1 = card.Rank; count = 1; } break;
+						case 3: flush3 = card.Rank; if (flush3 != flush2 - 1) { flush1 = card.Rank; count = 1; } break;
+						case 4: flush4 = card.Rank; if (flush4 != flush3 - 1) { flush1 = card.Rank; count = 1; } break;
+						case 5: flush5 = card.Rank; if (flush5 != flush4 - 1) { flush1 = card.Rank; count = 1; flush5 = 0; } break;
+					}
+					if (count == 5) break;
 				}
-				if ((pair1 == card.Rank) && (pair1 < 15)) { pair1 += 13; } 
-				else { if (pair1 < 15) pair1 = card.Rank; }
+				else { suite = card.Suite; flush1 = card.Rank; count = 1; }
 			}
+			if (flush5 > 0) value = RankCards(cards) | RankHand(flush1) | RankHand(flush2) | RankHand(flush3) | RankHand(flush4) | RankHand(flush5);
 
-			if ((pair1 > 14) && (pair2 > 14))
-			{
-				value |= (0x0001 << pair1);
-				value |= (0x0001 << pair2);
-			}
-			else value = 0;
+
 
 			if (value > 0)
 			{
-				Console.Write("\n TwoPair Rank (sorted): ");
+				Console.Write($"\n Straight Flush Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards + two pair)\n");
+				Console.Write("\n");
 			}
 
 
 			return value;
 		}
 
-		protected int IsPair(CList<Card> cards)
-		{
-			int value = 0, rank = 0, count = 0;
+		protected Int64 IsFourOfAKind(CList<Card> cards) {
+			Int64 value = RankCards(cards);
+			Int64 four = RankFourOfAKind(value);
 
-			cards.Sort(SortCardsOnRankFunc);
-
-			foreach (var card in cards)
-			{
-				value |= (0x0001 << card.Rank);
-				if (rank == card.Rank) { if (++count == 2) rank += 13; } 
-				else { if (rank < 15) { rank = card.Rank; count = 1; } }
-			}
-			if (rank > 14) { value |= (0x0001 << rank); } else value = 0;
-
+			if (four > 0) value |= four; else value = 0;
 
 
 
 			if (value > 0)
 			{
-				Console.Write("\n Pair Rank (sorted): ");
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n FourOfAKind Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards + pair )\n");
+				Console.Write("\n");
 			}
 
+
+			return value; 
+		}
+
+
+		protected Int64 IsFullHouse(CList<Card> cards) {
+			Int64 value = RankCards(cards);
+			Int64 fullhouse = RankFullHouse(value);
+
+			if (fullhouse > 0) value |= fullhouse; else value = 0;
+
+
+
+			if (value > 0)
+			{
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n Full House Rank (sorted): Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
+
+
+			return value; 
+		}
+
+
+		protected Int64 IsFlush(CList<Card> cards) {
+			Int64 value = 0;
+			int count = 0, flush1 = 0, flush2 = 0, flush3 = 0, flush4 = 0, flush5 = 0;
+			CardSuite suite = CardSuite.Blank;
+
+			if (cards == null) return value;
+			cards.Sort(SortCardsOnSuiteRankFunc);
+
+			foreach (var card in cards) {
+				if (suite == card.Suite) {
+					count++;
+					switch (count) {
+						case 1: flush1 = card.Rank; break;
+						case 2: flush2 = card.Rank; break;
+						case 3: flush3 = card.Rank; break;
+						case 4: flush4 = card.Rank; break;
+						case 5: flush5 = card.Rank; break;
+					}
+					if (count == 5) break;
+				}
+				else { suite = card.Suite; flush1 = card.Rank; count = 1; }
+			}
+			if (flush5 > 0) value = RankCards(cards) | RankHand(flush1) | RankHand(flush2) | RankHand(flush3) | RankHand(flush4) | RankHand(flush5);
+
+
+
+			if (value > 0)
+			{
+				Console.Write($"\n Flush Rank (sorted): Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
+
+
+			return value;
+		}
+
+		protected Int64 IsStraight(CList<Card> cards) {
+			Int64 value = RankCards(cards);
+			Int64 straight = RankStraight(value);
+
+			if (straight > 0) value |= straight; else value = 0;
+
+
+
+			if (value > 0)
+			{
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n Straight Rank (sorted): Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
+
+
+			return value;
+		}
+
+
+		protected Int64 IsThreeOfAKind(CList<Card> cards) {
+			Int64 value = RankCards(cards);
+			Int64 three = RankThreeOfAKind(value);
+
+			if (three > 0) value |= three; else value = 0;
+
+
+
+			if (value > 0)
+			{
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n ThreeOfAKind Rank (sorted): Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
+
+
+			return value;
+		}
+
+
+
+		protected Int64 IsTwoPair(CList<Card> cards)
+		{
+			Int64 value = RankCards(cards);
+			Int64 twopair = RankTwoPair(value);
+
+			if (twopair > 0) value |= twopair; else value = 0;
+
+
+
+			if (value > 0)
+			{
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n TwoPair Rank (sorted):      Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
+
+
+			return value;
+		}
+
+		protected Int64 IsPair(CList<Card> cards)
+		{
+			Int64 value = RankCards(cards);
+			Int64 pair = RankPair(value);
+
+			if (pair > 0) value |= pair; else value = 0;
+
+
+
+			if (value > 0)
+			{
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n Pair Rank (sorted):         Value = {value,10}  ");
+				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+				Console.Write("\n");
+			}
 
 			return value;
 		}
@@ -185,39 +238,172 @@ namespace Games.Card
 		{
 			Int64 value = RankCards(cards);
 
-			cards.Sort(SortCardsOnRankFunc);
+
 
 			if (value > 0)
 			{
-				Console.Write("\n High Card Rank (sorted): ");
+				cards.Sort(SortCardsOnRankFunc);
+				Console.Write($"\n High Card Rank (sorted):    Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write($"  Value = {value} (top cards)\n");
+				Console.Write("\n");
 			}
 
 			return value;
 		}
 
+
+
+
+
 		// Return the card rank value of a set of cards.
-		// Jokers are supported and ranks as Ace. Support up to 7 cards of the same rank
-		// 14 - 1 * 3 = 13 *3 = 39.40.41 42
+		// Jokers are ranked as rank value set. Support up to 7 cards of the same rank
 		private Int64 RankCards(CList<Card> cards) {
-			Int64 rank = 0;
+			Int64 rank = 0, cardrank = 0;
 			if (cards == null) return rank;
-			foreach (var card in cards) { 
-				if ((card != null) && (card.Rank > 0) && (card.Rank < 15)) {
-					if (card.Rank > 0) rank += (0x00000001 << ((card.Rank - 1) * 3));
-					else if (card.Suite == CardSuite.Joker) rank += (0x00000001 << 39);	// jokers are ranked as ace
+			foreach (var card in cards) {
+				if ((card != null) && (card.Suite != CardSuite.Blank)) {
+					cardrank = 0x00000001;
+					if ((card.Rank > 0) && (card.Rank < 15)) {
+						cardrank <<= card.Rank * 3;
+						rank += cardrank;
+					}
+					else if (card.Suite == CardSuite.Joker) rank += cardrank;
 				}
 			}
 			return rank;
 		}
 
-		// Return the Hand rank value based on card rank value (card rank expected to be 2-14)
+
+
+		// find highest four of same kind of cards and return Hand Rank Value
+		private Int64 RankFourOfAKind(Int64 cardrank)
+		{
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, four = 0;
+
+			while (rank > 0)
+			{
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 3) { four = rank; break; }
+				rank--;
+			}
+			if (four > 0) mask = RankHand(four);
+			else mask = 0;
+			return mask;
+		}
+
+
+
+
+		// find highest full house (3+2) and return Hand Rank Value
+		private Int64 RankFullHouse(Int64 cardrank)
+		{
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, three = 0, pair = 0;
+
+			while (rank > 0) {
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 1) {
+					if ((mask > 2) && (three == 0)) { three = rank; if (pair > 0) break; }
+					else if (pair == 0) { pair = rank; if (three > 0) break; }
+				}
+				rank--;
+			}
+			if ((three > 0) && (pair > 0)) mask = RankHand(three) | RankHand(pair);
+			else mask = 0;
+			return mask;
+		}
+
+
+		// find highest straight of cards and return Hand Rank Value
+		private Int64 RankStraight(Int64 cardrank)
+		{
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, count = 0, straight = 0;
+
+			while (rank > 0) {
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 0) { count++; if (count == 5) { straight = rank; break; } }
+				else count = 0;
+				rank--;
+			}
+			if (straight > 0) mask = RankHand(straight);
+			else mask = 0;
+			return mask;
+		}
+
+
+
+		// find highest three of same kind of cards and return Hand Rank Value
+		private Int64 RankThreeOfAKind(Int64 cardrank) {
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, three = 0;
+
+			while (rank > 0) {
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 2) { three = rank; break; }
+				rank--;
+			}
+			if (three > 0) mask = RankHand(three);
+			else mask = 0;
+			return mask;
+		}
+
+
+
+		// find highest 2 pair of cards and return Hand Rank Value
+		private Int64 RankTwoPair(Int64 cardrank) {
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, pair1 = 0, pair2 = 0;
+
+			while (rank > 0) {
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 1) {
+					if (pair1 == 0) pair1 = rank;
+					else { pair2 = rank; break; }
+				}
+				rank--;
+			}
+			if (pair2 > 0) { mask = RankHand(pair1) | RankHand(pair2); }
+			else mask = 0;
+			return mask;
+		}
+
+
+		// find highest pair of cards and return Hand Rank Value
+		private Int64 RankPair(Int64 cardrank) {
+			Int64 mask = 0, mask7 = 0x00000007;
+			int rank = 14, pair = 0;
+
+			while (rank > 0) {
+				mask = (mask7 << (rank * 3)) & cardrank;
+				mask = (mask >> (rank * 3)) & 0x00000007;
+				if (mask > 1) { pair = rank; break; }
+				rank--;
+			}
+			if (pair > 0) mask = RankHand(pair); 
+			else mask = 0;
+			return mask;
+		}
+
+		// Return the Hand rank value based on card rank value (card rank expected to be 1-14, or 0 is returned)
 		private Int64 RankHand(int cardrank) {
-			Int64 rank = 0;
-			if ((cardrank > 0) && (cardrank < 15)) rank = (0x00000001 << (((cardrank - 1) * 3) + handbitstart));
+			int handrankstartbit = 45;
+			Int64 rank = 1;
+			if ((cardrank > 0) && (cardrank < 15))
+			{
+				rank <<= (cardrank - 1) + handrankstartbit;
+			}
+			else rank = 0;
 			return rank;
 		}
+
+
 
 
 
@@ -230,12 +416,11 @@ namespace Games.Card
 		private bool SortCardsOnSuiteRankFunc(Card card1, Card card2)
 		{
 			if (card1.Suite < card2.Suite) return true;
-			if (card1.Rank < card2.Rank) return true;
+			if ((card1.Suite == card2.Suite) && (card1.Rank < card2.Rank)) return true;
 			return false;
 		}
 
 
-		int handbitstart = 42;
 
 
 	}

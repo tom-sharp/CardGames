@@ -59,6 +59,7 @@ namespace Games.Card
 			return this;
 		}
 
+		public bool IsJoker { get { if (this.jokercard) return true; return false; } }
 
 		/// <summary>
 		/// return a two character string representing the symbol name for the card

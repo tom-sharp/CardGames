@@ -39,7 +39,7 @@ namespace Games.Card
 		// NOTE! Jokers are not supported here
 		override public void RankHand(CList<Card> cards)
 		{
-			int value = 0;
+			Int64 value = 0;
 			if ((cards == null) || (cards.Count() == 0)) { this.Hand = TexasHoldEmHand.Nothing; this.Value = 0; return; }
 			if ((value = IsRoyalStraightFlush(cards)) > 0) { this.Hand = TexasHoldEmHand.RoyalStraightFlush; this.Value = value; return; }
 			if ((value = IsStraightFlush(cards)) > 0) { this.Hand = TexasHoldEmHand.StraightFlush; this.Value = value; return; }
@@ -61,7 +61,7 @@ namespace Games.Card
 
 		public TexasHoldEmHand Hand { get; set; }
 
-		public int Value { get; set; }
+		public Int64 Value { get; set; }
 
 
 	}
