@@ -12,12 +12,12 @@ namespace Games.Card
 	{
 
 		// PokerHand (returned rank value):
-		//		Rank value using Bit 0-14 + bit 15-27 (the higher rank the better hand)
+		//		Rank value using Bit 0-44 + bit 45-59 (the higher rank the better hand)
 		//		Rank value is used only to evaluate wich hand is best of two of the same kind (Ex pair/pair).
 		//		Rank value can not be used to evaluate the better hand of different types (Ex pair/flush)
 		//		NOTE! joker are not supported in this ranking
-		//		bit 0-14 indicate High card Value
-		//		bit 15-27 indicate branded value such as pair of 9 is higher than pair of 3
+		//		bit 0-44 indicate High card Value
+		//		bit 45-59 indicate branded value such as pair of 9 is higher than pair of 3
 
 		public abstract void RankHand(CList<Card> cards);
 
@@ -30,6 +30,13 @@ namespace Games.Card
 			if (cards.FirstOrDefault(c => c.Suite == CardSuite.Heart && c.Rank == 12) == null) return 0;
 			if (cards.FirstOrDefault(c => c.Suite == CardSuite.Heart && c.Rank == 13) == null) return 0;
 			if (cards.FirstOrDefault(c => c.Suite == CardSuite.Heart && c.Rank == 14) == null) return 0;
+
+
+
+			foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
+			Console.Write($"      Royal Straight Flush Rank: Value = 1  \n");
+
+
 			return 1;
 		}
 
@@ -62,9 +69,8 @@ namespace Games.Card
 
 			if (value > 0)
 			{
-				Console.Write($"\n Straight Flush Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      Straight Flush Rank: Value = {value,20}  \n");
 			}
 
 
@@ -82,9 +88,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n FourOfAKind Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      FourOfAKind Rank: Value = {value,20}  \n");
 			}
 
 
@@ -103,9 +108,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n Full House Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      Full House Rank: Value = {value,20}  \n");
 			}
 
 
@@ -141,9 +145,8 @@ namespace Games.Card
 
 			if (value > 0)
 			{
-				Console.Write($"\n Flush Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      Flush Rank: Value = {value,20}  \n");
 			}
 
 
@@ -161,9 +164,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n Straight Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      Straight Rank: Value = {value,20}  \n");
 			}
 
 
@@ -182,9 +184,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n ThreeOfAKind Rank (sorted): Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      ThreeOfAKind Rank: Value = {value,20}  \n");
 			}
 
 
@@ -205,9 +206,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n TwoPair Rank (sorted):      Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      TwoPair Rank:      Value = {value,20}  \n");
 			}
 
 
@@ -226,9 +226,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n Pair Rank (sorted):         Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      Pair Rank:         Value = {value,20}  \n");
 			}
 
 			return value;
@@ -243,9 +242,8 @@ namespace Games.Card
 			if (value > 0)
 			{
 				cards.Sort(SortCardsOnRankFunc);
-				Console.Write($"\n High Card Rank (sorted):    Value = {value,10}  ");
 				foreach (var c in cards) { Console.Write($"  {c.Symbol}"); }
-				Console.Write("\n");
+				Console.Write($"      High Card Rank:    Value = {value,20}  \n");
 			}
 
 			return value;
@@ -273,6 +271,18 @@ namespace Games.Card
 			return rank;
 		}
 
+		// Return the Hand rank value based on card rank value (card rank expected to be 1-14, or 0 is returned)
+		private Int64 RankHand(int cardrank)
+		{
+			int handrankstartbit = 45;
+			Int64 rank = 1;
+			if ((cardrank > 0) && (cardrank < 15))
+			{
+				rank <<= (cardrank - 1) + handrankstartbit;
+			}
+			else rank = 0;
+			return rank;
+		}
 
 
 		// find highest four of same kind of cards and return Hand Rank Value
@@ -391,17 +401,6 @@ namespace Games.Card
 			return mask;
 		}
 
-		// Return the Hand rank value based on card rank value (card rank expected to be 1-14, or 0 is returned)
-		private Int64 RankHand(int cardrank) {
-			int handrankstartbit = 45;
-			Int64 rank = 1;
-			if ((cardrank > 0) && (cardrank < 15))
-			{
-				rank <<= (cardrank - 1) + handrankstartbit;
-			}
-			else rank = 0;
-			return rank;
-		}
 
 
 

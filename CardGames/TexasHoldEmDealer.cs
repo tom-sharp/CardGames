@@ -63,6 +63,9 @@ namespace Games.Card
 			if (SetUpGameRound() < 2) return false;
 			if (!PlaceInitialBets()) { RollBackBets(); return false; }
 
+
+			Console.WriteLine("------------------ NEW ROUND ----------------");
+
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);						// deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
@@ -112,8 +115,8 @@ namespace Games.Card
 			counter++;
 
 			foreach (var p in this.gametable.TableSeats) { 
-				Console.Write($" Seat {counter,2}. ");
 				if (!p.IsFree()) {
+					Console.Write($" Seat {counter,2}. ");
 					Console.Write($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
 					playerhand = p.ShowCards();
 					foreach (var card in playerhand) {
@@ -121,7 +124,6 @@ namespace Games.Card
 					}
 					Console.Write("\n");
 				}
-				else Console.WriteLine("Empty");
 				counter++;
 			}
 			return true;
@@ -179,11 +181,11 @@ namespace Games.Card
 						if (this.requiredbet < seat.Bets) {
 							this.requiredbet = seat.Bets;
 							this.lastBetRaiseSeat = seat;
-							Console.WriteLine($" - Player {seat.Name} raised  {seat.Bets}");
+//							Console.WriteLine($" - Player {seat.Name} raised  {seat.Bets}");
 						}
-						else Console.WriteLine($" - Player {seat.Name} called  {seat.Bets}");
+//						else Console.WriteLine($" - Player {seat.Name} called  {seat.Bets}");
 					}
-					else Console.WriteLine($" - Player {seat.Name} folded  {seat.Bets}");
+//					else Console.WriteLine($" - Player {seat.Name} folded  {seat.Bets}");
 
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
