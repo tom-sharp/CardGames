@@ -13,11 +13,12 @@ namespace Games.Card
 	/// The dealer control card game flow and what type of card game to play
 	/// Seat position 0 is reserved for the dealer if required to participate in game
 	/// </summary>
-	public abstract class CardGameTable
+	public abstract class CardGameTable : ICardGameTable
 	{
-		public CardGameTable(int seats, ICardGameDealer dealer = null)
+		public CardGameTable(int seats)
 		{
-			this.carddealer = dealer;
+			this.carddealer = null;
+			this.statistics = null;
 			if (seats >= 0) this.tableseats = new CardGameTableSeat[seats + 1];
 			else this.tableseats = new CardGameTableSeat[1];
 			for (int seat = 0; seat < this.tableseats.Length; seat++) { this.tableseats[seat] = new CardGameTableSeat(); }
@@ -25,53 +26,63 @@ namespace Games.Card
 			this.RoundsPlayed = 0;
 		}
 
-		public bool JoinTable(CardPlayer player) {
+
+		public void Run(int rounds = 1)
+		{
+			if (this.carddealer == null) return;
+			while (this.carddealer.Run())
+			{
+				RoundsPlayed++;
+				if (this.statistics != null) this.statistics.RoundsPlayed = this.RoundsPlayed;
+
+				// Allow here to  opt in or out new players after each round
+				// Run method always return true unless there is a problem to continue
+
+				if (RoundsPlayed >= rounds) break;
+			}
+		}
+
+		public abstract ICardGameTable EnableStats();
+
+		public ICardGameStats GetStatistics() { if (this.statistics != null) this.statistics.RoundsPlayed = this.RoundsPlayed; return this.statistics; }
+
+		public int JoinTable(CardPlayer player)
+		{
 			int seat = 1;
-			if (player == null) return false;
-			while (seat < tableseats.Length) {
-				if (tableseats[seat].IsFree()) {
-					if (!tableseats[seat].Join(player)) return false;
-					player.TableSeat = seat;
-					return true;
+			if (player == null) return 0;
+			while (seat < tableseats.Length)
+			{
+				if (tableseats[seat].IsFree())
+				{
+					if (!tableseats[seat].Join(player)) return 0;
+					return seat;
 				}
 				seat++;
 			}
-			return false;
+			return 0;
 		}
 
-		public void LeaveTable(CardPlayer player) {
-			if (player == null) return;
-			LeaveTable(player.TableSeat);
-		}
 
-		public void LeaveTable(int seat) {
+		public void LeaveTable(int seat)
+		{
 			if ((seat < 1) || (seat >= tableseats.Length)) return;     // do not remove dealer
 			tableseats[seat].Leave();
 		}
 
-		public void Run(int rounds = 2) {
-			if (this.carddealer == null) return;
-			while (this.carddealer.Run(this)) {
-				RoundsPlayed++;
 
-				// Allow here to  opt in or out new players after each round
-				// Run method always return true unless there is a problem to continue
-				if(RoundsPlayed >= rounds) break;
-			}
-		}
-
-		// TEMPORARY WHILE MIGRATING FUNTIONALITY TO TABLE
-//		public CardGameTableSeat[] Seats { get { return this.tableseats; } }
 
 		/// <summary>
 		/// return all the table seats as long there is a player at the seat. Dealer excluded
 		/// </summary>
-		public IEnumerable<CardGameTableSeat> TableSeats {
-			get {
+		public IEnumerable<CardGameTableSeat> TableSeats
+		{
+			get
+			{
 				int seat = 0;
 				while (seat < this.tableseats.Length)
 				{
-					if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null)) {
+					if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null))
+					{
 						yield return this.tableseats[seat];
 					}
 					seat++;
@@ -82,13 +93,14 @@ namespace Games.Card
 		/// <summary>
 		/// return number of active player seats (dealer seat is excluded from count of active seats)
 		/// </summary>
-		public int CountActiveSeats 
-		{ 
-			get { 
+		public int CountActiveSeats
+		{
+			get
+			{
 				int count = 0;
 				foreach (var seat in this.tableseats) { if ((seat != null) && (seat.Active)) count++; }
-				return count - 1;	// remove dealer count
-			} 
+				return count - 1;   // remove dealer count
+			}
 		}
 
 		public int CountSeats { get { return this.tableseats.Length; } }
@@ -100,17 +112,20 @@ namespace Games.Card
 		/// Return next active seat from table, or first active seat if argumnet is null
 		/// Dealer seat is excluded from this search. If no active seats null is returned
 		/// </summary>
-		public CardGameTableSeat NextActiveSeat(CardGameTableSeat startseat = null) {
+		public CardGameTableSeat NextActiveSeat(CardGameTableSeat startseat = null)
+		{
 			int seat = 0;
 			CardGameTableSeat returnseat = null;
-			while (true) {
+			while (true)
+			{
 				if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null) && (this.tableseats[seat].Active))
 				{
 					if (returnseat == startseat) { returnseat = this.tableseats[seat]; break; }
 					if (startseat == this.tableseats[seat]) returnseat = this.tableseats[seat];
 				}
 				seat++;
-				if (seat == this.tableseats.Length) {
+				if (seat == this.tableseats.Length)
+				{
 					if (returnseat == null) break;
 					seat = 0;
 				}
@@ -118,23 +133,25 @@ namespace Games.Card
 			return returnseat;
 		}
 
-		public void AddPotTokens(int tokens) {
-			TokenPot += tokens;
+		public void PotTokensAdd(int tokens)
+		{
+			this.PotTokens += tokens;
 		}
 
-		public int CollectPotTokens() {
-			int tokens = TokenPot;
-			TokenPot = 0;
+		public int PotTokensCollect()
+		{
+			int tokens = PotTokens;
+			this.PotTokens = 0;
 			return tokens;
 		}
 
-		public int TokenPot { get; private set; }
+		public int PotTokens { get; private set; }
 
 		// Statistics
-		public int RoundsPlayed { get; set; }
+		public int RoundsPlayed { get; private set; }
 
-
-		protected ICardGameDealer carddealer = null; 
+		protected ICardGameStats statistics = null;
+		protected ICardGameDealer carddealer = null;
 		CardGameTableSeat[] tableseats = null;
 	}
 

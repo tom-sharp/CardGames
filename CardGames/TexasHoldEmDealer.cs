@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Syslib;
 
-namespace Games.Card
+namespace Games.Card.TexasHoldEm
 {
 
 	/*
@@ -55,10 +55,9 @@ namespace Games.Card
 		}
 
 
-		override public bool Run(CardGameTable gametable)
+		override public bool Run()
 		{
 			// Game Round
-			this.gametable = gametable;
 			if (this.gametable == null) return false;
 			if (SetUpGameRound() < 2) return false;
 			if (!PlaceInitialBets()) { RollBackBets(); return false; }
@@ -81,6 +80,7 @@ namespace Games.Card
 			PlaceBets();
 			CollectPlayerBets();
 			FindWinner();
+			Statistics();
 
 
 
@@ -135,7 +135,7 @@ namespace Games.Card
 		{
 			int count = 0;
 			this.requiredbet = 1;
-			this.gametable.CollectPotTokens();
+			this.gametable.PotTokensCollect();
 			this.tableseatrank.Clear();
 
 			this.gametable.DealerSeat.NewRound();
@@ -200,7 +200,7 @@ namespace Games.Card
 		private void CollectPlayerBets() {
 
 			foreach (var seat in this.gametable.TableSeats) {
-				if (seat != null) this.gametable.AddPotTokens(seat.CollectBet());
+				if (seat != null) this.gametable.PotTokensAdd(seat.CollectBet());
 			}
 
 		}
@@ -241,20 +241,16 @@ namespace Games.Card
 
 		private void FindWinner() {
 			foreach (var rank in this.tableseatrank) {
-				if (rank.TableSeat.Active)
-				{
-					if (rank.TableSeat == this.gametable.DealerSeat) rank.RankHand(rank.TableSeat.ShowCards());
-					else rank.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
-				}
-
+				rank.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
 			}
 
 			this.tableseatrank.Sort(SortRank);
 			Console.WriteLine("winner is:");
 			foreach (var rank in this.tableseatrank) {
-				Console.WriteLine($" {rank.TableSeat.Name,-15}  {rank.Hand,-15} {rank.Value,10}");
+				if (rank.TableSeat.Active) Console.WriteLine($" {rank.TableSeat.Name,-15}  {rank.Hand,-15} {rank.Value,10}");
+				else Console.WriteLine($" {rank.TableSeat.Name,-15}  Folded");
 			}
-			
+			this.tableseatrank.First().TableSeat.PayOutWinningPot(this.gametable.PotTokensCollect());
 		}
 
 		private bool SortRank(TexasHoldEmHandRank rank1, TexasHoldEmHandRank rank2) {
@@ -262,6 +258,20 @@ namespace Games.Card
 			if (rank1.Hand == rank2.Hand) { if (rank1.Value < rank2.Value) return true; }
 			return false;
 		}
+
+
+		private void Statistics() {
+			var stats = this.gametable.GetStatistics() as TexasHoldEmStats;
+			bool winner = true;
+			foreach (var rank in this.tableseatrank)
+			{
+				if ((rank.TableSeat.Active) && (winner)) { stats.StatsAddWinner(rank.Hand); winner = false; }
+				stats.StatsAddHand(rank.Hand);
+			}
+
+			
+		}
+
 
 		CardStack cardStack;
 		TexasHoldEmPlayer texasplayer = null;

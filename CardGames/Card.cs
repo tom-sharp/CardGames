@@ -49,7 +49,12 @@ namespace Games.Card
 		/// </summary>
 		public int Rank { get { return this.cardrank; } }
 
-
+		/// <summary>
+		/// Set the Suit and Rank of card if its a joker, if not it will be ignored
+		/// </summary>
+		/// <param name="suite"></param>
+		/// <param name="rank"></param>
+		/// <returns></returns>
 		public Card SetJoker(CardSuite suite = CardSuite.Joker, int rank = 0) {
 			if (this.jokercard) {
 				this.cardsuite = suite;
@@ -59,6 +64,9 @@ namespace Games.Card
 			return this;
 		}
 
+		/// <summary>
+		/// Return true if this card is a joker card
+		/// </summary>
 		public bool IsJoker { get { if (this.jokercard) return true; return false; } }
 
 		/// <summary>

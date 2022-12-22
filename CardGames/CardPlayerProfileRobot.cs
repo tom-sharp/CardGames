@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
+	class CardPlayerProfileRobot : CardPlayerProfile
 	{
-
-		public bool Run();
-
-
+		public CardPlayerProfileRobot():base(new CardPlayerType("Robot", 1))
+		{
+		}
 	}
 }

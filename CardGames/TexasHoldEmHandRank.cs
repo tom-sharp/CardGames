@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card
+namespace Games.Card.TexasHoldEm
 {
 
 	// Rank level of cards on hand.
@@ -65,7 +65,7 @@ namespace Games.Card
 
 
 	}
-
+	
 	public enum TexasHoldEmHand { Nothing = 0, HighCard, Pair, TwoPair, ThreeOfAKind, Straight, Flush, FullHouse, FourOfAKind, StraightFlush, RoyalStraightFlush }
 
 

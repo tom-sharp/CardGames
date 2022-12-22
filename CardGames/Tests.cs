@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card
+using Games.Card;
+using Games.Card.TexasHoldEm;
+
+namespace Games.Card.Test
 {
 	public static class Tests
 	{

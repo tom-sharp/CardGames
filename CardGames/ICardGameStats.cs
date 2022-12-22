@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
+	public interface ICardGameStats
 	{
-
-		public bool Run();
-
-
+		public int RoundsPlayed { get; set; }
 	}
 }

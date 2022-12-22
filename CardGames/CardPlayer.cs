@@ -8,12 +8,24 @@ namespace Games.Card
 {
 	public class CardPlayer
 	{
-		public CardPlayer(CardPlayerType playertype = CardPlayerType.Robot, string name = null, int tokens = 0)
+		public CardPlayer(ICardPlayerProfile playerprofile = null, string name = null, int tokens = 0)
 		{
+			if (playerprofile == null) this.PlayerProfile = new CardPlayerProfileHuman(); else this.PlayerProfile = playerprofile;
 			if (name != null) Name = name; else Name = "Player";
-			TableSeat = -1;
 			Tokens = tokens;
-			PlayerType = playertype;
+		}
+
+
+		public bool JoinTable(ICardGameTable table) {
+			if (this.gametable != null) LeaveTable();
+			if (table != null) this.tableseat = table.JoinTable(this); else this.tableseat = 0;
+			if (this.tableseat > 0) return true;
+			return false;
+		}
+
+		public void LeaveTable() {
+			if ((this.gametable != null) &&(this.tableseat > 0)) this.gametable.LeaveTable(this.tableseat);
+			this.gametable = null;
 		}
 
 		// Update token wallet, using + to add tokens to wallet or - to withdraw tokens from wallet
@@ -21,14 +33,15 @@ namespace Games.Card
 			Tokens += tokens;
 		}
 
-		// table seat number that player is using (used only join/leave table)
-		public int TableSeat { get; set; }
-
 		public string Name { get; }
 
 		public int Tokens { get; private set; }
 
-		public CardPlayerType PlayerType { get; }
+		public ICardPlayerProfile PlayerProfile { get; }
+
+
+		int tableseat = 0;
+		ICardGameTable gametable = null;
 	}
 
 }

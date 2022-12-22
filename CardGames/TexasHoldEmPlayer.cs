@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card
+namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmPlayer : CardGamePlayer, ICardGamePlayer
 	{

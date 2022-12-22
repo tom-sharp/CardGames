@@ -13,7 +13,7 @@ namespace Games.Card
 			this.gametable = gametable;
 		}
 
-		abstract public bool Run(CardGameTable gametable);
+		abstract public bool Run();
 
 		public string Name { get; set; }
 

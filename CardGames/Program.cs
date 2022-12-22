@@ -1,5 +1,6 @@
 ﻿using System;
 using Games.Card;
+using Games.Card.Test;
 
 namespace CardGames
 {
@@ -8,18 +9,11 @@ namespace CardGames
 		static void Main(string[] args)
 		{
 
-			// TEXAS
-			var texastable = new TexasHoldEmTable(tableseats: 8);
-			texastable.JoinTable(new CardPlayer(name: "Player1", tokens: 1000));
-			texastable.JoinTable(new CardPlayer(name: "Player2", tokens: 1000));
-			texastable.JoinTable(new CardPlayer(name: "Player3", tokens: 1000));
-			texastable.JoinTable(new CardPlayer(name: "Player4", tokens: 1000));
-			texastable.JoinTable(new CardPlayer(name: "Player5", tokens: 1000));
-			texastable.LeaveTable(seat: 2);
-			texastable.Run();
+			var texas = new Texas();
+			texas.Run(args);
 
 			// TESTS
-			Tests.RunTests();
+//			Tests.RunTests();
 
 		}
 	}

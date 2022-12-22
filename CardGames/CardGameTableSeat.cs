@@ -14,6 +14,7 @@ namespace Games.Card
 			PrivateCards = new CList<Card>();
 			PublicCards = new CList<Card>();
 			Player = null;
+			Active = false;
 			Comment = "";
 		}
 
@@ -24,14 +25,15 @@ namespace Games.Card
 
 		public bool Join(CardPlayer player) {
 			if (player == null) return false;
+			Active = false;
 			if (IsFree()) { Player = player; Comment = $"{Name} joined game"; return true; }
 			return false;
 		}
 
 		public bool Leave() {
 			if (this.Player == null) return true;
-			this.Player.TableSeat = 0;
 			Comment = $"{Name} left game";
+			Active = false;
 			Player = null;
 			return true;
 		}
@@ -61,7 +63,7 @@ namespace Games.Card
 
 		public bool AskBet(int tokens) {
 
-			// Templorary function - this should be handled i TexasPlayer class
+			// Temporary function - this should be handled in TexasPlayer class
 			// more evaluatin and possible to raise / fold. Here ONLY accept request, all users call
 
 			if (this.Player == null) return false;
@@ -74,6 +76,12 @@ namespace Games.Card
 			if (this.Player == null) return;
 			this.Player.UpdateTokenWallet(Bets);
 			Bets = 0;
+		}
+
+		public void PayOutWinningPot(int tokens)
+		{
+			if (this.Player == null) return;
+			this.Player.UpdateTokenWallet(tokens);
 		}
 
 		public void TakePrivateCard(Card card) {

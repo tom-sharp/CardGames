@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card
+namespace Games.Card.TexasHoldEm
 {
 	class TexasHoldEmTable : CardGameTable
 	{
@@ -12,5 +12,14 @@ namespace Games.Card
 		{
 			this.carddealer = new TexasHoldEmDealer(this);
 		}
+
+
+		public override ICardGameTable EnableStats()
+		{
+			this.statistics = new TexasHoldEmStats();
+
+			return this;
+		}
+
 	}
 }

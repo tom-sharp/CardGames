@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public enum CardPlayerType { Human = 0, Robot }
-
+	public class CardPlayerType
+	{
+		public CardPlayerType(string name, int id)
+		{
+			this.Name = name;
+			this.Id = id;
+		}
+		public string Name { get; }
+		public int Id { get; }
+	}
 }
