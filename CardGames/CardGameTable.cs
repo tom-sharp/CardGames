@@ -138,10 +138,12 @@ namespace Games.Card
 			this.PotTokens += tokens;
 		}
 
-		public int PotTokensCollect()
+		// Collect full pot if argument is 0 or requested number of tokens if other than that
+		public int PotTokensCollect(int tokens = 0)
 		{
-			int tokens = PotTokens;
-			this.PotTokens = 0;
+			int result;
+			if ((tokens <= 0) || (tokens > this.PotTokens)) { result = this.PotTokens; this.PotTokens = 0; }
+			else { result = tokens; this.PotTokens -= tokens; }
 			return tokens;
 		}
 

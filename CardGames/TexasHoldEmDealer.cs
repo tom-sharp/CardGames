@@ -43,7 +43,7 @@ namespace Games.Card.TexasHoldEm
 	*/
 
 
-	public class TexasHoldEmDealer : CardGameDealer, ICardGameDealer
+	public class TexasHoldEmDealer : CardGameDealer
 	{
 
 		public TexasHoldEmDealer(CardGameTable gametable, ITexasHoldEmIO inout) :base(gametable) {
@@ -72,16 +72,12 @@ namespace Games.Card.TexasHoldEm
 			DealPlayerCards(cards: 1);						// deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
 			PlaceBets();
-			CollectPlayerBets();
 			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
 			PlaceBets();
-			CollectPlayerBets();
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
-			CollectPlayerBets();
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
-			CollectPlayerBets();
 			FindWinner();
 			Statistics();
 
@@ -193,6 +189,7 @@ namespace Games.Card.TexasHoldEm
 				}
 				seat = this.gametable.NextActiveSeat(seat);
 			}
+			this.CollectPlayerBets();
 			this.lastBetRaiseSeat = null;
 			this.requiredbet = 0;
 
@@ -242,6 +239,9 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		private void FindWinner() {
+			TexasHoldEmHand winnerhand = TexasHoldEmHand.Nothing;
+			Int64 winnerrank = 0;
+
 			foreach (var rank in this.tableseatrank) {
 				rank.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
 			}
@@ -253,7 +253,28 @@ namespace Games.Card.TexasHoldEm
 				else { msg.Str($" {rank.TableSeat.Name,-15}  Folded"); }
 				this.IO.ShowMsg(msg.ToString());
 			}
-			this.tableseatrank.First().TableSeat.PayOutWinningPot(this.gametable.PotTokensCollect());
+
+			// HERE NEED TO CHECK IS THERE IS MORE THAN ONE WINNER AND POT NEED TO BE SPLIT
+			var WinnersSeats = new CList<CardGameTableSeat>();
+			foreach (var rank in this.tableseatrank) {
+				if ((winnerhand == TexasHoldEmHand.Nothing) && (rank.TableSeat.Active))
+				{
+					winnerhand = rank.Hand; winnerrank = rank.Value;
+					WinnersSeats.Add(rank.TableSeat);
+				}
+				else if ((rank.TableSeat.Active) && (winnerhand == rank.Hand) && (winnerrank == rank.Value)){ WinnersSeats.Add(rank.TableSeat); }
+			}
+			int potshare = this.gametable.PotTokens; 
+			if (WinnersSeats.Count() > 1) { potshare = this.gametable.PotTokens / WinnersSeats.Count(); this.IO.ShowMsg($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
+			foreach (var seat in WinnersSeats) {
+				seat.PayOutWinningPot(this.gametable.PotTokensCollect(potshare));
+				this.IO.ShowMsg($" Winner {seat.Name} wins {potshare} tokens and now have {seat.Tokens}");
+				if ((this.gametable.PotTokens < potshare) && (this.gametable.PotTokens > 0)) {
+					seat.PayOutWinningPot(this.gametable.PotTokensCollect());
+					this.IO.ShowMsg($" Uneven potshare given to {seat.Name} and now have {seat.Tokens}");
+				}
+			}
+
 		}
 
 		private bool SortRank(TexasHoldEmHandRank rank1, TexasHoldEmHandRank rank2) {

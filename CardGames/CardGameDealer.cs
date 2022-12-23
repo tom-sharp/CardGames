@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public abstract class CardGameDealer
+	public abstract class CardGameDealer : ICardGameDealer
 	{
 		public CardGameDealer(CardGameTable gametable)
 		{
@@ -15,14 +15,6 @@ namespace Games.Card
 
 		abstract public bool Run();
 
-		public string Name { get; set; }
-
-		public int Tokens { get; set; }
-
-		public bool Active { get; set; }
-
-
-		public int BetTokens { get; set; }
 
 		protected CardGameTable gametable = null;
 

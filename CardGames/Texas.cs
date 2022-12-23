@@ -13,10 +13,19 @@ namespace CardGames
 	{
 		public Texas()
 		{
-			this.PlayerList = new CList<CardPlayer>();
+			this.playerlist = new CList<CardPlayer>();
 			this.IO = new TexasHoldEmConIO();
 			this.texastable = null;
+
+			this.roundstoplay = 1;
+			this.tableseats = 8;
+			this.players = 5;
+			this.tokens = 1000;
+			this.statistics = false;
+			this.quiet = false;
+
 		}
+
 		public void Run(string[] args) {
 
 			if (!SetUp(args)) { this.Help(); return; }
@@ -28,7 +37,7 @@ namespace CardGames
 			var stats = texastable.GetStatistics() as TexasHoldEmStatistics;
 			if (stats != null) {
 				stats.ShowGameStatistics();
-				stats.ShowGamePlayerstatistics(this.PlayerList);
+				stats.ShowGamePlayerstatistics(this.playerlist);
 			}
 
 		}
@@ -59,36 +68,12 @@ namespace CardGames
 			if (statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
 
 			int count = 0;
-			while (++count <= players) PlayerList.Add(new CardPlayer(new CardPlayerProfileRobot(), name: $"Player{count}", tokens: tokens));
-			foreach (var p in PlayerList) { if (!p.JoinTable(texastable)) break; }
+			while (++count <= players) playerlist.Add(new CardPlayer(new CardPlayerProfileRobot(), name: $"Player{count}", tokens: tokens));
+			foreach (var p in playerlist) { if (!p.JoinTable(texastable)) break; }
 
-			if (PlayerList.Count() == 0) return false;
+			if (playerlist.Count() == 0) return false;
 
 			return true;
-		}
-
-
-		private void ShowStatistics(TexasHoldEmStatistics stats) {
-			if (stats != null)
-			{
-				this.IO.SupressOutput = false;
-				this.IO.ShowMsg("\nStatistics:                  Winning Hand                Hands");
-				int TotalHands = 0, TotalWin = 0;
-				double winpct, handpct;
-				for (int count = 0; count < stats.StatsHands.Length; count++) { TotalHands += stats.StatsHands[count]; TotalWin += stats.StatsWinnerHands[count]; }
-				for (int count = 0; count < stats.StatsHands.Length; count++)
-				{
-					winpct = 100 * stats.StatsWinnerHands[count] / TotalWin; handpct = 100 * stats.StatsHands[count] / TotalHands;
-					this.IO.ShowMsg($"{count,2}.  {(TexasHoldEmHand)count,-20}   {winpct,5:f1} %   {stats.StatsWinnerHands[count],7}           {handpct,5:f1} %   {stats.StatsHands[count],7}");
-				}
-				this.IO.ShowMsg($"-Rounds played {stats.RoundsPlayed,7}        Total:  {TotalWin,7}                     {TotalHands,7}");
-
-				this.IO.ShowMsg("Players:");
-				foreach (var p in this.PlayerList) {
-					this.IO.ShowMsg($" {p.Name,-20} Tokens {p.Tokens,10}");
-				}
-			}
-
 		}
 
 
@@ -102,14 +87,14 @@ namespace CardGames
 		}
 
 
-		int roundstoplay = 1;
-		int tableseats = 8;
-		int players = 5;
-		int tokens = 1000;
-		bool statistics = false;
-		bool quiet = false;
+		int roundstoplay;
+		int tableseats;
+		int players;
+		int tokens;
+		bool statistics;
+		bool quiet;
 		ITexasHoldEmIO IO;
-		CList<CardPlayer> PlayerList;
+		CList<CardPlayer> playerlist;
 		TexasHoldEmTable texastable;
 
 
