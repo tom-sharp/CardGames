@@ -15,15 +15,16 @@ namespace Games.Card
 	/// </summary>
 	public abstract class CardGameTable : ICardGameTable
 	{
-		public CardGameTable(int seats)
+		public CardGameTable(CardGameTableConfig tableConfig)
 		{
-			this.carddealer = null;
-			this.statistics = null;
-			if (seats >= 0) this.tableseats = new CardGameTableSeat[seats + 1];
+			if ((tableConfig != null) && (tableConfig.IsValid())) this.tableseats = new CardGameTableSeat[tableConfig.Seats + 1];
 			else this.tableseats = new CardGameTableSeat[1];
 			for (int seat = 0; seat < this.tableseats.Length; seat++) { this.tableseats[seat] = new CardGameTableSeat(); }
 			this.tableseats[CardGame.DealerSeatNumber].Join(new CardPlayer(name: "Dealer"));
-			this.RoundsPlayed = 0;
+
+			this.statistics = new CardGameTableStatistics();
+			this.carddealer = null;
+
 		}
 
 
@@ -32,19 +33,18 @@ namespace Games.Card
 			if (this.carddealer == null) return;
 			while (this.carddealer.Run())
 			{
-				RoundsPlayed++;
-				if (this.statistics != null) this.statistics.RoundsPlayed = this.RoundsPlayed;
+				this.statistics.RoundsPlayed++;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
 
-				if (RoundsPlayed >= rounds) break;
+				if (this.statistics.RoundsPlayed >= rounds) break;
 			}
 		}
 
-		public abstract ICardGameTable EnableStats();
+		public abstract ICardGameTable Statistics(ICardGameTableStatistics statistics);
 
-		public ICardGameStats GetStatistics() { if (this.statistics != null) this.statistics.RoundsPlayed = this.RoundsPlayed; return this.statistics; }
+		public ICardGameTableStatistics GetStatistics() { return this.statistics; }
 
 		public int JoinTable(CardPlayer player)
 		{
@@ -147,10 +147,8 @@ namespace Games.Card
 
 		public int PotTokens { get; private set; }
 
-		// Statistics
-		public int RoundsPlayed { get; private set; }
 
-		protected ICardGameStats statistics = null;
+		protected ICardGameTableStatistics statistics = null;
 		protected ICardGameDealer carddealer = null;
 		CardGameTableSeat[] tableseats = null;
 	}

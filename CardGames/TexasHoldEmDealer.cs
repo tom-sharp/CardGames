@@ -46,12 +46,14 @@ namespace Games.Card.TexasHoldEm
 	public class TexasHoldEmDealer : CardGameDealer, ICardGameDealer
 	{
 
-		public TexasHoldEmDealer(CardGameTable gametable) :base(gametable) {
+		public TexasHoldEmDealer(CardGameTable gametable, ITexasHoldEmIO inout) :base(gametable) {
 			this.cardStack = new CardStack(decks: 1);
 			this.texasplayer = new TexasHoldEmPlayer(gametable);
 			this.tableseatrank = new CList<TexasHoldEmHandRank>();
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
+			this.IO = inout;
+			this.msg = new CStr();
 		}
 
 
@@ -63,7 +65,8 @@ namespace Games.Card.TexasHoldEm
 			if (!PlaceInitialBets()) { RollBackBets(); return false; }
 
 
-			Console.WriteLine("------------------ NEW ROUND ----------------");
+			this.IO.ShowMsg("------------------ NEW ROUND ----------------");
+
 
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);						// deal 1 card to each active player
@@ -100,32 +103,34 @@ namespace Games.Card.TexasHoldEm
 			// 12. reset all player hands
 			// 13. return to look for add or remove players
 
-			Console.WriteLine($"Texas Hold'em");
+			this.IO.ShowMsg($"Texas Hold'em");
 			int counter = 0;
 			CList<Card> playerhand;
 
-			Console.Write($" Seat {counter,2}. ");
-			Console.Write($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
+			msg.Str( $" Seat {counter,2}. ");
+			msg.Append($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
 			playerhand = this.gametable.DealerSeat.ShowCards();
 			foreach (var card in playerhand)
 			{
-				Console.Write($"  {card.Symbol}");
+				msg.Append($"  {card.Symbol}");
 			}
-			Console.Write("\n");
+			this.IO.ShowMsg(msg.ToString());
 			counter++;
 
 			foreach (var p in this.gametable.TableSeats) { 
 				if (!p.IsFree()) {
-					Console.Write($" Seat {counter,2}. ");
-					Console.Write($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
+					msg.Clear();
+					msg.Append($" Seat {counter,2}. ");
+					msg.Append($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
 					playerhand = p.ShowCards();
 					foreach (var card in playerhand) {
-						Console.Write($"  {card.Symbol}");
+						msg.Append($"  {card.Symbol}");
 					}
-					Console.Write("\n");
+					this.IO.ShowMsg(msg.ToString());
 				}
 				counter++;
 			}
+
 			return true;
 		}
 
@@ -181,12 +186,9 @@ namespace Games.Card.TexasHoldEm
 						if (this.requiredbet < seat.Bets) {
 							this.requiredbet = seat.Bets;
 							this.lastBetRaiseSeat = seat;
-//							Console.WriteLine($" - Player {seat.Name} raised  {seat.Bets}");
 						}
-//						else Console.WriteLine($" - Player {seat.Name} called  {seat.Bets}");
 					}
-//					else Console.WriteLine($" - Player {seat.Name} folded  {seat.Bets}");
-
+					msg.Str(seat.Comment); this.IO.ShowMsg(msg.ToString());
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
 				seat = this.gametable.NextActiveSeat(seat);
@@ -245,10 +247,11 @@ namespace Games.Card.TexasHoldEm
 			}
 
 			this.tableseatrank.Sort(SortRank);
-			Console.WriteLine("winner is:");
+			this.IO.ShowMsg("winner is:");
 			foreach (var rank in this.tableseatrank) {
-				if (rank.TableSeat.Active) Console.WriteLine($" {rank.TableSeat.Name,-15}  {rank.Hand,-15} {rank.Value,10}");
-				else Console.WriteLine($" {rank.TableSeat.Name,-15}  Folded");
+				if (rank.TableSeat.Active) { msg.Str($" {rank.TableSeat.Name,-15}  {rank.Hand,-15} {rank.Value,10}"); }
+				else { msg.Str($" {rank.TableSeat.Name,-15}  Folded"); }
+				this.IO.ShowMsg(msg.ToString());
 			}
 			this.tableseatrank.First().TableSeat.PayOutWinningPot(this.gametable.PotTokensCollect());
 		}
@@ -261,21 +264,24 @@ namespace Games.Card.TexasHoldEm
 
 
 		private void Statistics() {
-			var stats = this.gametable.GetStatistics() as TexasHoldEmStats;
-			bool winner = true;
-			foreach (var rank in this.tableseatrank)
-			{
-				if ((rank.TableSeat.Active) && (winner)) { stats.StatsAddWinner(rank.Hand); winner = false; }
-				stats.StatsAddHand(rank.Hand);
+			var stats = this.gametable.GetStatistics() as TexasHoldEmStatistics;
+			if (stats != null) {
+				bool winner = true;
+				foreach (var rank in this.tableseatrank)
+				{
+					if ((rank.TableSeat.Active) && (winner)) { stats.StatsAddWinner(rank.Hand); winner = false; }
+					stats.StatsAddHand(rank.Hand);
+				}
 			}
 
-			
 		}
 
 
+		ITexasHoldEmIO IO;
 		CardStack cardStack;
 		TexasHoldEmPlayer texasplayer = null;
 		CList<TexasHoldEmHandRank> tableseatrank = null;
+		CStr msg;
 
 		int requiredbet;
 		CardGameTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table

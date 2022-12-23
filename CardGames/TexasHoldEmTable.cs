@@ -8,18 +8,20 @@ namespace Games.Card.TexasHoldEm
 {
 	class TexasHoldEmTable : CardGameTable
 	{
-		public TexasHoldEmTable(int tableseats) : base(tableseats)
+		public TexasHoldEmTable(CardGameTableConfig tableConfig, ITexasHoldEmIO inout) : base(tableConfig)
 		{
-			this.carddealer = new TexasHoldEmDealer(this);
+			this.carddealer = new TexasHoldEmDealer(this, inout);
 		}
 
 
-		public override ICardGameTable EnableStats()
+		public override ICardGameTable Statistics(ICardGameTableStatistics statistics)
 		{
-			this.statistics = new TexasHoldEmStats();
-
+			if (statistics != null) this.statistics = statistics;
 			return this;
 		}
+
+		public ITexasHoldEmIO IO { get; }
+
 
 	}
 }

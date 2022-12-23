@@ -48,8 +48,7 @@ namespace Games.Card
 
 		/// will shuffle deck of cards and position card pointer to the first card
 		public void ShuffleCards() {
-			var rnd = new CRandom();
-			rnd.Shuffle<Card>(deck);
+			CRandom.Random.Shuffle<Card>(deck);
 			nextcard = 0;
 		}
 

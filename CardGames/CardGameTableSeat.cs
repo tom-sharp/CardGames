@@ -65,10 +65,13 @@ namespace Games.Card
 
 			// Temporary function - this should be handled in TexasPlayer class
 			// more evaluatin and possible to raise / fold. Here ONLY accept request, all users call
-
-			if (this.Player == null) return false;
+			this.Comment = "";
+			if (this.Player == null) { this.Active = false; this.Comment = "Player fold"; return false; }
 			Bets += tokens;
 			this.Player.UpdateTokenWallet(-tokens);
+			this.Comment = $" - Player {this.Name} called  {tokens}";
+			// or if fold: this.Comment = $" - Player {this.Name} fold";
+			// or if raise: this.Comment = $" - Player {this.Name} called  {tokens}";
 			return true;
 		}
 

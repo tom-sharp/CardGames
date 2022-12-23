@@ -7,9 +7,9 @@ namespace Games.Card
 
 		void Run(int rounds = 1);
 
-		ICardGameTable EnableStats();
+		ICardGameTable Statistics(ICardGameTableStatistics statistics);
 
-		public ICardGameStats GetStatistics();
+		public ICardGameTableStatistics GetStatistics();
 
 
 		CardGameTableSeat DealerSeat { get; }
