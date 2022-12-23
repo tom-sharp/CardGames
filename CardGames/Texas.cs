@@ -32,13 +32,7 @@ namespace CardGames
 
 			texastable.Run(roundstoplay);
 
-			this.IO.SupressOutput = false;
-
-			var stats = texastable.GetStatistics() as TexasHoldEmStatistics;
-			if (stats != null) {
-				stats.ShowGameStatistics();
-				stats.ShowGamePlayerstatistics(this.playerlist);
-			}
+			ShowStatistics();
 
 		}
 
@@ -84,6 +78,16 @@ namespace CardGames
 			this.IO.ShowMsg("h = help");
 			this.IO.ShowMsg("ex: r10 p5");
 			this.IO.ShowMsg("ex: r10 p5 s8 t1000 -s");
+		}
+
+		private void ShowStatistics() {
+			var stats = texastable.GetStatistics() as TexasHoldEmStatistics;
+			if (stats != null)
+			{
+				this.IO.SupressOutput = false;
+				stats.ShowGameStatistics();
+				stats.ShowGamePlayerstatistics(this.playerlist);
+			}
 		}
 
 

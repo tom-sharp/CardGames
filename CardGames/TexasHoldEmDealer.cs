@@ -60,73 +60,9 @@ namespace Games.Card.TexasHoldEm
 		override public bool Run()
 		{
 			// Game Round
-			if (this.gametable == null) return false;
 			if (SetUpGameRound() < 2) return false;
 			if (!PlaceInitialBets()) { RollBackBets(); return false; }
-
-
-			this.IO.ShowMsg("------------------ NEW ROUND ----------------");
-
-
-			this.cardStack.ShuffleCards();                  // shuffle deck
-			DealPlayerCards(cards: 1);						// deal 1 card to each active player
-			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
-			PlaceBets();
-			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
-			PlaceBets();
-			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
-			PlaceBets();
-			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
-			PlaceBets();
-			FindWinner();
-			Statistics();
-
-
-
-
-			// GAME CODE HERE
-			// 1. track seat first card reciever
-			// 2. forced bet for the two first players - trac last raise
-			// 3. deal cards, two private for each player
-			// 4. take bets
-			// 5. deal three common public cards
-			// 6. take bets
-			// 7. deal another public card
-			// 8. take bets
-			// 9. deal the fifth public comon card
-			// 10 take bets
-			// 11 decide who wins the pot and distribute earnings
-			// 12. reset all player hands
-			// 13. return to look for add or remove players
-
-			this.IO.ShowMsg($"Texas Hold'em");
-			int counter = 0;
-			CList<Card> playerhand;
-
-			msg.Str( $" Seat {counter,2}. ");
-			msg.Append($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
-			playerhand = this.gametable.DealerSeat.ShowCards();
-			foreach (var card in playerhand)
-			{
-				msg.Append($"  {card.Symbol}");
-			}
-			this.IO.ShowMsg(msg.ToString());
-			counter++;
-
-			foreach (var p in this.gametable.TableSeats) { 
-				if (!p.IsFree()) {
-					msg.Clear();
-					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
-					playerhand = p.ShowCards();
-					foreach (var card in playerhand) {
-						msg.Append($"  {card.Symbol}");
-					}
-					this.IO.ShowMsg(msg.ToString());
-				}
-				counter++;
-			}
-
+			this.PlayRound();
 			return true;
 		}
 
@@ -135,6 +71,9 @@ namespace Games.Card.TexasHoldEm
 		private int SetUpGameRound()
 		{
 			int count = 0;
+
+			if (this.gametable == null) return 0;
+
 			this.requiredbet = 1;
 			this.gametable.PotTokensCollect();
 			this.tableseatrank.Clear();
@@ -152,6 +91,59 @@ namespace Games.Card.TexasHoldEm
 			return count;
 		}
 
+
+		private void PlayRound() {
+			this.IO.ShowMsg("------------------ NEW ROUND ----------------");
+			this.IO.ShowMsg($"Texas Hold'em");
+			this.cardStack.ShuffleCards();                  // shuffle deck
+			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
+			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
+			PlaceBets();
+			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
+			PlaceBets();
+			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
+			PlaceBets();
+			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
+			PlaceBets();
+			ShowRoundHands();
+			FindWinner();
+			Statistics();
+		}
+
+
+		private void ShowRoundHands() {
+			int counter = 0;
+			CList<Card> playerhand;
+
+			msg.Str($" Seat {counter,2}. ");
+			msg.Append($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
+			playerhand = this.gametable.DealerSeat.ShowCards();
+			foreach (var card in playerhand)
+			{
+				msg.Append($"  {card.Symbol}");
+			}
+			this.IO.ShowMsg(msg.ToString());
+			counter++;
+
+			foreach (var p in this.gametable.TableSeats)
+			{
+				if (!p.IsFree())
+				{
+					msg.Clear();
+					msg.Append($" Seat {counter,2}. ");
+					msg.Append($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
+					playerhand = p.ShowCards();
+					foreach (var card in playerhand)
+					{
+						msg.Append($"  {card.Symbol}");
+					}
+					this.IO.ShowMsg(msg.ToString());
+				}
+				counter++;
+			}
+			this.IO.ShowMsg($" Pot tokens:             {this.gametable.PotTokens,12}");
+
+		}
 
 		// this will advance trackers for first card seat as well as last bet Raise seat
 		// expected that at least two active players exist to call this function
