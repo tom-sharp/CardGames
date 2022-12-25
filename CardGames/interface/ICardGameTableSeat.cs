@@ -3,7 +3,7 @@
 	public interface ICardGameTableSeat
 	{
 
-		bool IsFree();
+		bool IsFree { get; }
 
 		bool IsActive { get; }
 

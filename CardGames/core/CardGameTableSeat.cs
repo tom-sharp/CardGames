@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Syslib;
+
 
 namespace Games.Card
 {
@@ -18,10 +14,11 @@ namespace Games.Card
 			this.Comment = "";
 		}
 
-		public bool IsFree()
-		{
-			if (this.player == null) return true;
-			return false;
+		public bool IsFree {
+			get {
+				if (this.player == null) return true;
+				return false;
+			}
 		}
 
 		public bool IsActive { get; private set; }
@@ -31,7 +28,7 @@ namespace Games.Card
 		{
 			this.IsActive = false;
 			if (player == null) return false;
-			if (IsFree()) { this.player = player; this.Comment = $"{this.player.Name} joined game"; return true; }
+			if (this.IsFree) { this.player = player; this.Comment = $"{this.player.Name} joined game"; return true; }
 			return false;
 		}
 

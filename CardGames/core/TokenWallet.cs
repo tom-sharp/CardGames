@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Games.Card
 {
@@ -24,7 +20,6 @@ namespace Games.Card
 		public int Tokens { get { return this.tokens; } }
 
 		int tokens;
-		bool allownegative;
 
 	}
 }

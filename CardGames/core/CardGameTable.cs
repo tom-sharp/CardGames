@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Syslib;
+﻿using System.Collections.Generic;
+
 
 namespace Games.Card
 {
@@ -32,25 +28,39 @@ namespace Games.Card
 		}
 
 
-		public void Run(int rounds = 1)
+		public void PlayRound()
 		{
-			int roundsplayed = 0;
 			if (this.carddealer == null) return;
-			while (true)
+			if (this.carddealer.DealRound()) this.statistics.RoundsPlayed++;
+		}
+
+		public int SeatCount { get { return this.tableseats.Length; } }
+
+		public int PlayerCount
+		{
+			get
 			{
-				if (this.carddealer.DealRound())
-				{
-					this.statistics.RoundsPlayed++;
-					roundsplayed++;
-				}
-				else break;
-				if (roundsplayed >= rounds) break;
+				int count = 0;
+				foreach (var seat in this.tableseats) { if (!seat.IsFree) count++; }
+				return count - 1;   // remove dealer count
 			}
 		}
 
-		public abstract ICardGameTable Statistics(ICardGameTableStatistics statistics);
+		/// <summary>
+		/// return number of active player seats (dealer seat is excluded from count of active seats)
+		/// </summary>
+		public int ActiveSeatCount
+		{
+			get
+			{
+				int count = 0;
+				foreach (var seat in this.tableseats) { if ((seat != null) && (seat.IsActive)) count++; }
+				return count - 1;   // remove dealer count
+			}
+		}
 
-		public ICardGameTableStatistics GetStatistics() { return this.statistics; }
+
+
 
 		public int JoinTable(CardPlayer player)
 		{
@@ -58,7 +68,7 @@ namespace Games.Card
 			if (player == null) return 0;
 			while (seat < tableseats.Length)
 			{
-				if (tableseats[seat].IsFree())
+				if (tableseats[seat].IsFree)
 				{
 					if (!tableseats[seat].Join(player)) return 0;
 					return seat;
@@ -75,6 +85,19 @@ namespace Games.Card
 			tableseats[seat].Leave();
 		}
 
+		public ITokenWallet TablePot { get; }
+
+
+		public abstract ICardGameTable Statistics(ICardGameTableStatistics statistics);
+
+		public ICardGameTableStatistics GetStatistics() { return this.statistics; }
+
+
+
+
+
+		// return Dealer seat
+		public ICardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }
 
 
 		/// <summary>
@@ -96,33 +119,7 @@ namespace Games.Card
 			}
 		}
 
-		/// <summary>
-		/// return number of active player seats (dealer seat is excluded from count of active seats)
-		/// </summary>
-		public int ActiveSeatCount
-		{
-			get
-			{
-				int count = 0;
-				foreach (var seat in this.tableseats) { if ((seat != null) && (seat.IsActive)) count++; }
-				return count - 1;   // remove dealer count
-			}
-		}
 
-		public int SeatCount { get { return this.tableseats.Length; } }
-
-		public int PlayerCount 
-		{ 
-			get 
-			{
-				int count = 0;
-				foreach (var seat in this.tableseats) { if (!seat.IsFree()) count++; }
-				return count - 1;   // remove dealer count
-			}
-		}
-
-		// return Dealer seat
-		public ICardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }
 
 		/// <summary>
 		/// Return next active seat from table, or first active seat if argumnet is null
@@ -150,7 +147,6 @@ namespace Games.Card
 		}
 
 
-		public ITokenWallet TablePot { get; }
 
 		protected ICardGameTableStatistics statistics;
 		protected ICardGameDealer carddealer;

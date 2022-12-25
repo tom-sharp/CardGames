@@ -80,7 +80,7 @@ namespace Games.Card.TexasHoldEm
 
 			foreach (var seat in this.gametable.TableSeats)
 			{
-				if (!seat.IsFree()) {
+				if (!seat.IsFree) {
 					seat.NewRound();
 					this.tableseatrank.Add(new TexasHoldEmHandRank() { TableSeat = seat });
 					count++;

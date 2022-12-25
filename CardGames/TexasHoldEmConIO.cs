@@ -67,7 +67,7 @@ namespace Games.Card.TexasHoldEm
 
 			foreach (var p in table.TableSeats)
 			{
-				if (!p.IsFree())
+				if (!p.IsFree)
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");

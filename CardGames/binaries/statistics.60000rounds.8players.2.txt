@@ -1,0 +1,24 @@
+Playing 60000 rounds with 8 players having 1000 tokens each at table with 8 seats 
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0            17,0 %     84035
+ 2.  Pair                    11,0 %      7166            44,0 %    211497
+ 3.  TwoPair                 27,0 %     16261            23,0 %    113020
+ 4.  ThreeOfAKind            16,0 %      9960             4,0 %     23470
+ 5.  Straight                17,0 %     10324             4,0 %     20015
+ 6.  Flush                   12,0 %      7498             3,0 %     14623
+ 7.  FullHouse               13,0 %      8007             2,0 %     12501
+ 8.  FourOfAKind              1,0 %       659             0,0 %       701
+ 9.  StraightFlush            0,0 %       122             0,0 %       135
+10.  RoyalStraightFlush       0,0 %         3             0,0 %         3
+-Rounds played   60000        Total:    60000                      480000
+Players:
+ Player1              Tokens       -654
+ Player2              Tokens       1575
+ Player3              Tokens       1023
+ Player4              Tokens       1543
+ Player5              Tokens       -527
+ Player6              Tokens       1987
+ Player7              Tokens       1875
+ Player8              Tokens       1178

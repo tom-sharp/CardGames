@@ -29,16 +29,15 @@ namespace CardGames
 		}
 
 		public void Run(string[] args) {
-
 			if (!SetUp(args)) { this.IO.ShowHelp(); return; }
 
 			while (true) {
-				texastable.Run(roundstoplay);
+				if (texastable.GetStatistics().RoundsPlayed >= roundstoplay) break;
+				texastable.PlayRound();
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
 				if (texastable.PlayerCount < 2) break;
-				break;
 
 			}
 
