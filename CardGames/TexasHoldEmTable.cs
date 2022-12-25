@@ -11,6 +11,7 @@ namespace Games.Card.TexasHoldEm
 		public TexasHoldEmTable(CardGameTableConfig tableConfig, ITexasHoldEmIO inout) : base(tableConfig)
 		{
 			this.carddealer = new TexasHoldEmDealer(this, inout);
+			this.cardplayer = new TexasHoldEmPlayer(this, inout);
 		}
 
 
@@ -20,7 +21,8 @@ namespace Games.Card.TexasHoldEm
 			return this;
 		}
 
-		public ITexasHoldEmIO IO { get; }
+
+
 
 
 	}

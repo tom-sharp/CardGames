@@ -8,11 +8,11 @@ namespace Games.Card
 {
 	public class CardPlayer
 	{
-		public CardPlayer(ICardPlayerProfile playerprofile = null, string name = null, int tokens = 0)
+		public CardPlayer(ICardPlayerProfile playerprofile = null, string name = null, ITokenWallet wallet = null)
 		{
 			if (playerprofile == null) this.PlayerProfile = new CardPlayerProfileHuman(); else this.PlayerProfile = playerprofile;
 			if (name != null) Name = name; else Name = "Player";
-			Tokens = tokens;
+			if (wallet != null) this.Wallet = wallet; else this.Wallet = new TokenWallet();
 		}
 
 
@@ -28,14 +28,11 @@ namespace Games.Card
 			this.gametable = null;
 		}
 
-		// Update token wallet, using + to add tokens to wallet or - to withdraw tokens from wallet
-		public void UpdateTokenWallet(int tokens) {
-			Tokens += tokens;
-		}
 
 		public string Name { get; }
 
-		public int Tokens { get; private set; }
+
+		public ITokenWallet Wallet { get; }
 
 		public ICardPlayerProfile PlayerProfile { get; }
 

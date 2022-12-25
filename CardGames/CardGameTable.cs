@@ -19,11 +19,15 @@ namespace Games.Card
 		{
 			if ((tableConfig != null) && (tableConfig.IsValid())) this.tableseats = new CardGameTableSeat[tableConfig.Seats + 1];
 			else this.tableseats = new CardGameTableSeat[1];
-			for (int seat = 0; seat < this.tableseats.Length; seat++) { this.tableseats[seat] = new CardGameTableSeat(); }
-			this.tableseats[CardGame.DealerSeatNumber].Join(new CardPlayer(name: "Dealer"));
+
+			for (int seat = 0; seat < this.tableseats.Length; seat++) this.tableseats[seat] = new CardGameTableSeat();
 
 			this.statistics = new CardGameTableStatistics();
 			this.carddealer = null;
+			this.cardplayer = null;
+			this.TablePot = new TokenWallet();
+
+			this.tableseats[CardGame.DealerSeatNumber].Join(new CardPlayer(name: "Dealer"));
 
 		}
 
@@ -31,9 +35,9 @@ namespace Games.Card
 		public void Run(int rounds = 1)
 		{
 			if (this.carddealer == null) return;
-			while (this.carddealer.Run())
+			while (true)
 			{
-				this.statistics.RoundsPlayed++;
+				if (this.carddealer.DealRound()) this.statistics.RoundsPlayed++;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
@@ -74,7 +78,7 @@ namespace Games.Card
 		/// <summary>
 		/// return all the table seats as long there is a player at the seat. Dealer excluded
 		/// </summary>
-		public IEnumerable<CardGameTableSeat> TableSeats
+		public IEnumerable<ICardGameTableSeat> TableSeats
 		{
 			get
 			{
@@ -93,32 +97,32 @@ namespace Games.Card
 		/// <summary>
 		/// return number of active player seats (dealer seat is excluded from count of active seats)
 		/// </summary>
-		public int CountActiveSeats
+		public int ActiveSeatCount
 		{
 			get
 			{
 				int count = 0;
-				foreach (var seat in this.tableseats) { if ((seat != null) && (seat.Active)) count++; }
+				foreach (var seat in this.tableseats) { if ((seat != null) && (seat.IsActive)) count++; }
 				return count - 1;   // remove dealer count
 			}
 		}
 
-		public int CountSeats { get { return this.tableseats.Length; } }
+		public int SeatCount { get { return this.tableseats.Length; } }
 
 		// return Dealer seat
-		public CardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }
+		public ICardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }
 
 		/// <summary>
 		/// Return next active seat from table, or first active seat if argumnet is null
 		/// Dealer seat is excluded from this search. If no active seats null is returned
 		/// </summary>
-		public CardGameTableSeat NextActiveSeat(CardGameTableSeat startseat = null)
+		public ICardGameTableSeat NextActiveSeat(ICardGameTableSeat startseat = null)
 		{
 			int seat = 0;
-			CardGameTableSeat returnseat = null;
+			ICardGameTableSeat returnseat = null;
 			while (true)
 			{
-				if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null) && (this.tableseats[seat].Active))
+				if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null) && (this.tableseats[seat].IsActive))
 				{
 					if (returnseat == startseat) { returnseat = this.tableseats[seat]; break; }
 					if (startseat == this.tableseats[seat]) returnseat = this.tableseats[seat];
@@ -133,26 +137,13 @@ namespace Games.Card
 			return returnseat;
 		}
 
-		public void PotTokensAdd(int tokens)
-		{
-			this.PotTokens += tokens;
-		}
 
-		// Collect full pot if argument is 0 or requested number of tokens if other than that
-		public int PotTokensCollect(int tokens = 0)
-		{
-			int result;
-			if ((tokens <= 0) || (tokens > this.PotTokens)) { result = this.PotTokens; this.PotTokens = 0; }
-			else { result = tokens; this.PotTokens -= tokens; }
-			return tokens;
-		}
+		public ITokenWallet TablePot { get; }
 
-		public int PotTokens { get; private set; }
-
-
-		protected ICardGameTableStatistics statistics = null;
-		protected ICardGameDealer carddealer = null;
-		CardGameTableSeat[] tableseats = null;
+		protected ICardGameTableStatistics statistics;
+		protected ICardGameDealer carddealer;
+		protected ICardGamePlayer cardplayer;
+		ICardGameTableSeat[] tableseats;
 	}
 
 }

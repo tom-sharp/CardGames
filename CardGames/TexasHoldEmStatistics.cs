@@ -45,7 +45,7 @@ namespace Games.Card.TexasHoldEm
 			this.IO.ShowMsg("Players:");
 			foreach (var p in playerlist)
 			{
-				this.IO.ShowMsg($" {p.Name,-20} Tokens {p.Tokens,10}");
+				this.IO.ShowMsg($" {p.Name,-20} Tokens {p.Wallet.Tokens,10}");
 			}
 
 		}

@@ -7,115 +7,111 @@ using Syslib;
 
 namespace Games.Card
 {
-	public class CardGameTableSeat
+	public class CardGameTableSeat : ICardGameTableSeat
 	{
 		public CardGameTableSeat()
 		{
-			PrivateCards = new CList<Card>();
-			PublicCards = new CList<Card>();
-			Player = null;
-			Active = false;
-			Comment = "";
-		}
-
-		public bool IsFree() {
-			if (Player == null) return true;
-			return false;
-		}
-
-		public bool Join(CardPlayer player) {
-			if (player == null) return false;
-			Active = false;
-			if (IsFree()) { Player = player; Comment = $"{Name} joined game"; return true; }
-			return false;
-		}
-
-		public bool Leave() {
-			if (this.Player == null) return true;
-			Comment = $"{Name} left game";
-			Active = false;
-			Player = null;
-			return true;
-		}
-
-
-		public void NewRound() {
-			PrivateCards.Clear();
-			PublicCards.Clear();
-			Comment = "Ready";
-			Active = true;
-			Bets = 0;
-		}
-
-
-		public bool PlaceBet(int tokens) {
-			if (this.Player == null) return false;
-			Bets += tokens;
-			this.Player.UpdateTokenWallet(-tokens);
-			return true;
-		}
-
-		public int CollectBet() {
-			int bet = Bets;
-			Bets = 0;
-			return bet;
-		}
-
-		public bool AskBet(int tokens) {
-
-			// Temporary function - this should be handled in TexasPlayer class
-			// more evaluatin and possible to raise / fold. Here ONLY accept request, all users call
+			this.seatwallet = new TokenWallet();
+			this.playercards = new CardGamePlayerCards();
+			this.player = null;
+			this.IsActive = false;
 			this.Comment = "";
-			if (this.Player == null) { this.Active = false; this.Comment = "Player fold"; return false; }
-			Bets += tokens;
-			this.Player.UpdateTokenWallet(-tokens);
-			this.Comment = $" - Player {this.Name} called  {tokens}";
-			// or if fold: this.Comment = $" - Player {this.Name} fold";
-			// or if raise: this.Comment = $" - Player {this.Name} called  {tokens}";
+		}
+
+		public bool IsFree()
+		{
+			if (this.player == null) return true;
+			return false;
+		}
+
+		public bool IsActive { get; private set; }
+
+
+		public bool Join(CardPlayer player)
+		{
+			this.IsActive = false;
+			if (player == null) return false;
+			if (IsFree()) { this.player = player; this.Comment = $"{this.player.Name} joined game"; return true; }
+			return false;
+		}
+
+		public bool Leave()
+		{
+			this.IsActive = false;
+			if (this.player == null) return true;
+			this.Comment = $"{this.player.Name} left game";
+			this.player = null;
 			return true;
 		}
 
-		public void ReturnBet() {
-			if (this.Player == null) return;
-			this.Player.UpdateTokenWallet(Bets);
-			Bets = 0;
-		}
 
-		public void PayOutWinningPot(int tokens)
+		public void NewRound()
 		{
-			if (this.Player == null) return;
-			this.Player.UpdateTokenWallet(tokens);
+			this.playercards.ClearHand();
+			this.seatwallet.Clear();
+			if (this.player != null) this.IsActive = true; else this.IsActive = false;
+			if (this.IsActive) this.Comment = "Ready"; else this.Comment = "Free seat";
 		}
 
-		public void TakePrivateCard(Card card) {
-			if (card == null) return;
-			this.PrivateCards.Add(card);
+		// Addd winnings to player wallet
+		public void WinTokens(int tokens)
+		{
+			if (this.player == null) return;
+			this.player.Wallet.AddTokens(tokens);
+			this.Comment = $"Player {this.player.Name} wins  {tokens} tokens";
 		}
 
-		public void TakePublicCard(Card card) {
-			if (card == null) return;
-			this.PublicCards.Add(card);
+		// remove requested tokens from player wallet and add them to seat bet tokens
+		public void PlaceBet(int tokens)
+		{
+			if ((this.player == null) || (!this.IsActive)) { this.IsActive = false; return; }
+			this.seatwallet.AddTokens(this.player.Wallet.RemoveTokens(tokens));
+			this.Comment = $" - Player {this.player.Name} called  {tokens}";
 		}
 
-		public CList<Card> ShowCards() {
-			return new CList<Card>().Add(this.PrivateCards).Add(this.PublicCards);
+		// remove tokens from uplayer wallet and add them to table seat wallet
+		public void RaiseBet(int tokens)
+		{
+			if ((this.player == null) || (!this.IsActive)) { this.IsActive = false; return; }
+			this.seatwallet.AddTokens(this.player.Wallet.RemoveTokens(tokens));
+			this.Comment = $" - Player {this.player.Name} raise  {tokens}";
 		}
 
-		public bool Active { get; private set; }
+		public void Fold()
+		{
+			this.IsActive = false;
+			this.Comment = $" - Player {this.player.Name} fold";
+		}
+
+		public int CollectBet()
+		{
+			return this.seatwallet.Clear();
+		}
+
+		public void RollbackBet()
+		{
+			if (this.player == null) return;
+			this.player.Wallet.AddTokens(this.seatwallet.Clear());
+		}
+
+
+		public ICardGamePlayerCards PlayerCards { get { return this.playercards; } }
+
+
+
+		public int Bets { get { return this.seatwallet.Tokens; } }
 
 		public String Comment { get; private set; }
 
-		public int Bets { get; private set; }
-
-		public string Name { get { if (this.Player != null) return this.Player.Name; else return ""; } }
-
-		public int Tokens { get { if (this.Player != null) return this.Player.Tokens; else return 0; } }
 
 
+		public string PlayerName { get { if (this.player != null) return this.player.Name; else return "Free seat"; } }
+		public int PlayerTokens { get { if (this.player != null) return this.player.Wallet.Tokens; else return 0; } }
 
-		CList<Card> PrivateCards;
-		CList<Card> PublicCards;
-		CardPlayer Player;
+
+		CardPlayer player;
+		ICardGamePlayerCards playercards;
+		ITokenWallet seatwallet;
 	}
 
 

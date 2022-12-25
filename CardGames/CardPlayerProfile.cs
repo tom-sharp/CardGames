@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public class CardPlayerProfile : ICardPlayerProfile
+	public abstract class CardPlayerProfile : ICardPlayerProfile
 	{
 		public CardPlayerProfile(CardPlayerType cardPlayerType)
 		{

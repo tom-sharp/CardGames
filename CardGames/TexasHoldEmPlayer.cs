@@ -9,9 +9,10 @@ namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmPlayer : CardGamePlayer, ICardGamePlayer
 	{
-		public TexasHoldEmPlayer(CardGameTable gametable)
+		public TexasHoldEmPlayer(CardGameTable gametable, ITexasHoldEmIO inout)
 		{
 			this.gametable = gametable;
+			this.IO = inout;
 		}
 
 
@@ -26,12 +27,14 @@ namespace Games.Card.TexasHoldEm
 
 		}
 
+		// return true if accept or raise bet or false if fold
+		public bool AskBet(CardGameTableSeat tableseat, int tokens) {
+			tableseat.PlaceBet(tokens);
+			return true; 
+		}
 
 
-
-
-
-
+		ITexasHoldEmIO IO;
 		CardGameTable gametable = null;
 
 	}

@@ -309,6 +309,16 @@ namespace Games.Card
 			return mask;
 		}
 
+		private bool IsJokerCard(Card card) {
+			if (card == null) return false;
+			return card.IsJoker;
+		}
+
+		private bool IsFaceCard(Card card) {
+			if (card == null) return false;
+			if ((card.Rank > 10) && (card.Rank < 14)) return true;
+			return false;
+		}
 
 		private bool SortCardsOnRankFunc(Card card1, Card card2)
 		{

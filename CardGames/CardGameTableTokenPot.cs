@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public interface ICardGameDealer 
+	public class CardGameTableTokenPot : TokenWallet
 	{
+		public CardGameTableTokenPot() {	}
 
-		public bool DealRound();
 
 
 	}

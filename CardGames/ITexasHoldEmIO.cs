@@ -8,8 +8,12 @@ namespace Games.Card
 {
 	public interface ITexasHoldEmIO
 	{
-		public void ShowMsg(string msg);
+		void ShowMsg(string msg);
 
-		public bool SupressOutput { get; set; }
+		void ShowNewRound(ICardGameTable table);
+
+		void ShowTableSeatHands(ICardGameTable table);
+
+		bool SupressOutput { get; set; }
 	}
 }

@@ -8,15 +8,15 @@ namespace Games.Card
 {
 	public abstract class CardGameDealer : ICardGameDealer
 	{
-		public CardGameDealer(CardGameTable gametable)
+		public CardGameDealer(ICardGameTable gametable)
 		{
 			this.gametable = gametable;
 		}
 
-		abstract public bool Run();
+		abstract public bool DealRound();
 
 
-		protected CardGameTable gametable = null;
+		protected ICardGameTable gametable = null;
 
 	}
 }

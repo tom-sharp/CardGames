@@ -48,7 +48,6 @@ namespace Games.Card.TexasHoldEm
 
 		public TexasHoldEmDealer(CardGameTable gametable, ITexasHoldEmIO inout) :base(gametable) {
 			this.cardStack = new CardStack(decks: 1);
-			this.texasplayer = new TexasHoldEmPlayer(gametable);
 			this.tableseatrank = new CList<TexasHoldEmHandRank>();
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
@@ -57,7 +56,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		override public bool Run()
+		override public bool DealRound()
 		{
 			// Game Round
 			if (SetUpGameRound() < 2) return false;
@@ -75,7 +74,7 @@ namespace Games.Card.TexasHoldEm
 			if (this.gametable == null) return 0;
 
 			this.requiredbet = 1;
-			this.gametable.PotTokensCollect();
+			this.gametable.TablePot.Clear();
 			this.tableseatrank.Clear();
 
 			this.gametable.DealerSeat.NewRound();
@@ -93,8 +92,7 @@ namespace Games.Card.TexasHoldEm
 
 
 		private void PlayRound() {
-			this.IO.ShowMsg("------------------ NEW ROUND ----------------");
-			this.IO.ShowMsg($"Texas Hold'em");
+			this.IO.ShowNewRound(this.gametable);
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
@@ -105,45 +103,12 @@ namespace Games.Card.TexasHoldEm
 			PlaceBets();
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
-			ShowRoundHands();
 			FindWinner();
+			this.IO.ShowTableSeatHands(this.gametable);
 			Statistics();
 		}
 
 
-		private void ShowRoundHands() {
-			int counter = 0;
-			CList<Card> playerhand;
-
-			msg.Str($" Seat {counter,2}. ");
-			msg.Append($"{this.gametable.DealerSeat.Name,-15}  {this.gametable.DealerSeat.Tokens,10}  {this.gametable.DealerSeat.Active}  ");
-			playerhand = this.gametable.DealerSeat.ShowCards();
-			foreach (var card in playerhand)
-			{
-				msg.Append($"  {card.Symbol}");
-			}
-			this.IO.ShowMsg(msg.ToString());
-			counter++;
-
-			foreach (var p in this.gametable.TableSeats)
-			{
-				if (!p.IsFree())
-				{
-					msg.Clear();
-					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.Name,-15}  {p.Tokens,10}  {p.Active}  ");
-					playerhand = p.ShowCards();
-					foreach (var card in playerhand)
-					{
-						msg.Append($"  {card.Symbol}");
-					}
-					this.IO.ShowMsg(msg.ToString());
-				}
-				counter++;
-			}
-			this.IO.ShowMsg($" Pot tokens:             {this.gametable.PotTokens,12}");
-
-		}
 
 		// this will advance trackers for first card seat as well as last bet Raise seat
 		// expected that at least two active players exist to call this function
@@ -152,11 +117,9 @@ namespace Games.Card.TexasHoldEm
 			this.firstCardSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
 			this.lastBetRaiseSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
 			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
-
-			if (!this.firstCardSeat.PlaceBet(tokens: this.requiredbet)) return false;
+			this.firstCardSeat.PlaceBet(tokens: this.requiredbet);
 			this.requiredbet *= 2;
-			if (!this.lastBetRaiseSeat.PlaceBet(tokens: this.requiredbet)) return false;
-
+			this.lastBetRaiseSeat.PlaceBet(tokens: this.requiredbet);
 			return true;
 		}
 
@@ -166,15 +129,14 @@ namespace Games.Card.TexasHoldEm
 			// If run immediately after init bets: first seat to be asked is next active after last raise 
 			// If run in normal bet roundfirst to ask is fistcard seat (may have folded and not active)
 
-			CardGameTableSeat seat = this.gametable.NextActiveSeat(this.lastBetRaiseSeat);
+			ICardGameTableSeat seat = this.gametable.NextActiveSeat(this.lastBetRaiseSeat);
 			if (this.lastBetRaiseSeat == null) seat = this.firstCardSeat;
 			while (seat != this.lastBetRaiseSeat) {
-				if (seat.Active) {
-					if (seat.AskBet(this.requiredbet - seat.Bets)) {
-						if (this.requiredbet < seat.Bets) {
-							this.requiredbet = seat.Bets;
-							this.lastBetRaiseSeat = seat;
-						}
+				if (seat.IsActive) {
+					seat.PlaceBet(this.requiredbet - seat.Bets);
+					if (this.requiredbet < seat.Bets) {
+						this.requiredbet = seat.Bets;
+						this.lastBetRaiseSeat = seat;
 					}
 					msg.Str(seat.Comment); this.IO.ShowMsg(msg.ToString());
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
@@ -191,7 +153,7 @@ namespace Games.Card.TexasHoldEm
 		private void CollectPlayerBets() {
 
 			foreach (var seat in this.gametable.TableSeats) {
-				if (seat != null) this.gametable.PotTokensAdd(seat.CollectBet());
+				if (seat != null) this.gametable.TablePot.AddTokens(seat.CollectBet());
 			}
 
 		}
@@ -199,24 +161,24 @@ namespace Games.Card.TexasHoldEm
 		// roll back bets made, as for some reson round was not completed
 		private void RollBackBets() {
 			foreach (var seat in this.gametable.TableSeats) {
-				if (seat != null) seat.ReturnBet();
+				if (seat != null) seat.RollbackBet();
 			}
 		}
 
 		// Deal 1 card around the table
 		private bool DealPlayerCards(int cards) {
-			CardGameTableSeat seat = this.firstCardSeat;
+			ICardGameTableSeat seat = this.firstCardSeat;
 			int card = 0;
 
 			if (cards < 1) return false;
 
-			if (this.cardStack.CardsLeft < (cards * this.gametable.CountActiveSeats)) this.cardStack.ShuffleCards();
-			seat.TakePrivateCard(this.cardStack.NextCard());
+			if (this.cardStack.CardsLeft < (cards * this.gametable.ActiveSeatCount)) this.cardStack.ShuffleCards();
+			seat.PlayerCards.TakePrivateCard(this.cardStack.NextCard());
 			seat = this.gametable.NextActiveSeat(seat);
 
 			while (seat != this.firstCardSeat) {
 				card = 0;
-				while (card < cards) { seat.TakePrivateCard(this.cardStack.NextCard()); card++; }
+				while (card < cards) { seat.PlayerCards.TakePrivateCard(this.cardStack.NextCard()); card++; }
 				seat = this.gametable.NextActiveSeat(seat);
 			}
 			return true;
@@ -226,7 +188,7 @@ namespace Games.Card.TexasHoldEm
 			int card = 0;
 			if (cards > this.cardStack.CardsTotal) return false;
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
-			while (card++ < cards) { this.gametable.DealerSeat.TakePublicCard(this.cardStack.NextCard()); }
+			while (card++ < cards) { this.gametable.DealerSeat.PlayerCards.TakePublicCard(this.cardStack.NextCard()); }
 			return true;
 		}
 
@@ -235,35 +197,30 @@ namespace Games.Card.TexasHoldEm
 			Int64 winnerrank = 0;
 
 			foreach (var rank in this.tableseatrank) {
-				rank.RankHand(rank.TableSeat.ShowCards().Add(this.gametable.DealerSeat.ShowCards()));
+				rank.RankHand(rank.TableSeat.PlayerCards.GetCards().Add(this.gametable.DealerSeat.PlayerCards.GetCards()));
+				rank.TableSeat.PlayerCards.HandName = $"{rank.Hand}";
 			}
 
 			this.tableseatrank.Sort(SortRank);
-			this.IO.ShowMsg("winner is:");
-			foreach (var rank in this.tableseatrank) {
-				if (rank.TableSeat.Active) { msg.Str($" {rank.TableSeat.Name,-15}  {rank.Hand,-15} {rank.Value,10}"); }
-				else { msg.Str($" {rank.TableSeat.Name,-15}  Folded"); }
-				this.IO.ShowMsg(msg.ToString());
-			}
 
-			// HERE NEED TO CHECK IS THERE IS MORE THAN ONE WINNER AND POT NEED TO BE SPLIT
-			var WinnersSeats = new CList<CardGameTableSeat>();
+			var WinnersSeats = new CList<ICardGameTableSeat>();
 			foreach (var rank in this.tableseatrank) {
-				if ((winnerhand == TexasHoldEmHand.Nothing) && (rank.TableSeat.Active))
+				if ((winnerhand == TexasHoldEmHand.Nothing) && (rank.TableSeat.IsActive))
 				{
 					winnerhand = rank.Hand; winnerrank = rank.Value;
 					WinnersSeats.Add(rank.TableSeat);
 				}
-				else if ((rank.TableSeat.Active) && (winnerhand == rank.Hand) && (winnerrank == rank.Value)){ WinnersSeats.Add(rank.TableSeat); }
+				else if ((rank.TableSeat.IsActive) && (winnerhand == rank.Hand) && (winnerrank == rank.Value)){ WinnersSeats.Add(rank.TableSeat); }
 			}
-			int potshare = this.gametable.PotTokens; 
-			if (WinnersSeats.Count() > 1) { potshare = this.gametable.PotTokens / WinnersSeats.Count(); this.IO.ShowMsg($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
+			int potshare = this.gametable.TablePot.Tokens; 
+			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowMsg($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
 			foreach (var seat in WinnersSeats) {
-				seat.PayOutWinningPot(this.gametable.PotTokensCollect(potshare));
-				this.IO.ShowMsg($" Winner {seat.Name} wins {potshare} tokens and now have {seat.Tokens}");
-				if ((this.gametable.PotTokens < potshare) && (this.gametable.PotTokens > 0)) {
-					seat.PayOutWinningPot(this.gametable.PotTokensCollect());
-					this.IO.ShowMsg($" Uneven potshare given to {seat.Name} and now have {seat.Tokens}");
+				seat.PlayerCards.WinHand = true;
+				seat.WinTokens(this.gametable.TablePot.RemoveTokens(potshare));
+				this.IO.ShowMsg($" Winner {seat.PlayerName} wins {potshare} tokens and now have {seat.PlayerTokens}");
+				if ((this.gametable.TablePot.Tokens < potshare) && (this.gametable.TablePot.Tokens > 0)) {
+					seat.WinTokens(this.gametable.TablePot.Clear());
+					this.IO.ShowMsg($" Uneven potshare given to {seat.PlayerName} and now have {seat.PlayerTokens}");
 				}
 			}
 
@@ -282,7 +239,7 @@ namespace Games.Card.TexasHoldEm
 				bool winner = true;
 				foreach (var rank in this.tableseatrank)
 				{
-					if ((rank.TableSeat.Active) && (winner)) { stats.StatsAddWinner(rank.Hand); winner = false; }
+					if ((rank.TableSeat.IsActive) && (winner)) { stats.StatsAddWinner(rank.Hand); winner = false; }
 					stats.StatsAddHand(rank.Hand);
 				}
 			}
@@ -292,13 +249,12 @@ namespace Games.Card.TexasHoldEm
 
 		ITexasHoldEmIO IO;
 		CardStack cardStack;
-		TexasHoldEmPlayer texasplayer = null;
 		CList<TexasHoldEmHandRank> tableseatrank = null;
 		CStr msg;
 
 		int requiredbet;
-		CardGameTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
-		CardGameTableSeat lastBetRaiseSeat;		// player that placed the last bet and raised, requiring other to place bets
+		ICardGameTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
+		ICardGameTableSeat lastBetRaiseSeat;		// player that placed the last bet and raised, requiring other to place bets
 	}
 
 

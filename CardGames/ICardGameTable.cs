@@ -12,14 +12,18 @@ namespace Games.Card
 		public ICardGameTableStatistics GetStatistics();
 
 
-		CardGameTableSeat DealerSeat { get; }
+		ICardGameTableSeat DealerSeat { get; }
 
-		IEnumerable<CardGameTableSeat> TableSeats { get; }
+		IEnumerable<ICardGameTableSeat> TableSeats { get; }
 
+		public ITokenWallet TablePot { get; }
 
 		int JoinTable(CardPlayer player);
 
 		void LeaveTable(int seat);
+		ICardGameTableSeat NextActiveSeat(ICardGameTableSeat startseat = null);
+		public int ActiveSeatCount { get; }
+		public int SeatCount { get; }
 
 
 	}

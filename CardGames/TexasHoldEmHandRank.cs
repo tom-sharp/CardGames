@@ -57,7 +57,7 @@ namespace Games.Card.TexasHoldEm
 
 
 
-		public CardGameTableSeat TableSeat { get; set; }
+		public ICardGameTableSeat TableSeat { get; set; }
 
 		public TexasHoldEmHand Hand { get; set; }
 
