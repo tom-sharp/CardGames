@@ -34,15 +34,17 @@ namespace Games.Card
 
 		public void Run(int rounds = 1)
 		{
+			int roundsplayed = 0;
 			if (this.carddealer == null) return;
 			while (true)
 			{
-				if (this.carddealer.DealRound()) this.statistics.RoundsPlayed++;
-
-				// Allow here to  opt in or out new players after each round
-				// Run method always return true unless there is a problem to continue
-
-				if (this.statistics.RoundsPlayed >= rounds) break;
+				if (this.carddealer.DealRound())
+				{
+					this.statistics.RoundsPlayed++;
+					roundsplayed++;
+				}
+				else break;
+				if (roundsplayed >= rounds) break;
 			}
 		}
 
@@ -108,6 +110,16 @@ namespace Games.Card
 		}
 
 		public int SeatCount { get { return this.tableseats.Length; } }
+
+		public int PlayerCount 
+		{ 
+			get 
+			{
+				int count = 0;
+				foreach (var seat in this.tableseats) { if (!seat.IsFree()) count++; }
+				return count - 1;   // remove dealer count
+			}
+		}
 
 		// return Dealer seat
 		public ICardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }

@@ -9,21 +9,23 @@ namespace Games.Card
 
 		ICardGameTable Statistics(ICardGameTableStatistics statistics);
 
-		public ICardGameTableStatistics GetStatistics();
+		ICardGameTableStatistics GetStatistics();
 
 
 		ICardGameTableSeat DealerSeat { get; }
 
 		IEnumerable<ICardGameTableSeat> TableSeats { get; }
 
-		public ITokenWallet TablePot { get; }
+		ITokenWallet TablePot { get; }
 
 		int JoinTable(CardPlayer player);
 
 		void LeaveTable(int seat);
 		ICardGameTableSeat NextActiveSeat(ICardGameTableSeat startseat = null);
-		public int ActiveSeatCount { get; }
-		public int SeatCount { get; }
+
+		int ActiveSeatCount { get; }
+		int SeatCount { get; }
+		int PlayerCount { get; }
 
 
 	}

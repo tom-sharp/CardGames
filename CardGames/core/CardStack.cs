@@ -43,6 +43,15 @@ namespace Games.Card
 		}
 
 
+		/// return total number of cards in deck
+		public int CardsTotal { get { if (this.stack == null) return 0; return this.stack.Length; } }
+
+
+		/// return number of undrawn cards 
+		public int CardsLeft { get { if (this.stack == null) return 0; return this.stack.Length - this.nextcard; } }
+
+
+
 		/// return next card in stack or null if no more undrawn cards
 		/// if firstcard is set to true the current card pointer will reset to the first card before returning card
 		public Card NextCard(bool firstcard = false)
@@ -60,13 +69,21 @@ namespace Games.Card
 			this.nextcard = 0;
 		}
 
+		public void SortCards()
+		{
+			Array.Sort<Card>(this.stack, comparecards);
+			this.nextcard = 0;
+		}
 
-		/// return total number of cards in deck
-		public int CardsTotal { get { if (this.stack == null) return 0; return this.stack.Length; } }
+		private int comparecards(Card x, Card y)
+		{
+			if (x.Suite > y.Suite) return 1;
+			if (x.Suite < y.Suite) return -1;
+			if (x.Rank > y.Rank) return 1;
+			if (x.Rank < y.Rank) return -1;
+			return 0;
+		}
 
-
-		/// return number of undrawn cards 
-		public int CardsLeft { get { if (this.stack == null) return 0; return this.stack.Length - this.nextcard; } }
 
 
 

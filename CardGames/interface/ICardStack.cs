@@ -7,5 +7,6 @@
 
 		Card NextCard(bool firstcard = false);
 		void ShuffleCards();
+		void SortCards();
 	}
 }
