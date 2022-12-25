@@ -23,12 +23,14 @@ namespace CardGames
 			this.tokens = 1000;
 			this.statistics = false;
 			this.quiet = false;
+			this.quietnotroundsummary = false;
+			this.quietnotstatistics = false;
 
 		}
 
 		public void Run(string[] args) {
 
-			if (!SetUp(args)) { this.Help(); return; }
+			if (!SetUp(args)) { this.IO.ShowHelp(); return; }
 
 			texastable.Run(roundstoplay);
 
@@ -44,19 +46,22 @@ namespace CardGames
 				foreach (var arg in args)
 				{
 					str.Str(arg).ToLower();
-					if (str.BeginWith("h")) {return false; }
-					else if (str.BeginWith("-s")) statistics = true;
+					if (str.BeginWith("?")) { return false; }
+					else if (str.BeginWith("-s")) { statistics = true; quietnotstatistics = true; }
+					else if (str.BeginWith("-qr")) { quiet = true; quietnotroundsummary = true; }
 					else if (str.BeginWith("-q")) quiet = true;
 					else if (str.BeginWith("r")) roundstoplay = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("s")) tableseats = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("p")) players = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("t")) tokens = str.FilterKeep(filter).ToInt32();
-					else { IO.ShowMsg($"Invalid argument {arg}"); return false; }
+					else { IO.ShowProgressMessage($"Invalid argument {arg}"); return false; }
 				}
 			}
 
-			this.IO.ShowMsg($"Playing {roundstoplay} rounds with {players} players having {tokens} tokens each at table with {tableseats} seats ");
+			this.IO.ShowProgressMessage($"Playing {roundstoplay} rounds with {players} players having {tokens} tokens each at table with {tableseats} seats ");
 			this.IO.SupressOutput = this.quiet;
+			this.IO.SupressOverrideRoundSummary = this.quietnotroundsummary;
+			this.IO.SupressOverrideStatistics = this.quietnotstatistics;
 
 			this.texastable = new TexasHoldEmTable(new CardGameTableConfig() { Seats = tableseats }, this.IO);
 			if (statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
@@ -71,23 +76,10 @@ namespace CardGames
 		}
 
 
-		private void Help() {
-			this.IO.ShowMsg("Arguments:");
-			this.IO.ShowMsg("r = rounds to play     s = number of table seats    p = number of players");
-			this.IO.ShowMsg("t = player tokens      -s = enable statistics       -q = quiet game output");
-			this.IO.ShowMsg("h = help");
-			this.IO.ShowMsg("ex: r10 p5");
-			this.IO.ShowMsg("ex: r10 p5 s8 t1000 -s");
-		}
 
 		private void ShowStatistics() {
-			var stats = texastable.GetStatistics() as TexasHoldEmStatistics;
-			if (stats != null)
-			{
-				this.IO.SupressOutput = false;
-				stats.ShowGameStatistics();
-				stats.ShowGamePlayerstatistics(this.playerlist);
-			}
+			this.IO.ShowGameStatistics(texastable.GetStatistics() as TexasHoldEmStatistics);
+			this.IO.ShowGamePlayerStatistics(this.playerlist);
 		}
 
 
@@ -97,6 +89,8 @@ namespace CardGames
 		int tokens;
 		bool statistics;
 		bool quiet;
+		bool quietnotroundsummary;
+		bool quietnotstatistics;
 		ITexasHoldEmIO IO;
 		CList<CardPlayer> playerlist;
 		TexasHoldEmTable texastable;

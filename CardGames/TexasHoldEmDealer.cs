@@ -52,7 +52,6 @@ namespace Games.Card.TexasHoldEm
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 			this.IO = inout;
-			this.msg = new CStr();
 		}
 
 
@@ -104,7 +103,7 @@ namespace Games.Card.TexasHoldEm
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
 			FindWinner();
-			this.IO.ShowTableSeatHands(this.gametable);
+			this.IO.ShowRoundSummary(this.gametable);
 			Statistics();
 		}
 
@@ -138,7 +137,7 @@ namespace Games.Card.TexasHoldEm
 						this.requiredbet = seat.Bets;
 						this.lastBetRaiseSeat = seat;
 					}
-					msg.Str(seat.Comment); this.IO.ShowMsg(msg.ToString());
+					this.IO.ShowProgressMessage(seat.Comment);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
 				seat = this.gametable.NextActiveSeat(seat);
@@ -213,14 +212,14 @@ namespace Games.Card.TexasHoldEm
 				else if ((rank.TableSeat.IsActive) && (winnerhand == rank.Hand) && (winnerrank == rank.Value)){ WinnersSeats.Add(rank.TableSeat); }
 			}
 			int potshare = this.gametable.TablePot.Tokens; 
-			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowMsg($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
+			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowProgressMessage($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
 			foreach (var seat in WinnersSeats) {
 				seat.PlayerCards.WinHand = true;
 				seat.WinTokens(this.gametable.TablePot.RemoveTokens(potshare));
-				this.IO.ShowMsg($" Winner {seat.PlayerName} wins {potshare} tokens and now have {seat.PlayerTokens}");
+				this.IO.ShowProgressMessage($" Winner {seat.PlayerName} wins {potshare} tokens and now have {seat.PlayerTokens}");
 				if ((this.gametable.TablePot.Tokens < potshare) && (this.gametable.TablePot.Tokens > 0)) {
 					seat.WinTokens(this.gametable.TablePot.Clear());
-					this.IO.ShowMsg($" Uneven potshare given to {seat.PlayerName} and now have {seat.PlayerTokens}");
+					this.IO.ShowProgressMessage($" Uneven potshare given to {seat.PlayerName} and now have {seat.PlayerTokens}");
 				}
 			}
 
@@ -250,7 +249,6 @@ namespace Games.Card.TexasHoldEm
 		ITexasHoldEmIO IO;
 		CardStack cardStack;
 		CList<TexasHoldEmHandRank> tableseatrank = null;
-		CStr msg;
 
 		int requiredbet;
 		ICardGameTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
