@@ -12,7 +12,7 @@ namespace Games.Card
 		{
 			this.Type = cardPlayerType;
 		}
-		public CardPlayerType Type { get; }
+		public ICardPlayerType Type { get; }
 	}
 
 }

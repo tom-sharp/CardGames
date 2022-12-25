@@ -2,6 +2,6 @@
 {
 	public interface ICardPlayerProfile
 	{
-		CardPlayerType Type { get; }
+		ICardPlayerType Type { get; }
 	}
 }

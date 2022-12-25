@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public class CardPlayer
+	public class CardPlayer : ICardPlayer
 	{
 		public CardPlayer(ICardPlayerProfile playerprofile = null, string name = null, ITokenWallet wallet = null)
 		{
@@ -16,15 +16,17 @@ namespace Games.Card
 		}
 
 
-		public bool JoinTable(ICardGameTable table) {
+		public bool JoinTable(ICardGameTable table)
+		{
 			if (this.gametable != null) LeaveTable();
 			if (table != null) this.tableseat = table.JoinTable(this); else this.tableseat = 0;
 			if (this.tableseat > 0) return true;
 			return false;
 		}
 
-		public void LeaveTable() {
-			if ((this.gametable != null) &&(this.tableseat > 0)) this.gametable.LeaveTable(this.tableseat);
+		public void LeaveTable()
+		{
+			if ((this.gametable != null) && (this.tableseat > 0)) this.gametable.LeaveTable(this.tableseat);
 			this.gametable = null;
 		}
 

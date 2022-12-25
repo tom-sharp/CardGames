@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public class CardPlayerType
+	public class CardPlayerType : ICardPlayerType
 	{
 		public CardPlayerType(string name, int id)
 		{
