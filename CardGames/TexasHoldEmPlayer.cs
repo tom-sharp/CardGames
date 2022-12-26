@@ -61,7 +61,7 @@ namespace Games.Card.TexasHoldEm
 
 
 			if (CRandom.Random.RandomBool(seat.Player.PlayerProfile.Randomness)) {
-				return RandomDesision(seat, tokens);
+				return RandomDecision(seat, tokens);
 			}
 
 
@@ -77,7 +77,7 @@ namespace Games.Card.TexasHoldEm
 			return true;
 		}
 
-		bool RandomDesision(ICardGameTableSeat seat, int tokens) {
+		bool RandomDecision(ICardGameTableSeat seat, int tokens) {
 			// Make a random decission
 			// if tokens == 0 options are fold, check, raise
 			// if tokens > 0 optopns are fold, call or raise
