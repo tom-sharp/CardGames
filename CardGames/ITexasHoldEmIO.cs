@@ -23,6 +23,8 @@ namespace Games.Card
 
 		void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset);
 
+		int AskForBet(int tokens);
+
 		bool SupressOutput { get; set; }
 		bool SupressOverrideRoundSummary { get; set; }
 		bool SupressOverrideStatistics { get; set; }

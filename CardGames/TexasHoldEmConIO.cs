@@ -133,12 +133,69 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
+		// respond to request fold/check/call/raise
+		// -1 Fold, 0 call or check, >0 raise that amount
+		public int AskForBet(int tokens)
+		{
+			var mnu = new Syslib.ConsoleIO.ConMenu(40, 10, 10, true, false);
+			mnuret = 0;
+			if (tokens > 0)
+			{
+				mnu.AddItem("Fold");
+				mnu.AddItem($"Call {tokens} tokens");
+				mnu.AddItem($"Raise", RespondRaise);
+				switch (mnu.Select())
+				{
+					case 1: return -1;  // fold
+					case 2: return 0;  // call
+					case 3: return mnuret;  // raise
+				}
+			}
+			else
+			{
+				mnu.AddItem("Check");
+				mnu.AddItem("Raise", RespondRaise);
+				switch (mnu.Select())
+				{
+					case 1: return 0;  // check
+					case 2: return mnuret;  // raise
+				}
+			}
+			if (tokens > 0) return -1; 
+			return 0;
+		}
+
+		int RespondRaise() {
+			var mnu = new Syslib.ConsoleIO.ConMenu(40, 12, 20, true, false);
+			mnu.AddItem($"Raise 1 token");
+			mnu.AddItem($"Raise 2 tokens");
+			mnu.AddItem($"Raise 3 tokens");
+			mnu.AddItem($"Raise 4 tokens");
+			mnu.AddItem($"Raise 5 tokens");
+			switch (mnu.Select())
+			{
+				case 1: mnuret = 1; return 0;
+				case 2: mnuret = 2; return 0;
+				case 3: mnuret = 3; return 0;
+				case 4: mnuret = 4; return 0;
+				case 5: mnuret = 5; return 0;
+			}
+			mnuret = 0;
+			return 0; 
+		}
+
+
+
 		void ShowMsg(string msg)
 		{
 			if (msg == null) Console.WriteLine("");
 			else Console.WriteLine(msg);
 		}
 
+
+
+
+		int mnuret;
 		CStr msg;
 		bool SortCardsFunc(Card c1, Card c2) { if (c1.Rank < c2.Rank) return true; return false; }
 

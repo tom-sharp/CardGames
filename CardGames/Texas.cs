@@ -76,8 +76,9 @@ namespace CardGames
 			if (statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
 
 			int count = 0;
-			while (++count <= players) { 
+			while (++count <= players) {
 				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", new TokenWallet(tokens: tokens), new CardPlayerProfileRandom()));
+				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
 				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", new TokenWallet(tokens: tokens)));
 			}
 			foreach (var p in playerlist) { if (!p.JoinTable(texastable)) break; }

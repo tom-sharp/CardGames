@@ -31,9 +31,17 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		bool AskBetHuman(ICardGameTableSeat seat, int tokens) {
-			// for now accept all requests
+
+			this.IO.ShowPlayerCards(seat, this.gametable.DealerSeat);
+			int ret = this.IO.AskForBet(tokens);
+			if (ret < 0)
+			{
+				seat.Fold();
+				return false;
+			}
+			else if (ret == 0) { seat.PlaceBet(tokens); return true; }
 			seat.PlaceBet(tokens);
-			
+			seat.RaiseBet(ret);
 			return true;
 		}
 
@@ -44,7 +52,7 @@ namespace Games.Card.TexasHoldEm
 			var hand = seat.PlayerCards.GetPrivateCards().Add(dealercards);
 			int roundprogress = hand.Count();
 
-			this.IO.ShowPlayerCards(seat, this.gametable.DealerSeat);
+//			this.IO.ShowPlayerCards(seat, this.gametable.DealerSeat);
 			var myrank = new TexasHoldEmHandRank();
 			var dealerrank = new TexasHoldEmHandRank();
 			var totalrank = new TexasHoldEmHandRank();
