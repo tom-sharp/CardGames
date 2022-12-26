@@ -8,21 +8,17 @@ namespace Games.Card
 {
 	public interface ICardGamePlayer
 	{
-	
-		public void Reset();
 
+		/// <summary>
+		/// Mandatory token Bet. for player at seat
+		/// </summary>
+		void PlaceBet(ICardGameTableSeat seat, int tokens);
 
-		public void Run();
+		/// <summary>
+		/// Requested minimum tokens to bet
+		/// </summary>
+		bool AskBet(ICardGameTableSeat seat, int tokens);
 
-
-		public string Name { get; set;}
-
-		public int Tokens { get; set; }
-
-		public bool Active { get; set; }
-
-
-		public int BetTokens { get; set; }
 
 	}
 }

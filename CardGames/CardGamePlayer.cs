@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace Games.Card
 {
-	public abstract class CardGamePlayer
+	public abstract class CardGamePlayer : ICardGamePlayer
 	{
 		public CardGamePlayer()
-		{
+		{	
 
 		}
 
+		public virtual void PlaceBet(ICardGameTableSeat seat, int tokens) {
+			seat.PlaceBet(tokens);
+		}
 
-		public string Name { get; set; }
-
-		public int Tokens { get; set; }
-
-		public bool Active { get; set; }
-
-		public int BetTokens { get; set; }
+		public virtual bool AskBet(ICardGameTableSeat seat, int tokens) {
+			seat.PlaceBet(tokens);
+			return true;
+		}
 
 
 	}

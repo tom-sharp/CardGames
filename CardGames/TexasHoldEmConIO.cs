@@ -13,6 +13,7 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;
+			this.msg = new CStr();
 		}
 
 		public bool SupressOutput { get; set; }
@@ -50,12 +51,11 @@ namespace Games.Card.TexasHoldEm
 		public void ShowRoundSummary(ICardGameTable table) {
 			int counter = 0;
 			CList<Card> playerhand;
-			CStr msg = new CStr();
 
 			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
 
 			msg.Str($" Seat {counter,2}. ");
-			msg.Append($"{table.DealerSeat.PlayerName,-15}  {table.DealerSeat.PlayerTokens,10}  {table.DealerSeat.IsActive}  ");
+			msg.Append($"{table.DealerSeat.Player.Name,-15}  {table.DealerSeat.Player.Wallet.Tokens,10}  {table.DealerSeat.IsActive}  ");
 			msg.Append("                             "); 
 			playerhand = table.DealerSeat.PlayerCards.GetCards().Sort(SortCardsFunc);
 			foreach (var card in playerhand)
@@ -71,7 +71,7 @@ namespace Games.Card.TexasHoldEm
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.PlayerName,-15}  {p.PlayerTokens,10}  {p.IsActive}   {p.PlayerCards.HandName,-20} ");
+					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive}   {p.PlayerCards.HandName,-20} ");
 					if (p.PlayerCards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
 					playerhand = p.PlayerCards.GetCards().Sort(SortCardsFunc);
 					foreach (var card in playerhand)
@@ -116,6 +116,21 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
+		public void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset) {
+			if (SupressOutput) return;
+			var playercards = playerseat.PlayerCards.GetPrivateCards();
+			var dealercards = dealerset.PlayerCards.GetPublicCards();
+			msg.Str($" {playerseat.Player.Name}: ");
+			foreach (var c in playercards) {
+				msg.Append($" {c.Symbol} ");
+			}
+			msg.Append(" | ");
+			foreach (var c in dealercards)
+			{
+				msg.Append($" {c.Symbol} ");
+			}
+			ShowMsg(msg.ToString());
+		}
 
 
 		void ShowMsg(string msg)
@@ -124,7 +139,7 @@ namespace Games.Card.TexasHoldEm
 			else Console.WriteLine(msg);
 		}
 
-
+		CStr msg;
 		bool SortCardsFunc(Card c1, Card c2) { if (c1.Rank < c2.Rank) return true; return false; }
 
 	}

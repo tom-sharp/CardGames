@@ -20,10 +20,9 @@ namespace Games.Card
 
 			this.statistics = new CardGameTableStatistics();
 			this.carddealer = null;
-			this.cardplayer = null;
 			this.TablePot = new TokenWallet();
 
-			this.tableseats[CardGame.DealerSeatNumber].Join(new CardPlayer(name: "Dealer"));
+			this.tableseats[CardGame.DealerSeatNumber].Join(new CardPlayerDealer());
 
 		}
 
@@ -34,7 +33,9 @@ namespace Games.Card
 			if (this.carddealer.DealRound()) this.statistics.RoundsPlayed++;
 		}
 
+
 		public int SeatCount { get { return this.tableseats.Length; } }
+
 
 		public int PlayerCount
 		{
@@ -46,9 +47,7 @@ namespace Games.Card
 			}
 		}
 
-		/// <summary>
-		/// return number of active player seats (dealer seat is excluded from count of active seats)
-		/// </summary>
+
 		public int ActiveSeatCount
 		{
 			get
@@ -58,8 +57,6 @@ namespace Games.Card
 				return count - 1;   // remove dealer count
 			}
 		}
-
-
 
 
 		public int JoinTable(CardPlayer player)
@@ -85,6 +82,7 @@ namespace Games.Card
 			tableseats[seat].Leave();
 		}
 
+
 		public ITokenWallet TablePot { get; }
 
 
@@ -94,15 +92,9 @@ namespace Games.Card
 
 
 
-
-
-		// return Dealer seat
 		public ICardGameTableSeat DealerSeat { get { return this.tableseats[CardGame.DealerSeatNumber]; } }
 
 
-		/// <summary>
-		/// return all the table seats as long there is a player at the seat. Dealer excluded
-		/// </summary>
 		public IEnumerable<ICardGameTableSeat> TableSeats
 		{
 			get
@@ -120,25 +112,26 @@ namespace Games.Card
 		}
 
 
-
 		/// <summary>
 		/// Return next active seat from table, or first active seat if argumnet is null
 		/// Dealer seat is excluded from this search. If no active seats null is returned
 		/// </summary>
 		public ICardGameTableSeat NextActiveSeat(ICardGameTableSeat startseat = null)
 		{
-			int seat = 0;
+			int seat = 0, activeseats = 0;
 			ICardGameTableSeat returnseat = null;
 			while (true)
 			{
-				if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null) && (this.tableseats[seat].IsActive))
+				if ((seat != CardGame.DealerSeatNumber) && (this.tableseats[seat] != null))
 				{
-					if (returnseat == startseat) { returnseat = this.tableseats[seat]; break; }
-					if (startseat == this.tableseats[seat]) returnseat = this.tableseats[seat];
+					if (this.tableseats[seat].IsActive) activeseats++;
+					if ((returnseat == startseat) && (this.tableseats[seat].IsActive)) { returnseat = this.tableseats[seat]; break; }
+					if (startseat == this.tableseats[seat]) returnseat = startseat;
 				}
 				seat++;
 				if (seat == this.tableseats.Length)
 				{
+					if (activeseats == 0) returnseat = null;
 					if (returnseat == null) break;
 					seat = 0;
 				}
@@ -150,7 +143,6 @@ namespace Games.Card
 
 		protected ICardGameTableStatistics statistics;
 		protected ICardGameDealer carddealer;
-		protected ICardGamePlayer cardplayer;
 		ICardGameTableSeat[] tableseats;
 	}
 

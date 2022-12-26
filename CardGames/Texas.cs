@@ -32,7 +32,9 @@ namespace CardGames
 			if (!SetUp(args)) { this.IO.ShowHelp(); return; }
 
 			while (true) {
+
 				if (texastable.GetStatistics().RoundsPlayed >= roundstoplay) break;
+
 				texastable.PlayRound();
 
 				// Allow here to  opt in or out new players after each round
@@ -74,7 +76,10 @@ namespace CardGames
 			if (statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
 
 			int count = 0;
-			while (++count <= players) playerlist.Add(new CardPlayer(new CardPlayerProfileRobot(), name: $"Player{count}", new TokenWallet(tokens: tokens)));
+			while (++count <= players) { 
+				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", new TokenWallet(tokens: tokens), new CardPlayerProfileRandom()));
+				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", new TokenWallet(tokens: tokens)));
+			}
 			foreach (var p in playerlist) { if (!p.JoinTable(texastable)) break; }
 
 			if (playerlist.Count() == 0) return false;

@@ -21,6 +21,7 @@ namespace Games.Card
 		void ShowGameStatistics(TexasHoldEmStatistics statistics);
 		void ShowGamePlayerStatistics(CList<CardPlayer> playerlist);
 
+		void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset);
 
 		bool SupressOutput { get; set; }
 		bool SupressOverrideRoundSummary { get; set; }

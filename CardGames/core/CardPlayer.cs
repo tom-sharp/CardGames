@@ -2,13 +2,14 @@
 
 namespace Games.Card
 {
-	public class CardPlayer : ICardPlayer
+	public abstract class CardPlayer : ICardPlayer
 	{
-		public CardPlayer(ICardPlayerProfile playerprofile = null, string name = null, ITokenWallet wallet = null)
+		public CardPlayer(CardPlayerType playertype, ICardPlayerProfile profile)
 		{
-			if (playerprofile == null) this.PlayerProfile = new CardPlayerProfileHuman(); else this.PlayerProfile = playerprofile;
-			if (name != null) Name = name; else Name = "Player";
-			if (wallet != null) this.Wallet = wallet; else this.Wallet = new TokenWallet();
+			this.Name = "Player";
+			this.Wallet = new TokenWallet();
+			this.PlayerType = playertype;
+			if (profile != null) this.PlayerProfile = profile; else this.PlayerProfile = new CardPlayerProfile();
 		}
 
 
@@ -27,10 +28,13 @@ namespace Games.Card
 		}
 
 
-		public string Name { get; }
+		public string Name { get; protected set; }
 
 
-		public ITokenWallet Wallet { get; }
+		public ITokenWallet Wallet { get; protected set; }
+
+
+		public CardPlayerType PlayerType { get; }
 
 		public ICardPlayerProfile PlayerProfile { get; }
 

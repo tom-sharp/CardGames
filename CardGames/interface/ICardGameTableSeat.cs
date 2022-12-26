@@ -35,9 +35,12 @@
 
 		ICardGamePlayerCards PlayerCards { get; }
 
-		string PlayerName { get; }
+		public ICardPlayer Player { get; }
 
-		int PlayerTokens { get; }
+
+		//string PlayerName { get; }
+
+		//int PlayerTokens { get; }
 
 
 	}

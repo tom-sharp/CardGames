@@ -63,7 +63,7 @@ namespace Games.Card
 
 		/// <summary>
 		/// Let a player join the table if there is a free seat.
-		/// Return the seat number
+		/// Return the seat number, or 0 if no free seat
 		/// </summary>
 		int JoinTable(CardPlayer player);
 

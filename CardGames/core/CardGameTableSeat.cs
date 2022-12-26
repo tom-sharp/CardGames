@@ -55,15 +55,19 @@ namespace Games.Card
 		{
 			if (this.player == null) return;
 			this.player.Wallet.AddTokens(tokens);
-			this.Comment = $"Player {this.player.Name} wins  {tokens} tokens";
+			this.Comment = $" - {this.player.Name} wins  {tokens} tokens";
 		}
 
 		// remove requested tokens from player wallet and add them to seat bet tokens
 		public void PlaceBet(int tokens)
 		{
 			if ((this.player == null) || (!this.IsActive)) { this.IsActive = false; return; }
-			this.seatwallet.AddTokens(this.player.Wallet.RemoveTokens(tokens));
-			this.Comment = $" - Player {this.player.Name} called  {tokens}";
+			if (tokens > 0)
+			{
+				this.seatwallet.AddTokens(this.player.Wallet.RemoveTokens(tokens));
+				this.Comment = $" - {this.player.Name} called  {tokens}";
+			}
+			else this.Comment = $" - {this.player.Name} check";
 		}
 
 		// remove tokens from uplayer wallet and add them to table seat wallet
@@ -71,13 +75,13 @@ namespace Games.Card
 		{
 			if ((this.player == null) || (!this.IsActive)) { this.IsActive = false; return; }
 			this.seatwallet.AddTokens(this.player.Wallet.RemoveTokens(tokens));
-			this.Comment = $" - Player {this.player.Name} raise  {tokens}";
+			this.Comment = $" - {this.player.Name} raise  {tokens}";
 		}
 
 		public void Fold()
 		{
 			this.IsActive = false;
-			this.Comment = $" - Player {this.player.Name} fold";
+			this.Comment = $" - {this.player.Name} fold";
 		}
 
 		public int CollectBet()
@@ -102,9 +106,7 @@ namespace Games.Card
 
 
 
-		public string PlayerName { get { if (this.player != null) return this.player.Name; else return "Free seat"; } }
-		public int PlayerTokens { get { if (this.player != null) return this.player.Wallet.Tokens; else return 0; } }
-
+		public ICardPlayer Player { get { return this.player; } }
 
 		CardPlayer player;
 		ICardGamePlayerCards playercards;
