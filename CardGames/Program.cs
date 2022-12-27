@@ -9,11 +9,9 @@ namespace CardGames
 		static void Main(string[] args)
 		{
 
-			var texas = new Texas();
-			texas.Run(args);
+//			new Texas().Run(args);
 
-			// TESTS
-//			Tests.RunTests();
+			new Tests().RunTests();
 
 		}
 	}

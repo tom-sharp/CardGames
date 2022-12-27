@@ -6,10 +6,10 @@ using Games.Card.TexasHoldEm;
 
 namespace Games.Card.Test
 {
-	public static class Tests
+	public class Tests
 	{
 
-		public static int RunTests() {
+		public int RunTests() {
 			int result = 0;
 
 			Console.WriteLine("\n---------------------------------------------- \n Running Tests..");
@@ -17,6 +17,7 @@ namespace Games.Card.Test
 			result += RunHankRankTest();
 			result += RunDeckTests();
 			result += RunStackTests();
+			result += RunJokerTests();
 
 			Console.WriteLine("\n");
 			if (result == 0) Console.WriteLine("\n All Tests Success"); else Console.WriteLine($"\n Tests result in {result} Error(s)");
@@ -24,7 +25,32 @@ namespace Games.Card.Test
 			return result;
 		}
 
-		public static int RunDeckTests() {
+
+		public int RunJokerTests() {
+			int result = 0;
+
+			IPlayCard joker = new PlayCardJoker();
+			Console.WriteLine($"\nJoker test: Rank {joker.Rank}, Suite {joker.Suite}, Symbol {joker.Symbol} ");
+			if (joker.Rank != 0) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Suite != PlayCardSuite.Joker) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Symbol != "**") { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			(joker as IPlayCardJoker).Rank = 14;
+			(joker as IPlayCardJoker).Suite = PlayCardSuite.Heart;
+			Console.WriteLine($"\nJoker test: Rank {joker.Rank}, Suite {joker.Suite}, Symbol {joker.Symbol} ");
+			if (joker.Rank != 14) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Suite != PlayCardSuite.Heart) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Symbol != "**") { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			(joker as IPlayCardJoker).Rank = 0;
+			(joker as IPlayCardJoker).Suite = PlayCardSuite.Joker;
+			Console.WriteLine($"\nJoker test: Rank {joker.Rank}, Suite {joker.Suite}, Symbol {joker.Symbol} ");
+			if (joker.Rank != 0) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Suite != PlayCardSuite.Joker) { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+			if (joker.Symbol != "**") { Console.Write(" Fail "); result++; } else Console.Write(" OK ");
+
+			return result;
+		}
+
+		public int RunDeckTests() {
 			int result = 0;
 
 			var deck = new PlayCardDeck(jokers: 2);
@@ -64,7 +90,7 @@ namespace Games.Card.Test
 		}
 
 
-		public static int RunStackTests()
+		public int RunStackTests()
 		{
 			int result = 0;
 
@@ -106,7 +132,7 @@ namespace Games.Card.Test
 
 
 
-		public static int RunHankRankTest() {
+		public int RunHankRankTest() {
 			int result = 0;
 
 			var rank = new TexasHoldEmHandRank();
