@@ -1,4 +1,5 @@
 ﻿using Syslib;
+using Syslib.Games.Card;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Games.Card.TexasHoldEm
 
 		public void ShowRoundSummary(ICardGameTable table) {
 			int counter = 0;
-			CList<Card> playerhand;
+			CList<IPlayCard> playerhand;
 
 			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
 
@@ -104,7 +105,7 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
-		public void ShowGamePlayerStatistics(CList<CardPlayer> playerlist)
+		public void ShowGamePlayerStatistics(CList<ICardPlayer> playerlist)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
 			if (playerlist != null) {
@@ -132,12 +133,48 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(msg.ToString());
 		}
 
+		public void ReDrawGameTable(ICardGameTable table) {
+			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
+			int x1 = 0, y1 = 0, x2, y2, logx = 0, logy = 16, s = 1;
+			foreach (var seat in table.TableSeats) {
+				x2 = x1; y2 = y1;
+				Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Seat {s,2}");
+				if (seat.IsFree)
+				{
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Empty");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
+				}
+				else {
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Name}");
+					if (seat.IsActive) Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Active");
+					else Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Fold");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Wallet.Tokens}");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(logx, logy++, $"{seat.Comment}");
+				}
+				s++;
+				x1 += 15;
+				if (x1 >= 75) { y1 += 8; x1 = 0; }
+			}
+
+			var dealer = table.DealerSeat;
+			x2 = 75; y2 = 0;
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Dealer");
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{dealer.Player.Name}");
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Pot:");
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{table.TablePot.Tokens}");
+			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(50, 6, "");
+
+		}
+
 
 		// respond to request fold/check/call/raise
 		// -1 Fold, 0 call or check, >0 raise that amount
 		public int AskForBet(int tokens)
 		{
-			var mnu = new Syslib.ConsoleIO.ConMenu(40, 10, 10, true, false);
+			var mnu = new Syslib.ConsoleIO.ConMenu(60, 10, 10, true, false);
 			mnuret = 0;
 			if (tokens > 0)
 			{
@@ -166,7 +203,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		int RespondRaise() {
-			var mnu = new Syslib.ConsoleIO.ConMenu(40, 12, 20, true, false);
+			var mnu = new Syslib.ConsoleIO.ConMenu(61, 12, 20, true, false);
 			mnu.AddItem($"Raise 1 token");
 			mnu.AddItem($"Raise 2 tokens");
 			mnu.AddItem($"Raise 3 tokens");
@@ -197,7 +234,7 @@ namespace Games.Card.TexasHoldEm
 
 		int mnuret;
 		CStr msg;
-		bool SortCardsFunc(Card c1, Card c2) { if (c1.Rank < c2.Rank) return true; return false; }
+		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }
 
 	}
 }

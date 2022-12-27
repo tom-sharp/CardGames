@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Syslib;
+using Syslib.Games.Card;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -46,8 +43,8 @@ namespace Games.Card.TexasHoldEm
 	public class TexasHoldEmDealer : CardGameDealer
 	{
 
-		public TexasHoldEmDealer(CardGameTable gametable, ITexasHoldEmIO inout) :base(gametable) {
-			this.cardStack = new CardStack(decks: 1);
+		public TexasHoldEmDealer(ICardGameTable gametable, ITexasHoldEmIO inout) :base(gametable) {
+			this.cardStack = new PlayCardStack(decks: 1);
 			this.tableseatrank = new CList<TexasHoldEmHandRank>();
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
@@ -120,6 +117,7 @@ namespace Games.Card.TexasHoldEm
 			this.cardplayer.PlaceBet(seat: this.firstCardSeat, tokens: this.requiredbet);
 			this.requiredbet *= 2;
 			this.cardplayer.PlaceBet(seat: this.lastBetRaiseSeat, tokens: this.requiredbet);
+			this.IO.ReDrawGameTable(this.gametable);
 			return true;
 		}
 
@@ -141,6 +139,7 @@ namespace Games.Card.TexasHoldEm
 					}
 					this.IO.ShowProgressMessage(seat.Comment);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
+					this.IO.ReDrawGameTable(this.gametable);
 				}
 				seat = this.gametable.NextActiveSeat(seat);
 			}
@@ -249,7 +248,7 @@ namespace Games.Card.TexasHoldEm
 
 
 		ITexasHoldEmIO IO;
-		CardStack cardStack;
+		IPlayCardStack cardStack;
 		CList<TexasHoldEmHandRank> tableseatrank = null;
 		TexasHoldEmPlayer cardplayer;
 

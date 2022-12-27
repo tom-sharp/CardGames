@@ -1,9 +1,6 @@
 ﻿using Syslib;
+using Syslib.Games.Card;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -37,7 +34,7 @@ namespace Games.Card.TexasHoldEm
 
 		//  return highest TexasHoldEm Rank of hand cards. if there is no cards 0 is returned
 		// NOTE! Jokers are not supported here
-		override public void RankHand(CList<Card> cards)
+		override public void RankHand(CList<IPlayCard> cards)
 		{
 			Int64 value = 0;
 			if ((cards == null) || (cards.Count() == 0)) { this.Hand = TexasHoldEmHand.Nothing; this.Value = 0; return; }

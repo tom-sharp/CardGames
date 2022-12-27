@@ -1,4 +1,5 @@
 ﻿using Syslib;
+using Syslib.Games.Card;
 
 namespace Games.Card
 {
@@ -8,19 +9,19 @@ namespace Games.Card
 		public void ClearHand();
 
 
-		public void TakePrivateCard(Card card);
+		public void TakePrivateCard(IPlayCard card);
 
 
-		public CList<Card> GetPrivateCards();
+		public CList<IPlayCard> GetPrivateCards();
 
 
-		public void TakePublicCard(Card card);
+		public void TakePublicCard(IPlayCard card);
 
 
-		public CList<Card> GetPublicCards();
+		public CList<IPlayCard> GetPublicCards();
 
 
-		public CList<Card> GetCards();
+		public CList<IPlayCard> GetCards();
 
 		public string HandName { get; set; }
 		public bool WinHand { get; set; }

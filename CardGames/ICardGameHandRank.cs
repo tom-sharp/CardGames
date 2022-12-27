@@ -1,15 +1,11 @@
 ﻿using Syslib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Syslib.Games.Card;
 
 namespace Games.Card
 {
 	public interface ICardGameHandRank
 	{
-		public void RankHand(CList<Card> cards);
+		public void RankHand(CList<IPlayCard> cards);
 
 	}
 }

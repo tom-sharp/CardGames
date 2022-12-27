@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Games.Card.TexasHoldEm;
+﻿using Games.Card.TexasHoldEm;
 using Syslib;
+using Syslib.Games.Card;
 
-namespace Games.Card
+namespace Games.Card.TexasHoldEm
 {
 	public interface ITexasHoldEmIO
 	{
@@ -19,9 +15,11 @@ namespace Games.Card
 		void ShowRoundSummary(ICardGameTable table);
 
 		void ShowGameStatistics(TexasHoldEmStatistics statistics);
-		void ShowGamePlayerStatistics(CList<CardPlayer> playerlist);
+		void ShowGamePlayerStatistics(CList<ICardPlayer> playerlist);
 
 		void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset);
+
+		void ReDrawGameTable(ICardGameTable table);
 
 		int AskForBet(int tokens);
 

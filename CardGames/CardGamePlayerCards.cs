@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Syslib;
+﻿using Syslib;
+using Syslib.Games.Card;
+
 
 namespace Games.Card
 {
@@ -11,8 +8,8 @@ namespace Games.Card
 	{
 		public CardGamePlayerCards()
 		{
-			this.privatecards = new CList<Card>();
-			this.publiccards = new CList<Card>();
+			this.privatecards = new CList<IPlayCard>();
+			this.publiccards = new CList<IPlayCard>();
 			this.HandName = "";
 			this.WinHand = false;
 		}
@@ -27,43 +24,43 @@ namespace Games.Card
 		}
 
 
-		public void TakePrivateCard(Card card)
+		public void TakePrivateCard(IPlayCard card)
 		{
 			if (card == null) return;
 			this.privatecards.Add(card);
 		}
 
 
-		public void TakePublicCard(Card card)
+		public void TakePublicCard(IPlayCard card)
 		{
 			if (card == null) return;
 			this.publiccards.Add(card);
 		}
 
 
-		public CList<Card> GetCards()
+		public CList<IPlayCard> GetCards()
 		{
-			return new CList<Card>().Add(this.privatecards).Add(this.publiccards);
+			return new CList<IPlayCard>().Add(this.privatecards).Add(this.publiccards);
 		}
 
 
-		public CList<Card> GetPrivateCards()
+		public CList<IPlayCard> GetPrivateCards()
 		{
-			return new CList<Card>().Add(this.privatecards);
+			return new CList<IPlayCard>().Add(this.privatecards);
 		}
 
 
-		public CList<Card> GetPublicCards()
+		public CList<IPlayCard> GetPublicCards()
 		{
-			return new CList<Card>().Add(this.publiccards);
+			return new CList<IPlayCard>().Add(this.publiccards);
 		}
 
 		public string HandName { get; set; }
 		public bool WinHand { get; set; }
 
 
-		readonly CList<Card> privatecards;
-		readonly CList<Card> publiccards;
+		readonly CList<IPlayCard> privatecards;
+		readonly CList<IPlayCard> publiccards;
 
 	}
 }

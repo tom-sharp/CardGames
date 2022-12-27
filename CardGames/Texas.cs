@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Games.Card;
 using Games.Card.TexasHoldEm;
 using Syslib;
+using Syslib.Games.Card;
 
 namespace CardGames
 {
@@ -13,7 +14,7 @@ namespace CardGames
 	{
 		public Texas()
 		{
-			this.playerlist = new CList<CardPlayer>();
+			this.playerlist = new CList<ICardPlayer>();
 			this.IO = new TexasHoldEmConIO();
 			this.texastable = null;
 
@@ -105,7 +106,7 @@ namespace CardGames
 		bool quietnotroundsummary;
 		bool quietnotstatistics;
 		ITexasHoldEmIO IO;
-		CList<CardPlayer> playerlist;
+		CList<ICardPlayer> playerlist;
 		TexasHoldEmTable texastable;
 
 
