@@ -10,15 +10,6 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public override ICardGameTable Statistics(ICardGameTableStatistics statistics)
-		{
-			if (statistics != null) this.statistics = statistics;
-			return this;
-		}
-
-
-
-
 
 	}
 }

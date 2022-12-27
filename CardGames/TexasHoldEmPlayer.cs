@@ -8,6 +8,7 @@ namespace Games.Card.TexasHoldEm
 		public TexasHoldEmPlayer(ICardGameTable gametable, ITexasHoldEmIO inout)
 		{
 			this.gametable = gametable;
+			this.seat = null;
 			this.IO = inout;
 		}
 
@@ -16,32 +17,31 @@ namespace Games.Card.TexasHoldEm
 		// return true if accept or raise bet or false if fold
 		public override bool AskBet(ICardGameTableSeat seat, int tokens)
 		{
-			if ((seat.IsFree) || (!seat.IsActive)) return false;
+			if ((seat == null) || (seat.IsFree) || (!seat.IsActive)) return false;
+			this.seat = seat;
 
-			switch (seat.Player.PlayerType) {
-				case CardPlayerType.Dealer: return AskBetDealer(seat, tokens);
-				case CardPlayerType.Human: return AskBetHuman(seat, tokens);
-				case CardPlayerType.Robot: return AskBetRobot(seat, tokens);
+			switch (this.seat.Player.PlayerType) {
+				case CardPlayerType.Dealer: return AskBetDealer(tokens);
+				case CardPlayerType.Human: return AskBetHuman(tokens);
+				case CardPlayerType.Robot: return AskBetRobot(tokens);
 			}
 			return false;
 		}
 
-		bool AskBetHuman(ICardGameTableSeat seat, int tokens) {
+		bool AskBetHuman(int tokens) {
 
 			this.IO.ShowPlayerCards(seat, this.gametable.DealerSeat);
-			int ret = this.IO.AskForBet(tokens);
-			if (ret < 0)
-			{
-				seat.Fold();
-				return false;
+			int returnbet = this.IO.AskForBet(tokens);
+			if (returnbet < 0) FoldBet();
+			else if (returnbet == 0) {
+				if (tokens == 0) CheckBet(); 
+				else CallBet(tokens);
 			}
-			else if (ret == 0) { seat.PlaceBet(tokens); return true; }
-			seat.PlaceBet(tokens);
-			seat.RaiseBet(ret);
-			return true;
+			else RaiseBet(tokens, returnbet + tokens);
+			return seat.IsActive;
 		}
 
-		bool AskBetRobot(ICardGameTableSeat seat, int tokens)
+		bool AskBetRobot(int tokens)
 		{
 			var mycards = seat.PlayerCards.GetPrivateCards();
 			var dealercards = this.gametable.DealerSeat.PlayerCards.GetPublicCards();
@@ -65,7 +65,7 @@ namespace Games.Card.TexasHoldEm
 
 
 			if (CRandom.Random.RandomBool(seat.Player.PlayerProfile.Randomness)) {
-				return RandomDecision(seat, tokens);
+				return RandomDecision(tokens);
 			}
 
 
@@ -74,44 +74,67 @@ namespace Games.Card.TexasHoldEm
 			return true;
 		}
 
-		bool AskBetDealer(ICardGameTableSeat seat, int tokens)
+		bool AskBetDealer(int tokens)
 		{
 			// for now accept all requests
 			seat.PlaceBet(tokens);
 			return true;
 		}
 
-		bool RandomDecision(ICardGameTableSeat seat, int tokens) {
+		bool RandomDecision(int tokens) {
 			// Make a random decission
-			// if tokens == 0 options are fold, check, raise
-			// if tokens > 0 optopns are fold, call or raise
+			// if requested tokens == 0 options are check or raise
+			// if requested tokens > 0 optopns are fold, call or raise
 			if (tokens > 0)
 			{
-				if (CRandom.Random.RandomBool(percentchance: 5))
-				{
-					seat.Fold();	// 5% chance to fold 
-				}
-				else {
-					seat.PlaceBet(tokens);	// call bet
-					if (CRandom.Random.RandomBool(percentchance: 5))
-					{
-						seat.RaiseBet(1);	// 5% chance to raise
-					}
-				}
+				if (CRandom.Random.RandomBool(percentchance: 5)) FoldBet();
+				else if (CRandom.Random.RandomBool(percentchance: 5)) RaiseBet(tokens, tokens + 1);
+				else CallBet(tokens);
 			}
 			else {
-				seat.PlaceBet(tokens);  // check bet
-				if (CRandom.Random.RandomBool(percentchance: 5))
-				{
-					seat.RaiseBet(1);   // 5% chance to raise
-				}
+				if (CRandom.Random.RandomBool(percentchance: 5)) RaiseBet(tokens, tokens + 1);
+				else CheckBet();
 			}
 			return seat.IsActive;
 		}
 
 
+
+
+
+
+		void FoldBet()
+		{
+			this.seat.Inactivate();
+			this.seat.Comment = $" - {seat.Player.Name} fold";
+			this.IO.ShowProgressMessage(this.seat.Comment);
+		}
+
+		void CheckBet()
+		{
+			this.seat.Comment = $" - {seat.Player.Name} check";
+			this.IO.ShowProgressMessage(this.seat.Comment);
+		}
+
+		void CallBet(int tokens)
+		{
+			this.seat.PlaceBet(tokens);
+			this.seat.Comment = $" - {seat.Player.Name} call {tokens} tokens";
+			this.IO.ShowProgressMessage(this.seat.Comment);
+		}
+
+		void RaiseBet(int tokensrequested, int tokensplaced)
+		{
+			this.seat.PlaceBet(tokensplaced);
+			if (tokensrequested > 0) this.seat.Comment = $" - {seat.Player.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
+			else this.seat.Comment = $" - {seat.Player.Name}  raise {tokensplaced} tokens";
+			this.IO.ShowProgressMessage(this.seat.Comment);
+		}
+
+
 		ITexasHoldEmIO IO;
-		ICardGameTable gametable = null;
+		ICardGameTable gametable;
+		ICardGameTableSeat seat;
 
 	}
 }

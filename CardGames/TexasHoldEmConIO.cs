@@ -90,6 +90,7 @@ namespace Games.Card.TexasHoldEm
 		public void ShowGameStatistics(TexasHoldEmStatistics statistics)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
+			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 			if (statistics != null) {
 				int TotalHands, TotalWin;
 				ShowMsg("\nStatistics:                  Winning Hand                Hands");
@@ -108,6 +109,7 @@ namespace Games.Card.TexasHoldEm
 		public void ShowGamePlayerStatistics(CList<ICardPlayer> playerlist)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
+
 			if (playerlist != null) {
 				ShowMsg("Players:");
 				foreach (var p in playerlist)

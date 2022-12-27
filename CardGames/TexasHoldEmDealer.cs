@@ -217,10 +217,13 @@ namespace Games.Card.TexasHoldEm
 			foreach (var seat in WinnersSeats) {
 				seat.PlayerCards.WinHand = true;
 				seat.WinTokens(this.gametable.TablePot.RemoveTokens(potshare));
-				this.IO.ShowProgressMessage($" Winner {seat.Player.Name} wins {potshare} tokens and now have {seat.Player.Wallet.Tokens}");
+				seat.Comment = $" - Winner {seat.Player.Name} wins  {potshare} tokens and now have {seat.Player.Wallet.Tokens}";
+
+				this.IO.ShowProgressMessage(seat.Comment);
 				if ((this.gametable.TablePot.Tokens < potshare) && (this.gametable.TablePot.Tokens > 0)) {
 					seat.WinTokens(this.gametable.TablePot.Clear());
-					this.IO.ShowProgressMessage($" Uneven potshare given to {seat.Player.Name} and now have {seat.Player.Wallet.Tokens}");
+					seat.Comment = $" Uneven potshare given to {seat.Player.Name} and now have {seat.Player.Wallet.Tokens}";
+					this.IO.ShowProgressMessage(seat.Comment);
 				}
 			}
 
