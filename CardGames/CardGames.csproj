@@ -6,14 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="ConsoleIO.Net5.1.0">
-      <HintPath>..\..\..\_csLibs\ConsoleIO.NET5.1.0\bin\Debug\net5.0\ConsoleIO.Net5.1.0.dll</HintPath>
+    <Reference Include="Syslib.ConsoleIO.Net5">
+      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.ConsoleIO.Net5.dll</HintPath>
     </Reference>
-    <Reference Include="Syslib.Core">
-      <HintPath>..\..\..\_csLibs\SysLibCore\Syslib.Core\bin\Debug\net5.0\Syslib.Core.dll</HintPath>
+    <Reference Include="Syslib.Core.Net5">
+      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Core.Net5.dll</HintPath>
     </Reference>
-    <Reference Include="Syslib.Games">
-      <HintPath>..\..\..\_csLibs\SysLibCore\Syslib.Games\bin\Debug\net5.0\Syslib.Games.dll</HintPath>
+    <Reference Include="Syslib.Games.Net5">
+      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Games.Net5.dll</HintPath>
     </Reference>
   </ItemGroup>
 

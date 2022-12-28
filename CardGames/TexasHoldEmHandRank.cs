@@ -10,55 +10,26 @@ namespace Games.Card.TexasHoldEm
 	// 2. the value of the holding hand pair of knight is better than pair of eight for example
 	// Value is needed to separate two or more with same type of hand.
 
-	public class TexasHoldEmHandRank : CardGameHandRank
+	public class TexasHoldEmHandRank : CardGameRankHand
 	{
-		public TexasHoldEmHandRank() {
-			TableSeat = null;
-			Hand = TexasHoldEmHand.Nothing;
-			Value = 0;
-		}
 
-		public TexasHoldEmHandRank(TexasHoldEmHand hand, int value)
+		override public IPlayCardHandRank RankHand(CList<IPlayCard> cards)
 		{
-			TableSeat = null;
-			Hand = hand;
-			Value = value;
+			ulong value = 0;
+			if ((cards == null) || (cards.Count() == 0)) { return new PlayCardHandRankNothing((int)TexasHoldEmHand.Nothing); }
+			if ((value = IsRoyalStraightFlush(cards)) > 0) { return new PlayCardHandRankRoyalStraightFlush(value, (int)TexasHoldEmHand.RoyalStraightFlush); }
+			if ((value = IsStraightFlush(cards)) > 0) { return new PlayCardHandRankStraightFlush(value, (int)TexasHoldEmHand.StraightFlush); }
+			if ((value = IsFourOfAKind(cards)) > 0) { return new PlayCardHandRankFourOfAKind(value, (int)TexasHoldEmHand.FourOfAKind); }
+			if ((value = IsFullHouse(cards)) > 0) { return new PlayCardHandRankFullHouse(value, (int)TexasHoldEmHand.FullHouse); }
+			if ((value = IsFlush(cards)) > 0) { return new PlayCardHandRankFlush(value, (int)TexasHoldEmHand.Flush); }
+			if ((value = IsStraight(cards)) > 0) { return new PlayCardHandRankStraight(value, (int)TexasHoldEmHand.Straight); }
+			if ((value = IsThreeOfAKind(cards)) > 0) { return new PlayCardHandRankThreeOfAKind(value, (int)TexasHoldEmHand.ThreeOfAKind); }
+			if ((value = IsTwoPair(cards)) > 0) { return new PlayCardHandRankTwoPair(value, (int)TexasHoldEmHand.TwoPair); }
+			if ((value = IsPair(cards)) > 0) { return new PlayCardHandRankPair(value, (int)TexasHoldEmHand.Pair); }
+			if ((value = IsHighCard(cards)) > 0) { return new PlayCardHandRankHighCard(value, (int)TexasHoldEmHand.HighCard); }
+			return new PlayCardHandRankNothing((int)TexasHoldEmHand.Nothing);
 		}
 
-		public TexasHoldEmHandRank(CardGameTableSeat tableseat, TexasHoldEmHand hand, int value)
-		{
-			TableSeat = tableseat;
-			Hand = hand;
-			Value = value;
-		}
-
-		//  return highest TexasHoldEm Rank of hand cards. if there is no cards 0 is returned
-		// NOTE! Jokers are not supported here
-		override public void RankHand(CList<IPlayCard> cards)
-		{
-			Int64 value = 0;
-			if ((cards == null) || (cards.Count() == 0)) { this.Hand = TexasHoldEmHand.Nothing; this.Value = 0; return; }
-			if ((value = IsRoyalStraightFlush(cards)) > 0) { this.Hand = TexasHoldEmHand.RoyalStraightFlush; this.Value = value; return; }
-			if ((value = IsStraightFlush(cards)) > 0) { this.Hand = TexasHoldEmHand.StraightFlush; this.Value = value; return; }
-			if ((value = IsFourOfAKind(cards)) > 0) { this.Hand = TexasHoldEmHand.FourOfAKind; this.Value = value; return; }
-			if ((value = IsFullHouse(cards)) > 0) { this.Hand = TexasHoldEmHand.FullHouse; this.Value = value; return; }
-			if ((value = IsFlush(cards)) > 0) { this.Hand = TexasHoldEmHand.Flush; this.Value = value; return; }
-			if ((value = IsStraight(cards)) > 0) { this.Hand = TexasHoldEmHand.Straight; this.Value = value; return; }
-			if ((value = IsThreeOfAKind(cards)) > 0) { this.Hand = TexasHoldEmHand.ThreeOfAKind; this.Value = value; return; }
-			if ((value = IsTwoPair(cards)) > 0) { this.Hand = TexasHoldEmHand.TwoPair; this.Value = value; return; }
-			if ((value = IsPair(cards)) > 0) { this.Hand = TexasHoldEmHand.Pair; this.Value = value; return; }
-			if ((value = IsHighCard(cards)) > 0) { this.Hand = TexasHoldEmHand.HighCard; this.Value = value; return; }
-			this.Hand = TexasHoldEmHand.Nothing;
-			this.Value = 0;
-		}
-
-
-
-		public ICardGameTableSeat TableSeat { get; set; }
-
-		public TexasHoldEmHand Hand { get; set; }
-
-		public Int64 Value { get; set; }
 
 
 	}

@@ -72,7 +72,7 @@ namespace Games.Card.TexasHoldEm
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive}   {p.PlayerCards.HandName,-20} ");
+					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive,5}   {p.PlayerCards.Hand.Name,-20} ");
 					if (p.PlayerCards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
 					playerhand = p.PlayerCards.GetCards().Sort(SortCardsFunc);
 					foreach (var card in playerhand)
@@ -90,8 +90,8 @@ namespace Games.Card.TexasHoldEm
 		public void ShowGameStatistics(TexasHoldEmStatistics statistics)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
-			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 			if (statistics != null) {
+				Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 				int TotalHands, TotalWin;
 				ShowMsg("\nStatistics:                  Winning Hand                Hands");
 				TotalHands = 0; TotalWin = 0;
@@ -136,6 +136,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public void ReDrawGameTable(ICardGameTable table) {
+			if (SupressOutput) return;
 			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 			int x1 = 0, y1 = 0, x2, y2, logx = 0, logy = 16, s = 1;
 			foreach (var seat in table.TableSeats) {

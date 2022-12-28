@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CardGames": {
+      "commandName": "Project",
+      "commandLineArgs": "-qs -s"
+    }
+  }
+}
