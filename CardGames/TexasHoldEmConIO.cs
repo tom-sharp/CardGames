@@ -72,7 +72,7 @@ namespace Games.Card.TexasHoldEm
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive,5}   {p.PlayerCards.Hand.Name,-20} ");
+					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive,5}   {p.PlayerCards.Rank.Name,-20} ");
 					if (p.PlayerCards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
 					playerhand = p.PlayerCards.GetCards().Sort(SortCardsFunc);
 					foreach (var card in playerhand)

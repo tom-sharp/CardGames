@@ -17,14 +17,16 @@ namespace Games.Card.TexasHoldEm
 			IO = inout;
 		}
 
-		public void StatsAddWinner(IPlayCardHandRank hand)
+		public void StatsAddWinner(ITexasHandRank hand)
 		{
-			statsWinners[hand.Id]++;
+			if (hand == null) return;
+			statsWinners[(int)hand.Id]++;
 		}
 
-		public void StatsAddHand(IPlayCardHandRank hand)
+		public void StatsAddHand(ITexasHandRank hand)
 		{
-			statsHands[hand.Id]++;
+			if (hand == null) return;
+			statsHands[(int)hand.Id]++;
 		}
 
 

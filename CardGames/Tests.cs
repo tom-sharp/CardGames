@@ -144,8 +144,8 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardHeart(10));
 			playerhand.Add(new PlayCardHeart(14));
 			playerhand.Add(new PlayCardHeart(11));
-			var hand1 = rank.RankHand(playerhand);
-			if (hand1.Id != (int)TexasHoldEmHand.RoyalStraightFlush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand1.Id != TexasHoldEmHand.RoyalStraightFlush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 			playerhand.Clear();
 			playerhand.Add(new PlayCardClub(3));
@@ -153,9 +153,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(6));
 			playerhand.Add(new PlayCardClub(7));
 			playerhand.Add(new PlayCardClub(5));
-			var hand2 = rank.RankHand(playerhand);
-			if (hand2.Id != (int)TexasHoldEmHand.StraightFlush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand1.Rank <= hand2.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand2 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand2.Id != TexasHoldEmHand.StraightFlush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand1.Value <= hand2.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 
 			playerhand.Clear();
@@ -164,9 +164,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(3));
 			playerhand.Add(new PlayCardSpade(3));
 			playerhand.Add(new PlayCardDiamond(3));
-			var hand7 = rank.RankHand(playerhand);
-			if (hand7.Id != (int)TexasHoldEmHand.FourOfAKind) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-           if (hand2.Rank <= hand7.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand3 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand3.Id != TexasHoldEmHand.FourOfAKind) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+           if (hand2.Value <= hand3.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 			playerhand.Clear();
 			playerhand.Add(new PlayCardClub(13));
@@ -174,9 +174,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(8));
 			playerhand.Add(new PlayCardSpade(13));
 			playerhand.Add(new PlayCardDiamond(8));
-			var hand9 = rank.RankHand(playerhand);
-			if (hand9.Id != (int)TexasHoldEmHand.FullHouse) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-           if (hand7.Rank <= hand9.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand4 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand4.Id != TexasHoldEmHand.FullHouse) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+           if (hand3.Value <= hand4.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 
 			playerhand.Clear();
@@ -185,9 +185,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(6));
 			playerhand.Add(new PlayCardClub(9));
 			playerhand.Add(new PlayCardClub(5));
-			var hand3 = rank.RankHand(playerhand);
-			if (hand3.Id != (int)TexasHoldEmHand.Flush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand9.Rank <= hand3.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand5 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand5.Id != TexasHoldEmHand.Flush) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand4.Value <= hand5.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 			playerhand.Clear();
 			playerhand.Add(new PlayCardClub(3));
@@ -195,9 +195,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(6));
 			playerhand.Add(new PlayCardSpade(7));
 			playerhand.Add(new PlayCardDiamond(5));
-			var hand4 = rank.RankHand(playerhand);
-			if (hand4.Id != (int)TexasHoldEmHand.Straight) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand3.Rank <= hand4.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand6 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand6.Id != TexasHoldEmHand.Straight) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand5.Value <= hand6.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 
 			playerhand.Clear();
@@ -206,9 +206,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(3));
 			playerhand.Add(new PlayCardSpade(3));
 			playerhand.Add(new PlayCardDiamond(5));
-			var hand6 = rank.RankHand(playerhand);
-			if (hand6.Id != (int)TexasHoldEmHand.ThreeOfAKind) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand4.Rank <= hand6.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand7 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand7.Id != TexasHoldEmHand.ThreeOfAKind) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand6.Value <= hand7.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 
 			playerhand.Clear();
@@ -217,9 +217,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(2));
 			playerhand.Add(new PlayCardSpade(3));
 			playerhand.Add(new PlayCardDiamond(2));
-			var hand8 = rank.RankHand(playerhand);
-			if (hand8.Id != (int)TexasHoldEmHand.TwoPair) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand6.Rank <= hand8.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand8 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand8.Id != TexasHoldEmHand.TwoPair) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand7.Value <= hand8.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 			playerhand.Clear();
 			playerhand.Add(new PlayCardClub(3));
@@ -227,9 +227,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(6));
 			playerhand.Add(new PlayCardSpade(3));
 			playerhand.Add(new PlayCardDiamond(5));
-			var hand5 = rank.RankHand(playerhand);
-			if (hand5.Id != (int)TexasHoldEmHand.Pair) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand8.Rank <= hand5.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand9 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand9.Id != TexasHoldEmHand.Pair) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand8.Value <= hand9.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 
 			playerhand.Clear();
@@ -238,9 +238,9 @@ namespace Games.Card.Test
 			playerhand.Add(new PlayCardClub(3));
 			playerhand.Add(new PlayCardSpade(11));
 			playerhand.Add(new PlayCardDiamond(4));
-			var hand10 = rank.RankHand(playerhand);
-			if (hand10.Id != (int)TexasHoldEmHand.HighCard) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
-			if (hand5.Rank <= hand10.Rank) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			var hand10 = rank.RankHand(playerhand) as ITexasHandRank;
+			if (hand10.Id != TexasHoldEmHand.HighCard) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
+			if (hand9.Value <= hand10.Value) { Console.Write(" Failed "); result++; } else Console.Write(" OK ");
 
 			return result;
 		}

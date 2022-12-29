@@ -198,16 +198,16 @@ namespace Games.Card.TexasHoldEm
 				if (!seat.IsFree) {
 					if (seat.IsActive)
 					{
-						seat.PlayerCards.Hand = texasrank.RankHand(seat.PlayerCards.GetCards().Add(this.gametable.DealerSeat.PlayerCards.GetCards()));
-						if (winnerrank < seat.PlayerCards.Hand.Rank) winnerrank = seat.PlayerCards.Hand.Rank;
+						seat.PlayerCards.Rank = texasrank.RankHand(seat.PlayerCards.GetCards().Add(this.gametable.DealerSeat.PlayerCards.GetCards()));
+						if (winnerrank < seat.PlayerCards.Rank.Value) winnerrank = seat.PlayerCards.Rank.Value;
 					}
-					else seat.PlayerCards.Hand = new PlayCardHandRankNothing();
+					else seat.PlayerCards.Rank = new PlayCardHandRankNothing();
 				}
 			}
 
 			foreach (var seat in this.gametable.TableSeats)	{
 				if (!seat.IsFree && seat.IsActive) {
-					if (seat.PlayerCards.Hand.Rank >= winnerrank) { WinnersSeats.Add(seat); }
+					if (seat.PlayerCards.Rank.Value >= winnerrank) { WinnersSeats.Add(seat); }
 				}
 			}
 
@@ -230,11 +230,14 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		private bool SortOnHandRank(ICardGameTableSeat seat1, ICardGameTableSeat seat2) {
-			if (seat1.PlayerCards.Hand.Rank < seat2.PlayerCards.Hand.Rank) return true;
+			if (seat1.PlayerCards.Rank.Value < seat2.PlayerCards.Rank.Value) return true;
 			return false;
 		}
 
 
+
+		// Add statistics if requested - only add active hands from
+		// end of game as inactive may not have a complete hand
 		private void Statistics() {
 			var stats = this.gametable.GetStatistics() as TexasHoldEmStatistics;
 			if (stats != null) {
@@ -242,8 +245,11 @@ namespace Games.Card.TexasHoldEm
 				foreach (var seat in this.gametable.TableSeats)
 				{
 					if (seat.IsActive) {
-						if (winner && seat.PlayerCards.WinHand) { stats.StatsAddWinner(seat.PlayerCards.Hand); winner = false; }
-						stats.StatsAddHand(seat.PlayerCards.Hand);
+						if (winner && seat.PlayerCards.WinHand) { 
+							stats.StatsAddWinner(seat.PlayerCards.Rank as ITexasHandRank); 
+							winner = false; 
+						}
+						stats.StatsAddHand(seat.PlayerCards.Rank as ITexasHandRank);
 					}
 				}
 			}

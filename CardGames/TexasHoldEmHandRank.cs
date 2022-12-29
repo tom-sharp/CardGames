@@ -16,18 +16,18 @@ namespace Games.Card.TexasHoldEm
 		override public IPlayCardHandRank RankHand(CList<IPlayCard> cards)
 		{
 			ulong value = 0;
-			if ((cards == null) || (cards.Count() == 0)) { return new PlayCardHandRankNothing((int)TexasHoldEmHand.Nothing); }
-			if ((value = IsRoyalStraightFlush(cards)) > 0) { return new PlayCardHandRankRoyalStraightFlush(value, (int)TexasHoldEmHand.RoyalStraightFlush); }
-			if ((value = IsStraightFlush(cards)) > 0) { return new PlayCardHandRankStraightFlush(value, (int)TexasHoldEmHand.StraightFlush); }
-			if ((value = IsFourOfAKind(cards)) > 0) { return new PlayCardHandRankFourOfAKind(value, (int)TexasHoldEmHand.FourOfAKind); }
-			if ((value = IsFullHouse(cards)) > 0) { return new PlayCardHandRankFullHouse(value, (int)TexasHoldEmHand.FullHouse); }
-			if ((value = IsFlush(cards)) > 0) { return new PlayCardHandRankFlush(value, (int)TexasHoldEmHand.Flush); }
-			if ((value = IsStraight(cards)) > 0) { return new PlayCardHandRankStraight(value, (int)TexasHoldEmHand.Straight); }
-			if ((value = IsThreeOfAKind(cards)) > 0) { return new PlayCardHandRankThreeOfAKind(value, (int)TexasHoldEmHand.ThreeOfAKind); }
-			if ((value = IsTwoPair(cards)) > 0) { return new PlayCardHandRankTwoPair(value, (int)TexasHoldEmHand.TwoPair); }
-			if ((value = IsPair(cards)) > 0) { return new PlayCardHandRankPair(value, (int)TexasHoldEmHand.Pair); }
-			if ((value = IsHighCard(cards)) > 0) { return new PlayCardHandRankHighCard(value, (int)TexasHoldEmHand.HighCard); }
-			return new PlayCardHandRankNothing((int)TexasHoldEmHand.Nothing);
+			if ((cards == null) || (cards.Count() == 0)) { return new TexasHandRankNothing(); }
+			if ((value = IsRoyalStraightFlush(cards)) > 0) { return new TexasHandRankRoyalStraightFlush(value); }
+			if ((value = IsStraightFlush(cards)) > 0) { return new TexasHandRankStraightFlush(value); }
+			if ((value = IsFourOfAKind(cards)) > 0) { return new TexasHandRankFourOfAKind(value); }
+			if ((value = IsFullHouse(cards)) > 0) { return new TexasHandRankFullHouse(value); }
+			if ((value = IsFlush(cards)) > 0) { return new TexasHandRankFlush(value); }
+			if ((value = IsStraight(cards)) > 0) { return new TexasHandRankStraight(value); }
+			if ((value = IsThreeOfAKind(cards)) > 0) { return new TexasHandRankThreeOfAKind(value); }
+			if ((value = IsTwoPair(cards)) > 0) { return new TexasHandRankTwoPair(value); }
+			if ((value = IsPair(cards)) > 0) { return new TexasHandRankPair(value); }
+			if ((value = IsHighCard(cards)) > 0) { return new TexasHandRankHighCard(value); }
+			return new TexasHandRankNothing();
 		}
 
 
