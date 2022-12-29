@@ -37,14 +37,18 @@ namespace Games.Card.TexasHoldEm
 
 
 		public void ShowProgressMessage(string msg) {
+
 			if (SupressOutput) return;
+
 			this.ShowMsg(msg);
 		}
 
 
 
 		public void ShowNewRound(ICardGameTable table) {
+
 			if (SupressOutput) return;
+
 			ShowMsg("------------------ NEW ROUND | Texas Hold'em  ----------------");
 		}
 
@@ -56,7 +60,7 @@ namespace Games.Card.TexasHoldEm
 			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
 
 			msg.Str($" Seat {counter,2}. ");
-			msg.Append($"{table.DealerSeat.Player.Name,-15}  {table.DealerSeat.Player.Wallet.Tokens,10}  {table.DealerSeat.IsActive}  ");
+			msg.Append($"{table.DealerSeat.Player.Name,-15}  {table.DealerSeat.Player.Wallet.Tokens,10}  {table.DealerSeat.IsActive,5}  ");
 			msg.Append("                             "); 
 			playerhand = table.DealerSeat.PlayerCards.GetCards().Sort(SortCardsFunc);
 			foreach (var card in playerhand)
@@ -90,8 +94,9 @@ namespace Games.Card.TexasHoldEm
 		public void ShowGameStatistics(TexasHoldEmStatistics statistics)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
+
 			if (statistics != null) {
-				Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
+//				Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 				int TotalHands, TotalWin;
 				ShowMsg("\nStatistics:                  Winning Hand                Hands");
 				TotalHands = 0; TotalWin = 0;
@@ -120,7 +125,9 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset) {
+
 			if (SupressOutput) return;
+
 			var playercards = playerseat.PlayerCards.GetPrivateCards();
 			var dealercards = dealerset.PlayerCards.GetPublicCards();
 			msg.Str($" {playerseat.Player.Name}: ");
@@ -136,7 +143,9 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public void ReDrawGameTable(ICardGameTable table) {
+
 			if (SupressOutput) return;
+
 			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 			int x1 = 0, y1 = 0, x2, y2, logx = 0, logy = 16, s = 1;
 			foreach (var seat in table.TableSeats) {
@@ -177,6 +186,8 @@ namespace Games.Card.TexasHoldEm
 		// -1 Fold, 0 call or check, >0 raise that amount
 		public int AskForBet(int tokens)
 		{
+			if (SupressOutput) return 0;
+
 			var mnu = new Syslib.ConsoleIO.ConMenu(60, 10, 10, true, false);
 			mnuret = 0;
 			if (tokens > 0)

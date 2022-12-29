@@ -3,9 +3,9 @@
 
 namespace Games.Card.TexasHoldEm
 {
-	class TexasHandRankNothing : PlayCardHandRankPair, ITexasHandRank
+	class TexasHandRankNothing : PlayCardHandRankNothing, ITexasHandRank
 	{
-		public TexasHandRankNothing() : base(0)
+		public TexasHandRankNothing() : base()
 		{
 			Id = TexasHoldEmHand.Nothing;
 		}

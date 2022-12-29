@@ -3,7 +3,7 @@
 
 namespace Games.Card.TexasHoldEm
 {
-	class TexasHandRankTwoPair : PlayCardHandRankPair, ITexasHandRank
+	class TexasHandRankTwoPair : PlayCardHandRankTwoPair, ITexasHandRank
 	{
 		public TexasHandRankTwoPair(ulong rank) : base(rank)
 		{

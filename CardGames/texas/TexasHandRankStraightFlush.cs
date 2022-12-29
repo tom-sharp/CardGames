@@ -3,7 +3,7 @@
 
 namespace Games.Card.TexasHoldEm
 {
-	class TexasHandRankStraightFlush : PlayCardHandRankPair, ITexasHandRank
+	class TexasHandRankStraightFlush : PlayCardHandRankFlush, ITexasHandRank
 	{
 		public TexasHandRankStraightFlush(ulong rank) : base(rank)
 		{
