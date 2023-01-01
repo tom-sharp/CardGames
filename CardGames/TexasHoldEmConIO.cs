@@ -1,4 +1,5 @@
 ﻿using Syslib;
+using Syslib.Games;
 using Syslib.Games.Card;
 using System;
 using System.Collections.Generic;
@@ -45,7 +46,7 @@ namespace Games.Card.TexasHoldEm
 
 
 
-		public void ShowNewRound(ICardGameTable table) {
+		public void ShowNewRound(ICardTable table) {
 
 			if (SupressOutput) return;
 
@@ -53,16 +54,16 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void ShowRoundSummary(ICardGameTable table) {
+		public void ShowRoundSummary(ICardTable table) {
 			int counter = 0;
 			CList<IPlayCard> playerhand;
 
 			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
 
 			msg.Str($" Seat {counter,2}. ");
-			msg.Append($"{table.DealerSeat.Player.Name,-15}  {table.DealerSeat.Player.Wallet.Tokens,10}  {table.DealerSeat.IsActive,5}  ");
+			msg.Append($"{table.DefaultSeat.Player.Name,-15}  {table.DefaultSeat.Player.Tokens,10}  {table.DefaultSeat.IsActive,5}  ");
 			msg.Append("                             "); 
-			playerhand = table.DealerSeat.PlayerCards.GetCards().Sort(SortCardsFunc);
+			playerhand = table.DefaultSeat.PlayerCards.GetCards().Sort(SortCardsFunc);
 			foreach (var card in playerhand)
 			{
 				msg.Append($"  {card.Symbol}");
@@ -70,15 +71,15 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(msg.ToString());
 			counter++;
 
-			foreach (var p in table.TableSeats)
+			foreach (var seat in table.TableSeats)
 			{
-				if (!p.IsFree)
+				if (!seat.IsFree)
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{p.Player.Name,-15}  {p.Player.Wallet.Tokens,10}  {p.IsActive,5}   {p.PlayerCards.Rank.Name,-20} ");
-					if (p.PlayerCards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
-					playerhand = p.PlayerCards.GetCards().Sort(SortCardsFunc);
+					msg.Append($"{seat.Player.Name,-15}  {seat.Player.Tokens,10}  {seat.IsActive,5}   { seat.PlayerCards.Rank.Name,-20 } ");
+					if (seat.PlayerCards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
+					playerhand = seat.PlayerCards.GetCards().Sort(SortCardsFunc);
 					foreach (var card in playerhand)
 					{
 						msg.Append($"  {card.Symbol}");
@@ -107,24 +108,24 @@ namespace Games.Card.TexasHoldEm
 					winpct = 100 * statistics.StatsWinnerHands[count] / TotalWin; handpct = 100 * statistics.StatsHands[count] / TotalHands;
 					ShowMsg($"{count,2}.  {(TexasHoldEmHand)count,-20}   {winpct,5:f1} %   {statistics.StatsWinnerHands[count],7}           {handpct,5:f1} %   {statistics.StatsHands[count],7}");
 				}
-				ShowMsg($"-Rounds played {statistics.RoundsPlayed,7}        Total:  {TotalWin,7}                     {TotalHands,7}");
+				ShowMsg($"-Rounds played {statistics.GamesPlayed,7}        Total:  {TotalWin,7}                     {TotalHands,7}");
 			}
 		}
 
-		public void ShowGamePlayerStatistics(CList<ICardPlayer> playerlist)
+		public void ShowGamePlayerStatistics(ICardTable table)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
 
-			if (playerlist != null) {
+			if (table != null) {
 				ShowMsg("Players:");
-				foreach (var p in playerlist)
+				foreach (var seat in table.TableSeats)
 				{
-					ShowMsg($" {p.Name,-20} Tokens {p.Wallet.Tokens,10}");
+					if (!seat.IsFree) ShowMsg($" {seat.Player.Name,-20} Tokens {seat.Player.Tokens,10}");
 				}
 			}
 		}
 
-		public void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset) {
+		public void ShowPlayerCards(ICardTableSeat playerseat, ICardTableSeat dealerset) {
 
 			if (SupressOutput) return;
 
@@ -142,7 +143,7 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(msg.ToString());
 		}
 
-		public void ReDrawGameTable(ICardGameTable table) {
+		public void ReDrawGameTable(ICardTable table) {
 
 			if (SupressOutput) return;
 
@@ -162,7 +163,7 @@ namespace Games.Card.TexasHoldEm
 					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Name}");
 					if (seat.IsActive) Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Active");
 					else Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Fold");
-					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Wallet.Tokens}");
+					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Tokens}");
 					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(logx, logy++, $"{seat.Comment}");
 				}
 				s++;
@@ -170,7 +171,7 @@ namespace Games.Card.TexasHoldEm
 				if (x1 >= 75) { y1 += 8; x1 = 0; }
 			}
 
-			var dealer = table.DealerSeat;
+			var dealer = table.DefaultSeat;
 			x2 = 75; y2 = 0;
 			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Dealer");
 			Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{dealer.Player.Name}");

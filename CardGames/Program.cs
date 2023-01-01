@@ -1,6 +1,4 @@
-﻿using System;
-using Games.Card;
-using Games.Card.Test;
+﻿using Games.Card.TexasHoldEm;
 
 namespace CardGames
 {
@@ -8,11 +6,8 @@ namespace CardGames
 	{
 		static void Main(string[] args)
 		{
-
-			new Texas().Run(args);
-
-//			new Tests().RunTests();
-
+			var ui = new TexasHoldEmConIO();
+			new Texas(ui).Run(args);
 		}
 	}
 }

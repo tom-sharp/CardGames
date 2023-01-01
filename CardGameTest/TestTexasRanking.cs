@@ -11,7 +11,7 @@ namespace CardGameTest
 	{
 
 		[TestMethod]
-		public void RoyalStraightFlush_Ranking_Success()
+		public void Ranking_RoyalStraightFlush_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -31,7 +31,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void StraightFlush_Ranking_Success()
+		public void Ranking_StraightFlush_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -54,7 +54,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void FourOfAKind_Ranking_Success()
+		public void Ranking_FourOfAKind_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -74,7 +74,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void FullHouse_Ranking_Success()
+		public void Ranking_FullHouse_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -95,7 +95,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void Flush_Ranking_Success()
+		public void Ranking_Flush_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -116,7 +116,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void Straight_Ranking_Success()
+		public void Ranking_Straight_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -136,7 +136,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void ThreeOfAKind_Ranking_Success()
+		public void Ranking_ThreeOfAKind_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -156,7 +156,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void TwoPair_Ranking_Success()
+		public void Ranking_TwoPair_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -179,7 +179,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void Pair_Ranking_Success()
+		public void Ranking_Pair_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -202,7 +202,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void HighCard_Ranking_Success()
+		public void Ranking_HighCard_Success()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -223,7 +223,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void Nothing_RankingNoCards_Nothing()
+		public void Ranking_NoCards_Nothing()
 		{
 			var rank = new TexasHoldEmHandRank();
 			var playerhand = new CList<IPlayCard>();
@@ -238,7 +238,7 @@ namespace CardGameTest
 
 
 		[TestMethod]
-		public void Nothing_RankingNullArg_Nothing()
+		public void Ranking_NullArg_Nothing()
 		{
 			var rank = new TexasHoldEmHandRank();
 			ulong expectedvalue = 0;

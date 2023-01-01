@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Games.Card;
-using Games.Card.TexasHoldEm;
+﻿using Games.Card.TexasHoldEm;
 using Syslib;
+using Syslib.Games;
 using Syslib.Games.Card;
 
 namespace CardGames
 {
 	public class Texas
 	{
-		public Texas()
+		public Texas(ITexasHoldEmIO inout)
 		{
-			this.playerlist = new CList<ICardPlayer>();
-			this.IO = new TexasHoldEmConIO();
+			this.IO = inout;
 			this.texastable = null;
 
 			this.roundstoplay = 1;
@@ -30,13 +24,15 @@ namespace CardGames
 		}
 
 		public void Run(string[] args) {
-			if (!SetUp(args)) { this.IO.ShowHelp(); return; }
+
+			if (!ProcessArguments(args)) { this.IO.ShowHelp(); return; }
+			if (!SetUp()) { this.IO.ShowHelp(); return; }
 
 			while (true) {
 
-				if (texastable.GetStatistics().RoundsPlayed >= roundstoplay) break;
+				if (texastable.GetStatistics().GamesPlayed >= roundstoplay) break;
 
-				texastable.PlayRound();
+				texastable.PlayGame();
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
@@ -48,7 +44,7 @@ namespace CardGames
 
 		}
 
-		private bool SetUp(string[] args) {
+		bool ProcessArguments(string[] args) {
 			if ((args != null) && (args.Length > 0))
 			{
 				var str = new CStr();
@@ -67,24 +63,33 @@ namespace CardGames
 					else { IO.ShowProgressMessage($"Invalid argument {arg}"); return false; }
 				}
 			}
+			return true;
+		}
+
+		private bool SetUp() {
 
 			this.IO.ShowProgressMessage($"Playing {roundstoplay} rounds with {players} players having {tokens} tokens each at table with {tableseats} seats ");
 			this.IO.SupressOutput = this.quiet;
 			this.IO.SupressOverrideRoundSummary = this.quietnotroundsummary;
 			this.IO.SupressOverrideStatistics = this.quietnotstatistics;
 
-			this.texastable = new TexasHoldEmTable(new CardGameTableConfig() { Seats = tableseats }, this.IO);
-			if (statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
+			this.texastable = new CardTable(new CardTableConfig() { Seats = tableseats });
+			
+			if (this.statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
+
+			new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = tokens}, this.IO).JoinTable(texastable);
 
 			int count = 0;
 			while (++count <= players) {
-				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", new TokenWallet(tokens: tokens), new CardPlayerProfileRandom()));
-//				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
-				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", new TokenWallet(tokens: tokens)));
-			}
-			foreach (var p in playerlist) { if (!p.JoinTable(texastable)) break; }
 
-			if (playerlist.Count() == 0) return false;
+				new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Player{count}", Tokens = tokens }, this.IO).JoinTable(texastable);
+
+//				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", tokens, new GamePlayerProfileRandom()));
+////				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
+//				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", tokens));
+			
+			}
+
 
 			return true;
 		}
@@ -93,7 +98,7 @@ namespace CardGames
 
 		private void ShowStatistics() {
 			this.IO.ShowGameStatistics(texastable.GetStatistics() as TexasHoldEmStatistics);
-			this.IO.ShowGamePlayerStatistics(this.playerlist);
+			this.IO.ShowGamePlayerStatistics(this.texastable);
 		}
 
 
@@ -106,8 +111,7 @@ namespace CardGames
 		bool quietnotroundsummary;
 		bool quietnotstatistics;
 		ITexasHoldEmIO IO;
-		CList<ICardPlayer> playerlist;
-		TexasHoldEmTable texastable;
+		CardTable texastable;
 
 
 	}

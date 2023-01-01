@@ -1,4 +1,5 @@
 ﻿using Syslib;
+using Syslib.Games;
 using Syslib.Games.Card;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card.TexasHoldEm
 {
-	public class TexasHoldEmStatistics : CardGameTableStatistics
+	public class TexasHoldEmStatistics : GameStatistics
 	{
 		public TexasHoldEmStatistics(ITexasHoldEmIO inout)
 		{

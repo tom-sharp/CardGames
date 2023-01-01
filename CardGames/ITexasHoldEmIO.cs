@@ -1,5 +1,6 @@
 ﻿using Games.Card.TexasHoldEm;
 using Syslib;
+using Syslib.Games;
 using Syslib.Games.Card;
 
 namespace Games.Card.TexasHoldEm
@@ -10,16 +11,16 @@ namespace Games.Card.TexasHoldEm
 
 		void ShowProgressMessage(string msg);
 
-		void ShowNewRound(ICardGameTable table);
+		void ShowNewRound(ICardTable table);
 
-		void ShowRoundSummary(ICardGameTable table);
+		void ShowRoundSummary(ICardTable table);
 
 		void ShowGameStatistics(TexasHoldEmStatistics statistics);
-		void ShowGamePlayerStatistics(CList<ICardPlayer> playerlist);
+		void ShowGamePlayerStatistics(ICardTable table);
 
-		void ShowPlayerCards(ICardGameTableSeat playerseat, ICardGameTableSeat dealerset);
+		void ShowPlayerCards(ICardTableSeat playerseat, ICardTableSeat dealerset);
 
-		void ReDrawGameTable(ICardGameTable table);
+		void ReDrawGameTable(ICardTable table);
 
 		int AskForBet(int tokens);
 
