@@ -11,11 +11,10 @@ namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmStatistics : GameStatistics
 	{
-		public TexasHoldEmStatistics(ITexasHoldEmIO inout)
+		public TexasHoldEmStatistics()
 		{
 			statsWinners = new int[(int)TexasHoldEmHand.RoyalStraightFlush + 1];
 			statsHands = new int[(int)TexasHoldEmHand.RoyalStraightFlush + 1];
-			IO = inout;
 		}
 
 		public void StatsAddWinner(ITexasHandRank hand)
@@ -37,6 +36,5 @@ namespace Games.Card.TexasHoldEm
 
 		int[] statsWinners;
 		int[] statsHands;
-		ITexasHoldEmIO IO;
 	}
 }

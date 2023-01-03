@@ -44,11 +44,11 @@ namespace Games.Card.TexasHoldEm
 	public class TexasHoldEmPlayerDealer : CardPlayerDefault
 	{
 
-		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO inout) :base(config) {
+		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
 			this.cardStack = new PlayCardStack(decks: 1);
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
-			this.IO = inout;
+			this.IO = UI;
 		}
 
 		public override void AskBet(int tokens, ICardTable table) {
@@ -60,31 +60,35 @@ namespace Games.Card.TexasHoldEm
 
 		public override bool PlayGame(IGameTable table)
 		{
-			this.gametable = (ICardTable)table;
-			// Game Round
-			if (SetUpGameRound() < 2) return false;
+
+			if (!SetUpGameRound(table)) return false;
 			if (!PlaceInitialBets()) { RollBackBets(); return false; }
+
 			this.PlayRound();
+
 			return true;
 		}
 
 
-		// Loop through all seats and make players ready. Return total number of players
-		private int SetUpGameRound()
+		// Loop through all seats and make players ready
+		private bool SetUpGameRound(IGameTable table)
 		{
-			int count = 0;
+			if (table == null) return false;
+			if (this.IO == null) return false;
 
-			if (this.gametable == null) return 0;
+			this.gametable = (ICardTable)table;
 
 			this.requiredbet = 1;
 			this.gametable.TablePot.Clear();
 
-
 			foreach (var seat in this.gametable.TableSeats)
 			{
-				if (!seat.IsFree) {	seat.GetReady(); count++; }
+				if (!seat.IsFree) {	seat.GetReady(); }
 			}
-			return count;
+
+			if (this.gametable.ActiveSeatCount < 2) return false;
+
+			return true;
 		}
 
 

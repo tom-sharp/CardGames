@@ -78,9 +78,9 @@ namespace CardGames
 			this.IO.SupressOverrideRoundSummary = this.quietnotroundsummary;
 			this.IO.SupressOverrideStatistics = this.quietnotstatistics;
 
-			this.texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = tableseats }, IO);
+			this.texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = tableseats });
 			
-			if (this.statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
+			if (this.statistics) texastable.Statistics(new TexasHoldEmStatistics());
 
 
 			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = tokens }, this.IO));

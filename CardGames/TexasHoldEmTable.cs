@@ -6,7 +6,7 @@ namespace Games.Card.TexasHoldEm
 
 	public class TexasHoldEmTable : CardTable
 	{
-		public TexasHoldEmTable(CardTableConfig tableConfig, ITexasHoldEmIO inout) : base(tableConfig)
+		public TexasHoldEmTable(CardTableConfig tableConfig) : base(tableConfig)
 		{
 		}
 
