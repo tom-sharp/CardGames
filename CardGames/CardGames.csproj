@@ -6,11 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Syslib.Core" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Syslib.ConsoleIO.Net5">
       <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.ConsoleIO.Net5.dll</HintPath>
-    </Reference>
-    <Reference Include="Syslib.Core.Net5">
-      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Core.Net5.dll</HintPath>
     </Reference>
     <Reference Include="Syslib.Games.Net5">
       <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Games.Net5.dll</HintPath>

@@ -13,7 +13,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_RoyalStraightFlush_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -33,7 +33,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_StraightFlush_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -56,7 +56,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_FourOfAKind_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -76,7 +76,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_FullHouse_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -97,7 +97,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_Flush_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -118,7 +118,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_Straight_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -138,7 +138,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_ThreeOfAKind_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -158,7 +158,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_TwoPair_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -181,7 +181,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_Pair_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -204,7 +204,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_HighCard_Success()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedNotvalue = 0;
 
@@ -225,7 +225,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_NoCards_Nothing()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			var playerhand = new CList<IPlayCard>();
 			ulong expectedvalue = 0;
 
@@ -240,7 +240,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Ranking_NullArg_Nothing()
 		{
-			var rank = new TexasHoldEmHandRank();
+			var rank = new TexasHoldEmRankHand();
 			ulong expectedvalue = 0;
 
 			var hand1 = rank.RankHand(null) as ITexasHandRank;

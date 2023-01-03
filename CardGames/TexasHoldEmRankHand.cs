@@ -10,7 +10,7 @@ namespace Games.Card.TexasHoldEm
 	// 2. the value of the holding hand pair of knight is better than pair of eight for example
 	// Value is needed to separate two or more with same type of hand.
 
-	public class TexasHoldEmHandRank : CardGameRankHand
+	public class TexasHoldEmRankHand : CardGameRankHand
 	{
 
 		override public IPlayCardHandRank RankHand(CList<IPlayCard> cards)
@@ -29,8 +29,6 @@ namespace Games.Card.TexasHoldEm
 			if ((value = IsHighCard(cards)) > 0) { return new TexasHandRankHighCard(value); }
 			return new TexasHandRankNothing();
 		}
-
-
 
 	}
 	

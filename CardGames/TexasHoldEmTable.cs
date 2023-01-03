@@ -4,15 +4,12 @@ using Syslib.Games.Card;
 namespace Games.Card.TexasHoldEm
 {
 
-	// OBSOLETE
-
-	//class TexasHoldEmTable : GameTable
-	//{
-	//	public TexasHoldEmTable(GameTableConfig tableConfig, ITexasHoldEmIO inout) : base(tableConfig)
-	//	{
-	//		this.gamecontroller = new TexasHoldEmDealer(this, inout);
-	//	}
+	public class TexasHoldEmTable : CardTable
+	{
+		public TexasHoldEmTable(CardTableConfig tableConfig, ITexasHoldEmIO inout) : base(tableConfig)
+		{
+		}
 
 
-	//}
+	}
 }

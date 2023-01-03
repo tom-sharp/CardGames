@@ -6,25 +6,24 @@ namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmPlayerRobot : CardPlayerRobot
 	{
-		public TexasHoldEmPlayerRobot(ICardPlayerConfig config, ITexasHoldEmIO inout) : base(config)
+		public TexasHoldEmPlayerRobot(ICardPlayerConfig config) : base(config)
 		{
-			this.IO = inout;
 		}
 
 
 
 		// return true if accept or raise bet or false if fold
-		public override void AskBet(int tokens)
+		public override void AskBet(int tokens, ICardTable table)
 		{
-			var mycards = this.TableSeat.PlayerCards.GetPrivateCards();
-			var dealercards = this.gametable.DefaultSeat.PlayerCards.GetPublicCards();
-			var hand = this.TableSeat.PlayerCards.GetPrivateCards().Add(dealercards);
+			var mycards = this.Cards.GetPrivateCards();
+			CList<IPlayCard> dealercards = null;
+			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
+			var hand = this.Cards.GetPrivateCards().Add(dealercards);
 			int roundprogress = hand.Count();
 
-			//			this.IO.ShowPlayerCards(seat, this.gametable.DealerSeat);
-			var myrank = new TexasHoldEmHandRank();
-			var dealerrank = new TexasHoldEmHandRank();
-			var totalrank = new TexasHoldEmHandRank();
+			var myrank = new TexasHoldEmRankHand();
+			var dealerrank = new TexasHoldEmRankHand();
+			var totalrank = new TexasHoldEmRankHand();
 			myrank.RankHand(mycards);
 
 			// SOME DECISION MAKING HERE
@@ -36,7 +35,7 @@ namespace Games.Card.TexasHoldEm
 			// weight: random weight in desicion ?
 
 
-
+			
 			if (CRandom.Random.RandomBool(this.Profile.Randomness))
 			{
 				RandomDecision(tokens);
@@ -45,7 +44,8 @@ namespace Games.Card.TexasHoldEm
 
 
 			// for now accept all requests
-			this.TableSeat.PlaceBet(tokens);
+			if (tokens > 0) this.CallBet(tokens);
+			else CheckBet();
 
 		}
 
@@ -77,20 +77,20 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.TableSeat.IsActive = false;
 			this.TableSeat.Comment = $" - {this.Name} fold";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Fold";
 		}
 
 		void CheckBet()
 		{
 			this.TableSeat.Comment = $" - {this.Name} check";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Check";
 		}
 
 		void CallBet(int tokens)
 		{
 			this.TableSeat.PlaceBet(tokens);
 			this.TableSeat.Comment = $" - {this.Name} call {tokens} tokens";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Call";
 		}
 
 		void RaiseBet(int tokensrequested, int tokensplaced)
@@ -98,10 +98,8 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(tokensplaced);
 			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Raise";
 		}
 
-
-		ITexasHoldEmIO IO;
 	}
 }

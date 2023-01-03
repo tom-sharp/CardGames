@@ -12,10 +12,12 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public override void AskBet(int tokens)
+		public override void AskBet(int tokens, ICardTable table)
 		{
 
-			this.IO.ShowPlayerCards(this.TableSeat, this.gametable.DefaultSeat);
+			ICardTableSeat dealerseat = null;
+			foreach (var seat in table.TableSeats) { if (seat.IsActive && seat.Player.Type == GamePlayerType.Default) dealerseat = seat; break; }
+			this.IO.ShowPlayerCards(this.TableSeat, dealerseat);
 			int returnbet = this.IO.AskForBet(tokens);
 			if (returnbet < 0) FoldBet();
 			else if (returnbet == 0)
@@ -33,20 +35,20 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.TableSeat.IsActive = false;
 			this.TableSeat.Comment = $" - {this.Name} fold";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Fold";
 		}
 
 		void CheckBet()
 		{
 			this.TableSeat.Comment = $" - {this.Name} check";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Check";
 		}
 
 		void CallBet(int tokens)
 		{
 			this.TableSeat.PlaceBet(tokens);
 			this.TableSeat.Comment = $" - {this.Name} call {tokens} tokens";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Call";
 		}
 
 		void RaiseBet(int tokensrequested, int tokensplaced)
@@ -54,7 +56,7 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(tokensplaced);
 			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
-			this.IO.ShowProgressMessage(this.TableSeat.Comment);
+			this.Status = "Raised";
 		}
 
 

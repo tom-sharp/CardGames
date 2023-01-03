@@ -73,16 +73,17 @@ namespace CardGames
 			this.IO.SupressOverrideRoundSummary = this.quietnotroundsummary;
 			this.IO.SupressOverrideStatistics = this.quietnotstatistics;
 
-			this.texastable = new CardTable(new CardTableConfig() { Seats = tableseats });
+			this.texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = tableseats }, IO);
 			
 			if (this.statistics) texastable.Statistics(new TexasHoldEmStatistics(this.IO));
 
-			new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = tokens}, this.IO).JoinTable(texastable);
+
+			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = tokens }, this.IO));
 
 			int count = 0;
 			while (++count <= players) {
 
-				new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Player{count}", Tokens = tokens }, this.IO).JoinTable(texastable);
+				texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Player{count}", Tokens = tokens }));
 
 //				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", tokens, new GamePlayerProfileRandom()));
 ////				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
