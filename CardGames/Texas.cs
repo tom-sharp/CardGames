@@ -7,36 +7,29 @@ namespace CardGames
 {
 	public class Texas
 	{
-		public Texas(ITexasHoldEmIO inout)
+		public Texas(ITexasHoldEmIO UI)
 		{
-			this.IO = inout;
+			this.IO = UI;
 			this.texastable = null;
-
-			this.roundstoplay = 1;
-			this.tableseats = 8;
-			this.players = 5;
-			this.tokens = 1000;
-			this.statistics = false;
-			this.quiet = false;
-			this.quietnotroundsummary = false;
-			this.quietnotstatistics = false;
-
 		}
+
 
 		public void Run(string[] args) {
 
+			SetUpDefaults();
 			if (!ProcessArguments(args)) { this.IO.ShowHelp(); return; }
 			if (!SetUp()) { this.IO.ShowHelp(); return; }
 
 			while (true) {
 
-				if (texastable.GetStatistics().GamesPlayed >= roundstoplay) break;
-
-				texastable.PlayGame();
+				if (roundstoplay > 0 && texastable.GetStatistics().GamesPlayed >= roundstoplay) break;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
+
 				if (texastable.PlayerCount < 2) break;
+
+				texastable.PlayGame();
 
 			}
 
@@ -64,6 +57,18 @@ namespace CardGames
 				}
 			}
 			return true;
+		}
+
+		void SetUpDefaults()
+		{
+			this.roundstoplay = 1;
+			this.tableseats = 8;
+			this.players = 5;
+			this.tokens = 1000;
+			this.statistics = false;
+			this.quiet = false;
+			this.quietnotroundsummary = false;
+			this.quietnotstatistics = false;
 		}
 
 		private bool SetUp() {

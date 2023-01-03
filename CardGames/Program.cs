@@ -6,8 +6,7 @@ namespace CardGames
 	{
 		static void Main(string[] args)
 		{
-			var ui = new TexasHoldEmConIO();
-			new Texas(ui).Run(args);
+			new Texas(UI: new TexasHoldEmConIO()).Run(args);
 		}
 	}
 }

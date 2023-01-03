@@ -9,7 +9,7 @@ namespace CardGameTest
 	public class TestTexasTable
 	{
 		[TestMethod]
-		public void Texastable_nullInit_Init() {
+		public void Texastable_nullInit_DefaultInit() {
 
 			var table = new TexasHoldEmTable(null,null);
 			int expectedseatcount = 0;
@@ -29,7 +29,7 @@ namespace CardGameTest
 		}
 
 		[TestMethod]
-		public void Texastable_InitDeafult0Seat_Init()
+		public void Texastable_Init0Seat_DefaultInit()
 		{
 
 			var table = new TexasHoldEmTable(new CardTableConfig(), null);
@@ -50,7 +50,7 @@ namespace CardGameTest
 		}
 
 		[TestMethod]
-		public void Texastable_InitNegativSeat_Init()
+		public void Texastable_InitNegativSeat_DefaultInit()
 		{
 
 			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = -1}, null);
