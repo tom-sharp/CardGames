@@ -10,6 +10,10 @@ namespace Games.Card.TexasHoldEm
 		{
 		}
 
+		public override void PlaceBet(int tokens, ICardTable table)
+		{
+			this.TableSeat.PlaceBet(tokens);
+		}
 
 
 		// return true if accept or raise bet or false if fold

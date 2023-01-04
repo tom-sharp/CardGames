@@ -86,15 +86,17 @@ namespace Games.Card.TexasHoldEm
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
 
 			if (statistics != null) {
-//				Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
 				int TotalHands, TotalWin;
 				ShowMsg("\nStatistics:                  Winning Hand                Hands");
 				TotalHands = 0; TotalWin = 0;
-				double winpct, handpct;
+				double winpct, handpct, hands, handswin, hand, handwin;
 				for (int count = 0; count < statistics.StatsHands.Length; count++) { TotalHands += statistics.StatsHands[count]; TotalWin += statistics.StatsWinnerHands[count]; }
+				hands = TotalHands; handswin = TotalWin;
 				for (int count = 0; count < statistics.StatsHands.Length; count++)
 				{
-					winpct = 100 * statistics.StatsWinnerHands[count] / TotalWin; handpct = 100 * statistics.StatsHands[count] / TotalHands;
+					hand = 100 * statistics.StatsHands[count];
+					handwin = 100 * statistics.StatsWinnerHands[count];
+					winpct = handwin / handswin; handpct = hand / hands;
 					ShowMsg($"{count,2}.  {(TexasHoldEmHand)count,-20}   {winpct,5:f1} %   {statistics.StatsWinnerHands[count],7}           {handpct,5:f1} %   {statistics.StatsHands[count],7}");
 				}
 				ShowMsg($"-Rounds played {statistics.GamesPlayed,7}        Total:  {TotalWin,7}                     {TotalHands,7}");

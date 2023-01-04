@@ -51,9 +51,15 @@ namespace Games.Card.TexasHoldEm
 			this.IO = UI;
 		}
 
+		public override void PlaceBet(int tokens, ICardTable table)
+		{
+			this.TableSeat.PlaceBet(tokens);
+		}
+
 		public override void AskBet(int tokens, ICardTable table) {
 
 				// for now accept all requests (Should not be used ?)
+
 				this.TableSeat.PlaceBet(tokens);
 
 		}
@@ -117,10 +123,13 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.firstCardSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
 			this.lastBetRaiseSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
+
 			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
-			this.firstCardSeat.PlaceBet(tokens: this.requiredbet);
+
+			this.firstCardSeat.Player.PlaceBet(tokens: this.requiredbet, this.gametable);
 			this.requiredbet *= 2;
-			this.lastBetRaiseSeat.PlaceBet(tokens: this.requiredbet);
+			this.lastBetRaiseSeat.Player.PlaceBet(tokens: this.requiredbet, this.gametable);
+			
 			return true;
 		}
 

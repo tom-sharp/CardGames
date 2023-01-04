@@ -12,6 +12,12 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
+		public override void PlaceBet(int tokens, ICardTable table)
+		{
+			this.TableSeat.PlaceBet(tokens);
+		}
+
+
 		public override void AskBet(int tokens, ICardTable table)
 		{
 

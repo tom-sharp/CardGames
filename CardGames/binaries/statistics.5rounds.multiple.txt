@@ -278,3 +278,288 @@ Players:
  Player3              Tokens        990
  Player4              Tokens       1010
  Player5              Tokens        990
+Playing 5 rounds with 5 players having 1000 tokens each at table with 8 seats 
+ Seat  0. Dealer                 1000   True   Nothing                       JS  6D  5D  5C  3D
+ Seat  1. Player1                 998   True   Pair                          AS  9D
+ Seat  2. Player2                 998   True   Pair                          AC  8H
+ Seat  3. Player3                 998   True   Pair                          0D  9S
+ Seat  4. Player4                 998   True   Two pair                      QC  6C
+ Seat  5. Player5                1008   True   Three of a kind       *WIN*   5H  2D
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AH  KH  KC  JH  2C
+ Seat  1. Player1                 996   True   Two pair                      0H  0D
+ Seat  2. Player2                 996   True   Pair                          9C  8H
+ Seat  3. Player3                 996   True   Two pair                      AC  4C
+ Seat  4. Player4                 996   True   Two pair                      AD  5H
+ Seat  5. Player5                1016   True   Two pair              *WIN*   AS  9H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       QD  7H  7D  4C  2S
+ Seat  1. Player1                 994   True   Two pair                      QC  3H
+ Seat  2. Player2                 994   True   Pair                          AH  6H
+ Seat  3. Player3                1004   True   Three of a kind       *WIN*   0S  7C
+ Seat  4. Player4                 994   True   Pair                          JS  3S
+ Seat  5. Player5                1014   True   Pair                          AS  JD
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AC  8S  5C  5D  3S
+ Seat  1. Player1                 992   True   Pair                          9C  4C
+ Seat  2. Player2                 992   True   Two pair                      JD  3C
+ Seat  3. Player3                1002   True   Pair                          9S  2D
+ Seat  4. Player4                 992   True   Pair                          9H  6H
+ Seat  5. Player5                1022   True   Two pair              *WIN*   AH  0H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KH  9H  9S  7S  6S
+ Seat  1. Player1                 990   True   Pair                          QD  0C
+ Seat  2. Player2                 990   True   Two pair                      KC  2S
+ Seat  3. Player3                1000   True   Pair                          JC  4S
+ Seat  4. Player4                1000   True   Full house            *WIN*   7C  7H
+ Seat  5. Player5                1020   True   Two pair                      8C  6H
+ Pot tokens:                        0
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0             0,0 %         0
+ 2.  Pair                     0,0 %         0            48,0 %        12
+ 3.  TwoPair                 40,0 %         2            40,0 %        10
+ 4.  ThreeOfAKind            40,0 %         2             8,0 %         2
+ 5.  Straight                 0,0 %         0             0,0 %         0
+ 6.  Flush                    0,0 %         0             0,0 %         0
+ 7.  FullHouse               20,0 %         1             4,0 %         1
+ 8.  FourOfAKind              0,0 %         0             0,0 %         0
+ 9.  StraightFlush            0,0 %         0             0,0 %         0
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played       5        Total:        5                          25
+Players:
+ Dealer               Tokens       1000
+ Player1              Tokens        990
+ Player2              Tokens        990
+ Player3              Tokens       1000
+ Player4              Tokens       1000
+ Player5              Tokens       1020
+Playing 5 rounds with 5 players having 1000 tokens each at table with 8 seats 
+ Seat  0. Dealer                 1000   True   Nothing                       QS  9C  7H  5D  5S
+ Seat  1. Player1                 998   True   Two pair                      7C  2H
+ Seat  2. Player2                 998   True   Two pair                      QH  3C
+ Seat  3. Player3                 998   True   Pair                          4S  3S
+ Seat  4. Player4                1008   True   Straight              *WIN*   8H  6D
+ Seat  5. Player5                 998   True   Pair                          KD  2D
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AC  KS  QC  0C  3D
+ Seat  1. Player1                 996   True   High card                     9S  8C
+ Seat  2. Player2                 996   True   High card                     9H  5H
+ Seat  3. Player3                 996   True   High card                     6S  4C
+ Seat  4. Player4                1006   True   Pair                          KH  6H
+ Seat  5. Player5                1006   True   Flush                 *WIN*   6C  5C
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       JD  0C  9C  9D  4H
+ Seat  1. Player1                 994   True   Two pair                      JC  8S
+ Seat  2. Player2                 994   True   Pair                          QD  7S
+ Seat  3. Player3                 994   True   Pair                          AS  3C
+ Seat  4. Player4                1014   True   Straight              *WIN*   QH  8H
+ Seat  5. Player5                1004   True   Two pair                      QC  JS
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       QC  JS  9C  7D  7S
+ Seat  1. Player1                 992   True   Pair                          3D  2H
+ Seat  2. Player2                 992   True   Pair                          6C  2C
+ Seat  3. Player3                 992   True   Two pair                      0H  9D
+ Seat  4. Player4                1022   True   Two pair              *WIN*   AD  QS
+ Seat  5. Player5                1002   True   Two pair                      JC  6D
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KH  JD  6C  5H  4H
+ Seat  1. Player1                 990   True   High card                     0S  2S
+ Seat  2. Player2                 990   True   Pair                          QH  QS
+ Seat  3. Player3                 990   True   Two pair                      6D  4D
+ Seat  4. Player4                1020   True   Pair                          JC  9D
+ Seat  5. Player5                1010   True   Straight              *WIN*   8H  7D
+ Pot tokens:                        0
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0            16,0 %         4
+ 2.  Pair                     0,0 %         0            36,0 %         9
+ 3.  TwoPair                 20,0 %         1            32,0 %         8
+ 4.  ThreeOfAKind             0,0 %         0             0,0 %         0
+ 5.  Straight                60,0 %         3            12,0 %         3
+ 6.  Flush                   20,0 %         1             4,0 %         1
+ 7.  FullHouse                0,0 %         0             0,0 %         0
+ 8.  FourOfAKind              0,0 %         0             0,0 %         0
+ 9.  StraightFlush            0,0 %         0             0,0 %         0
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played       5        Total:        5                          25
+Players:
+ Dealer               Tokens       1000
+ Player1              Tokens        990
+ Player2              Tokens        990
+ Player3              Tokens        990
+ Player4              Tokens       1020
+ Player5              Tokens       1010
+Playing 5 rounds with 5 players having 1000 tokens each at table with 8 seats 
+ Seat  0. Dealer                 1000   True   Nothing                       QD  QC  9D  4D  2C
+ Seat  1. Player1                 998   True   Pair                          KS  7C
+ Seat  2. Player2                 998   True   Pair                          AD  0H
+ Seat  3. Player3                 998   True   Pair                          7S  6S
+ Seat  4. Player4                 998   True   Pair                          AH  3D
+ Seat  5. Player5                1008   True   Two pair              *WIN*   7D  4C
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       QC  8S  6S  3C  2H
+ Seat  1. Player1                 996   True   Pair                          9H  6C
+ Seat  2. Player2                 996   True   Pair                          6D  5C
+ Seat  3. Player3                 996   True   Pair                          0D  0H
+ Seat  4. Player4                 996   True   Pair                          JH  8D
+ Seat  5. Player5                1016   True   Three of a kind       *WIN*   2D  2C
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KC  0C  7C  5C  4C
+ Seat  1. Player1                 994   True   Flush                         9C  8H
+ Seat  2. Player2                1004   True   Flush                 *WIN*   JS  JC
+ Seat  3. Player3                 994   True   Flush                         AD  9D
+ Seat  4. Player4                 994   True   Flush                         KH  2C
+ Seat  5. Player5                1014   True   Flush                         6C  5H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KD  KH  8S  7C  6S
+ Seat  1. Player1                 992   True   Two pair                      8D  4D
+ Seat  2. Player2                1012   True   Straight              *WIN*   5C  4H
+ Seat  3. Player3                 992   True   Two pair                      7S  6D
+ Seat  4. Player4                 992   True   Two pair                      7H  5D
+ Seat  5. Player5                1012   True   Two pair                      JD  6H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       QC  8C  5D  5C  3C
+ Seat  1. Player1                 990   True   Two pair                      3D  2S
+ Seat  2. Player2                1010   True   Pair                          AH  KD
+ Seat  3. Player3                1000   True   Flush                 *WIN*   AC  JC
+ Seat  4. Player4                 990   True   Flush                         0H  2C
+ Seat  5. Player5                1010   True   Pair                          KH  6D
+ Pot tokens:                        0
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0             0,0 %         0
+ 2.  Pair                     0,0 %         0            40,0 %        10
+ 3.  TwoPair                 20,0 %         1            24,0 %         6
+ 4.  ThreeOfAKind            20,0 %         1             4,0 %         1
+ 5.  Straight                20,0 %         1             4,0 %         1
+ 6.  Flush                   40,0 %         2            28,0 %         7
+ 7.  FullHouse                0,0 %         0             0,0 %         0
+ 8.  FourOfAKind              0,0 %         0             0,0 %         0
+ 9.  StraightFlush            0,0 %         0             0,0 %         0
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played       5        Total:        5                          25
+Players:
+ Dealer               Tokens       1000
+ Player1              Tokens        990
+ Player2              Tokens       1010
+ Player3              Tokens       1000
+ Player4              Tokens        990
+ Player5              Tokens       1010
+Playing 5 rounds with 5 players having 1000 tokens each at table with 8 seats 
+ Seat  0. Dealer                 1000   True   Nothing                       KS  QH  9S  7S  2S
+ Seat  1. Player1                1008   True   Flush                 *WIN*   0C  5S
+ Seat  2. Player2                 998   True   Two pair                      7H  2D
+ Seat  3. Player3                 998   True   Pair                          3H  3C
+ Seat  4. Player4                 998   True   High card                     8H  5C
+ Seat  5. Player5                 998   True   Flush                         8D  3S
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KD  KS  7H  4D  3H
+ Seat  1. Player1                1006   True   Two pair                      0D  7D
+ Seat  2. Player2                1006   True   Three of a kind       *WIN*   KH  5D
+ Seat  3. Player3                 996   True   Two pair                      7S  2H
+ Seat  4. Player4                 996   True   Pair                          AH  QD
+ Seat  5. Player5                 996   True   Pair                          JH  5H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AH  KC  QD  0S  5H
+ Seat  1. Player1                1004   True   Pair                          QH  7D
+ Seat  2. Player2                1004   True   High card                     3C  2S
+ Seat  3. Player3                 994   True   High card                     9C  3S
+ Seat  4. Player4                 994   True   High card                     9S  7S
+ Seat  5. Player5                1004   True   Straight              *WIN*   AD  JH
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KH  KD  8D  5S  5C
+ Seat  1. Player1                1002   True   Two pair                      JD  3D
+ Seat  2. Player2                1002   True   Two pair                      AC  3S
+ Seat  3. Player3                 992   True   Two pair                      9C  8H
+ Seat  4. Player4                1002   True   Full house            *WIN*   9S  5D
+ Seat  5. Player5                1002   True   Two pair                      7D  3H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AS  0D  9C  6D  3D
+ Seat  1. Player1                1000   True   Pair                          9D  5H
+ Seat  2. Player2                1000   True   High card                     QD  2C
+ Seat  3. Player3                 990   True   High card                     8C  2S
+ Seat  4. Player4                1010   True   Two pair              *WIN*   AH  3C
+ Seat  5. Player5                1000   True   Pair                          7S  7H
+ Pot tokens:                        0
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0            24,0 %         6
+ 2.  Pair                     0,0 %         0            24,0 %         6
+ 3.  TwoPair                 20,0 %         1            32,0 %         8
+ 4.  ThreeOfAKind            20,0 %         1             4,0 %         1
+ 5.  Straight                20,0 %         1             4,0 %         1
+ 6.  Flush                   20,0 %         1             8,0 %         2
+ 7.  FullHouse               20,0 %         1             4,0 %         1
+ 8.  FourOfAKind              0,0 %         0             0,0 %         0
+ 9.  StraightFlush            0,0 %         0             0,0 %         0
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played       5        Total:        5                          25
+Players:
+ Dealer               Tokens       1000
+ Player1              Tokens       1000
+ Player2              Tokens       1000
+ Player3              Tokens        990
+ Player4              Tokens       1010
+ Player5              Tokens       1000
+Playing 5 rounds with 5 players having 1000 tokens each at table with 8 seats 
+ Seat  0. Dealer                 1000   True   Nothing                       KS  JS  9S  9C  6C
+ Seat  1. Player1                 998   True   Pair                          8C  3H
+ Seat  2. Player2                 998   True   Two pair                      7S  7H
+ Seat  3. Player3                1008   True   Full house            *WIN*   JH  9D
+ Seat  4. Player4                 998   True   Pair                          QD  8D
+ Seat  5. Player5                 998   True   Pair                          3C  2H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       9D  9S  8S  6C  4C
+ Seat  1. Player1                 996   True   Two pair                      JH  6H
+ Seat  2. Player2                 996   True   Pair                          KC  5H
+ Seat  3. Player3                1006   True   Two pair                      KS  8C
+ Seat  4. Player4                 996   True   Pair                          QS  0C
+ Seat  5. Player5                1006   True   Two pair              *WIN*   QC  QH
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KH  9S  5C  5S  4C
+ Seat  1. Player1                1004   True   Two pair              *WIN*   KC  6D
+ Seat  2. Player2                 994   True   Pair                          6S  3C
+ Seat  3. Player3                1004   True   Two pair                      9H  6C
+ Seat  4. Player4                 994   True   Pair                          JD  6H
+ Seat  5. Player5                1004   True   Two pair                      8S  8H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       KD  KS  0H  0S  2S
+ Seat  1. Player1                1002   True   Two pair                      6D  2D
+ Seat  2. Player2                1002   True   Full house            *WIN*   0D  7C
+ Seat  3. Player3                1002   True   Two pair                      7D  3H
+ Seat  4. Player4                 992   True   Two pair                      AH  JH
+ Seat  5. Player5                1002   True   Two pair                      8C  8H
+ Pot tokens:                        0
+ Seat  0. Dealer                 1000   True   Nothing                       AC  AD  5H  4C  4S
+ Seat  1. Player1                1010   True   Full house            *WIN*   AH  3H
+ Seat  2. Player2                1000   True   Two pair                      QC  7S
+ Seat  3. Player3                1000   True   Two pair                      KD  2H
+ Seat  4. Player4                 990   True   Two pair                      6C  6H
+ Seat  5. Player5                1000   True   Two pair                      JC  7C
+ Pot tokens:                        0
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 0,0 %         0             0,0 %         0
+ 2.  Pair                     0,0 %         0            28,0 %         7
+ 3.  TwoPair                 40,0 %         2            60,0 %        15
+ 4.  ThreeOfAKind             0,0 %         0             0,0 %         0
+ 5.  Straight                 0,0 %         0             0,0 %         0
+ 6.  Flush                    0,0 %         0             0,0 %         0
+ 7.  FullHouse               60,0 %         3            12,0 %         3
+ 8.  FourOfAKind              0,0 %         0             0,0 %         0
+ 9.  StraightFlush            0,0 %         0             0,0 %         0
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played       5        Total:        5                          25
+Players:
+ Dealer               Tokens       1000
+ Player1              Tokens       1010
+ Player2              Tokens       1000
+ Player3              Tokens       1000
+ Player4              Tokens        990
+ Player5              Tokens       1000
