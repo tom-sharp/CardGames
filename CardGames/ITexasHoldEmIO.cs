@@ -9,9 +9,14 @@ namespace Games.Card.TexasHoldEm
 	{
 		void ShowHelp();
 
-		void ShowProgressMessage(string msg);
 
 		void ShowNewRound(ICardTable table);
+
+		void ReDrawGameTable();
+		void ShowProgressMessage(string msg);
+
+		void ShowPlayerSeat(ICardTableSeat seat);
+
 
 		void ShowRoundSummary(ICardTable table);
 
@@ -20,7 +25,6 @@ namespace Games.Card.TexasHoldEm
 
 		void ShowPlayerCards(ICardTableSeat playerseat, ICardTableSeat dealerset);
 
-		void ReDrawGameTable(ICardTable table);
 
 		int AskForBet(int tokens);
 

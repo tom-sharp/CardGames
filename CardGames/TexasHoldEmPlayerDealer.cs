@@ -103,6 +103,7 @@ namespace Games.Card.TexasHoldEm
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
+			this.IO.ReDrawGameTable();
 			PlaceBets();
 			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
 			PlaceBets();
@@ -150,6 +151,7 @@ namespace Games.Card.TexasHoldEm
 						this.lastBetRaiseSeat = seat;
 					}
 					this.IO.ShowProgressMessage(seat.Comment);
+					this.IO.ShowPlayerSeat(seat);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
 				seat = this.gametable.NextActiveSeat(seat);
@@ -157,7 +159,7 @@ namespace Games.Card.TexasHoldEm
 			this.CollectPlayerBets();
 			this.lastBetRaiseSeat = null;
 			this.requiredbet = 0;
-
+			this.IO.ReDrawGameTable();
 		}
 
 
@@ -200,6 +202,7 @@ namespace Games.Card.TexasHoldEm
 			if (cards > this.cardStack.CardsTotal) return false;
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
 			while (card++ < cards) { this.Cards.TakePublicCard(this.cardStack.NextCard()); }
+			this.IO.ReDrawGameTable();
 			return true;
 		}
 
@@ -215,6 +218,7 @@ namespace Games.Card.TexasHoldEm
 					if ((seat.IsActive) && (seat.Player != this))
 					{
 						seat.Player.Cards.Rank = texasrank.RankHand(seat.Player.Cards.GetCards().Add(this.Cards.GetCards()));
+						seat.Player.Status = seat.Player.Cards.Rank.Name;
 						if (winnerrank < seat.Player.Cards.Rank.Value) winnerrank = seat.Player.Cards.Rank.Value;
 					}
 					else seat.Player.Cards.Rank = new PlayCardHandRankNothing();
@@ -242,7 +246,7 @@ namespace Games.Card.TexasHoldEm
 					this.IO.ShowProgressMessage(seat.Comment);
 				}
 			}
-
+			this.IO.ReDrawGameTable();
 		}
 
 		private bool SortOnHandRank(ICardTableSeat seat1, ICardTableSeat seat2) {

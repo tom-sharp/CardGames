@@ -16,6 +16,7 @@ namespace Games.Card.TexasHoldEm
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;
 			this.msg = new CStr();
+			this.playerseats = new CList<PlayerSeat>();
 		}
 
 		public bool SupressOutput { get; set; }
@@ -40,17 +41,26 @@ namespace Games.Card.TexasHoldEm
 		public void ShowProgressMessage(string msg) {
 
 			if (SupressOutput) return;
-
-			this.ShowMsg(msg);
+			MsgLog.AddMsg(msg);
+			UpdateMessageLog();
 		}
 
 
 
 		public void ShowNewRound(ICardTable table) {
 
+
 			if (SupressOutput) return;
 
-			ShowMsg("------------------ NEW ROUND | Texas Hold'em  ----------------");
+			Console.Clear();
+			playerseats.Clear();
+			MsgLog.Clear();
+
+			WriteXY(0, 0, "------------------ NEW ROUND | Texas Hold'em  ----------------");
+
+			SetUpTable(table);
+			UpdatePlayers();
+			UpdateMessageLog();
 		}
 
 
@@ -134,41 +144,17 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(msg.ToString());
 		}
 
-		public void ReDrawGameTable(ICardTable table) {
-
-			if (SupressOutput) return;
-
-			Syslib.ConsoleIO.ConIO.PInstance.ClearScrn();
-			int x1 = 0, y1 = 0, x2, y2, logx = 0, logy = 16, s = 0;
-			int x3 = 75, y3 = 0;
-			foreach (var seat in table.TableSeats) {
-				x2 = x1; y2 = y1;
-				Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Seat {s,2}");
-				if (seat.IsFree)
-				{
-					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"Empty");
-					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
-					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"");
-				}
-				else {
-					Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x3, y3++, $"{seat.Player.Name}");
-					if (seat.Player.Type == GamePlayerType.Default)
-					{
-						Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x3, y3++, $"Pot:");
-						Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x3, y3++, $"{table.TablePot.Tokens}");
-						Syslib.ConsoleIO.ConIO.PInstance.ShowXY(50, 6, "");
-					}
-					else {
-						Syslib.ConsoleIO.ConIO.PInstance.ShowXY(logx, logy++, $"{seat.Player.Status}");
-						Syslib.ConsoleIO.ConIO.PInstance.ShowXY(x2, y2++, $"{seat.Player.Tokens}");
-					}
-				}
-				s++;
-				x1 += 15;
-				if (x1 >= 75) { y1 += 8; x1 = 0; }
-			}
-
+		public void ReDrawGameTable() {
+			this.UpdatePlayers();
 		}
+
+		public void ShowPlayerSeat(ICardTableSeat seat) {
+			foreach (var s in playerseats)
+			{
+				if (s.Seat.Player != null && s.Seat == seat) { UpdatePlayer(s); break; }
+			}
+		}
+
 
 
 		// respond to request fold/check/call/raise
@@ -232,9 +218,114 @@ namespace Games.Card.TexasHoldEm
 			else Console.WriteLine(msg);
 		}
 
+		void UpdatePlayers()
+		{
+			foreach (var seat in this.playerseats)
+			{
+				if (seat.Seat.IsFree)
+				{
+					WriteXY(seat.X, seat.Y, "Empty");
+				}
+				else if (seat.Seat.Player.Type == GamePlayerType.Default)
+				{
+					UpdateDealer(seat);
+				}
+				else
+				{
+					UpdatePlayer(seat);
+				}
+			}
+		}
+
+		void UpdateDealer(PlayerSeat seat) {
+			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Hand = new CStr();
+			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
+			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
+			WriteXY(seat.X, seat.Y, "Dealer");
+			WriteXY(seat.X, seat.Y + 2, $"Pot{seat.Seat.Bets,7}");
+			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
+		}
+
+		void UpdatePlayer(PlayerSeat seat)
+		{
+			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Hand = new CStr();
+			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
+			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
+			if (seat.Seat.Player.Cards.Rank != null) seat.Hand = seat.Seat.Player.Cards.Rank.Name;
+			WriteXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
+			WriteXY(seat.X, seat.Y + 1, $"Tkns{seat.Seat.Player.Tokens,6}");
+			WriteXY(seat.X, seat.Y + 2, $"Bet{seat.Seat.Bets,7}");
+			WriteXY(seat.X, seat.Y + 3, $"{seat.Seat.Player.Status,-10}");
+			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
+			if (seat.Seat.Player.Cards.WinHand) WriteXY(seat.X, seat.Y + 5, $"*WIN*");
+		}
+
+		void UpdateMessageLog() {
+			int y = 0;
+
+			foreach (var message in this.MsgLog.Msg)
+			{
+				WriteXY(MsgLog.X, MsgLog.Y + y, message);
+				y++;
+			}
+
+		}
+
+		/// <summary>
+		/// Setup screen for players
+		/// est 20 char width / player and 7 rows height
+		/// P P P P P D
+		/// P P P P P
+		/// log
+		/// log
+		/// log
+		/// </summary>
+		/// <param name="table"></param>
+		void SetUpTable(ICardTable table) {
+			int topleftX = 2, topleftY = 2, dealerX = 92, dealerY = 2, logX = 0, logY = 10;
+
+			foreach (var seat in table.TableSeats) {
+				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default) {
+					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = dealerX, Y = dealerY, Cards = "" });
+				}
+				else {
+					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = topleftX, Y = topleftY, Cards = "" });
+					topleftX += 18;
+				}
+				if (topleftX >= 90) { topleftX = 2; topleftY += 10; }
+			}
+			this.MsgLog.X = logX;
+			this.MsgLog.Y = topleftY + logY;
+		}
+
+		class PlayerSeat {
+			public ICardTableSeat Seat { get; set; }
+			public int X { get; set; }
+			public int Y { get; set; }
+			public string Hand { get; set; } = "";
+			public string Cards { get; set; } = "";
+		}
+
+		class ProgressLog {
+			public int X { get; set; }
+			public int Y { get; set; }
+			public void Clear() { for (int i = 0; i < loglength; i++) Msg[i] = ""; }
+			public void AddMsg(string msg) { 
+				int i = loglength; 
+				while (--i > 0) { Msg[i] = Msg[i - 1]; }
+				Msg[0] = msg;
+			}
+			const int loglength = 3;
+			public string[] Msg  = new string[loglength];
+		}
+
+		void WriteXY(int x, int y, string msg) { Console.CursorLeft = x; Console.CursorTop = y; Console.Write(msg); }
 
 
-
+		CList<PlayerSeat> playerseats;
+		ProgressLog MsgLog = new ProgressLog();
 		int mnuret;
 		CStr msg;
 		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }
