@@ -235,7 +235,7 @@ namespace Games.Card.TexasHoldEm
 					player = seat.Player;
 					if ((seat.IsActive) && (seat.Player != this))
 					{
-						seat.Player.Cards.Rank = texasrank.RankHand((IPlayCards)seat.Player.Cards.GetCards().Add((CList<IPlayCard>)this.Cards.GetCards()));
+						seat.Player.Cards.Rank = texasrank.HandSignature((IPlayCards)seat.Player.Cards.GetCards().Add((CList<IPlayCard>)this.Cards.GetCards()));
 						seat.Player.Status = seat.Player.Cards.Rank.Name;
 						if (winnerrank < seat.Player.Cards.Rank.Rank) winnerrank = seat.Player.Cards.Rank.Rank;
 					}
