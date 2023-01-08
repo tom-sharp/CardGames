@@ -45,13 +45,15 @@ namespace Games.Card.TexasHoldEm
 			UpdateMessageLog();
 		}
 
-
+		public void Finish() {
+			Console.CursorVisible = true;
+		}
 
 		public void ShowNewRound(ICardTable table) {
 
 
 			if (SupressOutput) return;
-
+			Console.CursorVisible = false;
 			Console.Clear();
 			playerseats.Clear();
 			MsgLog.Clear();
@@ -65,10 +67,13 @@ namespace Games.Card.TexasHoldEm
 
 
 		public void ShowRoundSummary(ICardTable table) {
+
+			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
+
 			int counter = 0;
 			CList<IPlayCard> playerhand;
 
-			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
+			if (!SupressOutput) Console.Clear();
 
 			foreach (var seat in table.TableSeats)
 			{
@@ -151,7 +156,11 @@ namespace Games.Card.TexasHoldEm
 		public void ShowPlayerSeat(ICardTableSeat seat) {
 			foreach (var s in playerseats)
 			{
-				if (s.Seat.Player != null && s.Seat == seat) { UpdatePlayer(s); break; }
+				if (s.Seat.Player != null && s.Seat == seat) { 
+					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDealer(s);
+					else UpdatePlayer(s); 
+					break; 
+				}
 			}
 		}
 
@@ -163,52 +172,17 @@ namespace Games.Card.TexasHoldEm
 		{
 			if (SupressOutput) return 0;
 
-			var mnu = new Syslib.ConsoleIO.ConMenu(60, 10, 10, true, false);
-			mnuret = 0;
-			if (tokens > 0)
-			{
-				mnu.AddItem("Fold");
-				mnu.AddItem($"Call {tokens} tokens");
-				mnu.AddItem($"Raise", RespondRaise);
-				switch (mnu.Select())
-				{
-					case 1: return -1;  // fold
-					case 2: return 0;  // call
-					case 3: return mnuret;  // raise
-				}
-			}
-			else
-			{
-				mnu.AddItem("Check");
-				mnu.AddItem("Raise", RespondRaise);
-				switch (mnu.Select())
-				{
-					case 1: return 0;  // check
-					case 2: return mnuret;  // raise
-				}
-			}
-			if (tokens > 0) return -1; 
-			return 0;
+			int result = this.menu.Ask(tokens);
+			Cleanup(this.menu.X, this.menu.Y, 21, 10);
+			return result;
 		}
 
-		int RespondRaise() {
-			var mnu = new Syslib.ConsoleIO.ConMenu(61, 12, 20, true, false);
-			mnu.AddItem($"Raise 1 token");
-			mnu.AddItem($"Raise 2 tokens");
-			mnu.AddItem($"Raise 3 tokens");
-			mnu.AddItem($"Raise 4 tokens");
-			mnu.AddItem($"Raise 5 tokens");
-			switch (mnu.Select())
-			{
-				case 1: mnuret = 1; return 0;
-				case 2: mnuret = 2; return 0;
-				case 3: mnuret = 3; return 0;
-				case 4: mnuret = 4; return 0;
-				case 5: mnuret = 5; return 0;
-			}
-			mnuret = 0;
-			return 0; 
+		void Cleanup(int x, int y, int width, int height) {
+			var str = new CStr(width, 32);
+			int count = 0;
+			while (count < height) { WriteXY(x, y + count, str.ToString()); count++; }
 		}
+
 
 
 
@@ -243,7 +217,7 @@ namespace Games.Card.TexasHoldEm
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
 			WriteXY(seat.X, seat.Y, "Dealer");
-			WriteXY(seat.X, seat.Y + 2, $"Pot{seat.Seat.Bets,7}");
+			WriteXY(seat.X, seat.Y + 2, $"Pot{this.table.TablePot.Tokens,7}");
 			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
 		}
 
@@ -284,8 +258,9 @@ namespace Games.Card.TexasHoldEm
 		/// </summary>
 		/// <param name="table"></param>
 		void SetUpTable(ICardTable table) {
-			int topleftX = 2, topleftY = 2, dealerX = 92, dealerY = 2, logX = 0, logY = 10;
+			int topleftX = 2, topleftY = 2, dealerX = 92, dealerY = 2;
 
+			this.table = table;
 			foreach (var seat in table.TableSeats) {
 				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default) {
 					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = dealerX, Y = dealerY, Cards = "" });
@@ -296,8 +271,11 @@ namespace Games.Card.TexasHoldEm
 				}
 				if (topleftX >= 90) { topleftX = 2; topleftY += 10; }
 			}
-			this.MsgLog.X = logX;
-			this.MsgLog.Y = topleftY + logY;
+			this.MsgLog.X = 74;
+			this.MsgLog.Y = 18;
+			this.menu.X = 74;
+			this.menu.Y = 10;
+
 		}
 
 		class PlayerSeat {
@@ -315,10 +293,67 @@ namespace Games.Card.TexasHoldEm
 			public void AddMsg(string msg) { 
 				int i = loglength; 
 				while (--i > 0) { Msg[i] = Msg[i - 1]; }
-				Msg[0] = msg;
+				Msg[0] = $"{msg,-logwidth}";
 			}
-			const int loglength = 3;
+			const int loglength = 5;
+			const int logwidth = 30;
+
 			public string[] Msg  = new string[loglength];
+		}
+
+		class Menu {
+			public int X { get; set; }
+			public int Y { get; set; }
+			int mnuret;
+			public int Ask(int tokens) {
+				var mnu = new Syslib.ConsoleIO.ConMenu(X, Y, 15, true, false);
+				mnuret = 0;
+				if (tokens > 0)
+				{
+					mnu.AddItem("Fold");
+					mnu.AddItem($"Call {tokens} tokens");
+					mnu.AddItem($"Raise", RespondRaise);
+					switch (mnu.Select())
+					{
+						case 1: return -1;  // fold
+						case 2: return 0;  // call
+						case 3: return mnuret;  // raise
+					}
+				}
+				else
+				{
+					mnu.AddItem("Check");
+					mnu.AddItem("Raise", RespondRaise);
+					switch (mnu.Select())
+					{
+						case 1: return 0;  // check
+						case 2: return mnuret;  // raise
+					}
+				}
+				if (tokens > 0) return -1;
+				return 0;
+			}
+
+			int RespondRaise()
+			{
+				var mnu = new Syslib.ConsoleIO.ConMenu(X+1, Y+1, 18, true, false);
+				mnu.AddItem($"Raise 1 token");
+				mnu.AddItem($"Raise 2 tokens");
+				mnu.AddItem($"Raise 3 tokens");
+				mnu.AddItem($"Raise 4 tokens");
+				mnu.AddItem($"Raise 5 tokens");
+				switch (mnu.Select())
+				{
+					case 1: mnuret = 1; return 0;
+					case 2: mnuret = 2; return 0;
+					case 3: mnuret = 3; return 0;
+					case 4: mnuret = 4; return 0;
+					case 5: mnuret = 5; return 0;
+				}
+				mnuret = 0;
+				return 0;
+			}
+
 		}
 
 		void WriteXY(int x, int y, string msg) { Console.CursorLeft = x; Console.CursorTop = y; Console.Write(msg); }
@@ -326,7 +361,8 @@ namespace Games.Card.TexasHoldEm
 
 		CList<PlayerSeat> playerseats;
 		ProgressLog MsgLog = new ProgressLog();
-		int mnuret;
+		Menu menu = new Menu();
+		ICardTable table;
 		CStr msg;
 		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }
 

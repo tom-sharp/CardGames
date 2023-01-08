@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
@@ -84,6 +85,7 @@ namespace Games.Card.TexasHoldEm
 
 			this.gametable = (ICardTable)table;
 
+
 			this.requiredbet = 1;
 			this.gametable.TablePot.Clear();
 
@@ -97,6 +99,11 @@ namespace Games.Card.TexasHoldEm
 			return true;
 		}
 
+		void Wait(int ms = 0) {
+			if (this.gametable.SleepTime < 0 || ms < 0) return;
+			if (ms == 0) Thread.Sleep(this.gametable.SleepTime);
+			else Thread.Sleep(ms);
+		}
 
 		private void PlayRound() {
 			this.IO.ShowNewRound(this.gametable);
@@ -114,6 +121,7 @@ namespace Games.Card.TexasHoldEm
 			FindWinner();
 			this.IO.ShowRoundSummary(this.gametable);
 			Statistics();
+			Wait(5000);
 		}
 
 
@@ -187,11 +195,18 @@ namespace Games.Card.TexasHoldEm
 
 			if (this.cardStack.CardsLeft < (cards * this.gametable.ActiveSeatCount)) this.cardStack.ShuffleCards();
 			seat.Player.Cards.TakePrivateCard(this.cardStack.NextCard());
+			IO.ShowPlayerSeat(seat);
+			Wait();
 			seat = this.gametable.NextActiveSeat(seat);
 
 			while (seat != this.firstCardSeat) {
 				card = 0;
-				while (card < cards) { seat.Player.Cards.TakePrivateCard(this.cardStack.NextCard()); card++; }
+				while (card < cards) {
+					seat.Player.Cards.TakePrivateCard(this.cardStack.NextCard()); 
+					card++;
+					IO.ShowPlayerSeat(seat);
+					Wait();
+				}
 				seat = this.gametable.NextActiveSeat(seat);
 			}
 			return true;
@@ -201,8 +216,11 @@ namespace Games.Card.TexasHoldEm
 			int card = 0;
 			if (cards > this.cardStack.CardsTotal) return false;
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
-			while (card++ < cards) { this.Cards.TakePublicCard(this.cardStack.NextCard()); }
-			this.IO.ReDrawGameTable();
+			while (card++ < cards) { 
+				this.Cards.TakePublicCard(this.cardStack.NextCard());
+				IO.ShowPlayerSeat(this.TableSeat);
+				Wait();
+			}
 			return true;
 		}
 
@@ -217,9 +235,9 @@ namespace Games.Card.TexasHoldEm
 					player = seat.Player;
 					if ((seat.IsActive) && (seat.Player != this))
 					{
-						seat.Player.Cards.Rank = texasrank.RankHand(seat.Player.Cards.GetCards().Add(this.Cards.GetCards()));
+						seat.Player.Cards.Rank = texasrank.RankHand((IPlayCards)seat.Player.Cards.GetCards().Add((CList<IPlayCard>)this.Cards.GetCards()));
 						seat.Player.Status = seat.Player.Cards.Rank.Name;
-						if (winnerrank < seat.Player.Cards.Rank.Value) winnerrank = seat.Player.Cards.Rank.Value;
+						if (winnerrank < seat.Player.Cards.Rank.Rank) winnerrank = seat.Player.Cards.Rank.Rank;
 					}
 					else seat.Player.Cards.Rank = new PlayCardHandRankNothing();
 				}
@@ -227,7 +245,7 @@ namespace Games.Card.TexasHoldEm
 
 			foreach (var seat in this.gametable.TableSeats)	{
 				if (!seat.IsFree && seat.IsActive) {
-					if (seat.Player.Cards.Rank.Value >= winnerrank) { WinnersSeats.Add(seat); }
+					if (seat.Player.Cards.Rank.Rank >= winnerrank) { WinnersSeats.Add(seat); }
 				}
 			}
 
@@ -250,7 +268,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		private bool SortOnHandRank(ICardTableSeat seat1, ICardTableSeat seat2) {
-			if (seat1.Player.Cards.Rank.Value < seat2.Player.Cards.Rank.Value) return true;
+			if (seat1.Player.Cards.Rank.Rank < seat2.Player.Cards.Rank.Rank) return true;
 			return false;
 		}
 

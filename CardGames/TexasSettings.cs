@@ -63,6 +63,11 @@ namespace CardGames
 		/// </summary>
 		public bool QuietNotStatistics { get; set; }
 
+		/// <summary>
+		/// How long time to slow down gameplay in milliseconds
+		/// </summary>
+		public int SleepTime { get; set; }
+
 
 		/// <summary>
 		/// Reset to defalt settings
@@ -76,6 +81,7 @@ namespace CardGames
 			Quiet = false;
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
+			SleepTime = 1000;
 		}
 
 

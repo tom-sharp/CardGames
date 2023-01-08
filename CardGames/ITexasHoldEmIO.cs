@@ -9,7 +9,6 @@ namespace Games.Card.TexasHoldEm
 	{
 		void ShowHelp();
 
-
 		void ShowNewRound(ICardTable table);
 
 		void ReDrawGameTable();
@@ -17,6 +16,7 @@ namespace Games.Card.TexasHoldEm
 
 		void ShowPlayerSeat(ICardTableSeat seat);
 
+		void Finish();
 
 		void ShowRoundSummary(ICardTable table);
 

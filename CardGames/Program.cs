@@ -7,6 +7,7 @@ namespace CardGames
 		static void Main(string[] args)
 		{
 			new Texas(UI: new TexasHoldEmConIO()).Run(args);
+//			TestRank.Run();
 		}
 	}
 }

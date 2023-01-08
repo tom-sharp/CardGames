@@ -14,7 +14,7 @@ namespace CardGameTest
 		public void Ranking_RoyalStraightFlush_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Add(new PlayCardHeart(13));
@@ -25,7 +25,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.RoyalStraightFlush);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -34,7 +34,7 @@ namespace CardGameTest
 		public void Ranking_StraightFlush_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -46,7 +46,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.StraightFlush);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -57,7 +57,7 @@ namespace CardGameTest
 		public void Ranking_FourOfAKind_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -69,7 +69,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.FourOfAKind);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -77,7 +77,7 @@ namespace CardGameTest
 		public void Ranking_FullHouse_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -89,7 +89,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.FullHouse);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -98,7 +98,7 @@ namespace CardGameTest
 		public void Ranking_Flush_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -110,7 +110,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.Flush);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -119,7 +119,7 @@ namespace CardGameTest
 		public void Ranking_Straight_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -131,7 +131,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.Straight);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -139,7 +139,7 @@ namespace CardGameTest
 		public void Ranking_ThreeOfAKind_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -151,7 +151,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.ThreeOfAKind);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 		}
 
 
@@ -159,7 +159,7 @@ namespace CardGameTest
 		public void Ranking_TwoPair_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -171,7 +171,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.TwoPair);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 
 		}
 
@@ -182,7 +182,7 @@ namespace CardGameTest
 		public void Ranking_Pair_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -194,7 +194,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.Pair);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 
 		}
 
@@ -205,7 +205,7 @@ namespace CardGameTest
 		public void Ranking_HighCard_Success()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedNotvalue = 0;
 
 			playerhand.Clear();
@@ -217,7 +217,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.HighCard);
-			Assert.AreNotEqual(expectedNotvalue, hand1.Value);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
 
 		}
 
@@ -226,13 +226,13 @@ namespace CardGameTest
 		public void Ranking_NoCards_Nothing()
 		{
 			var rank = new TexasHoldEmRankHand();
-			var playerhand = new CList<IPlayCard>();
+			var playerhand = new PlayCards();
 			ulong expectedvalue = 0;
 
 			var hand1 = rank.RankHand(playerhand) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.Nothing);
-			Assert.AreEqual(expectedvalue, hand1.Value);
+			Assert.AreEqual(expectedvalue, hand1.Signature);
 
 		}
 
@@ -246,7 +246,7 @@ namespace CardGameTest
 			var hand1 = rank.RankHand(null) as ITexasHandRank;
 
 			Assert.AreEqual(hand1.Id, TexasHoldEmHand.Nothing);
-			Assert.AreEqual(expectedvalue, hand1.Value);
+			Assert.AreEqual(expectedvalue, hand1.Signature);
 
 		}
 

@@ -1,6 +1,7 @@
 ﻿using Syslib;
 using Syslib.Games.Card;
 using Syslib.Games;
+using System.Threading;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -20,9 +21,9 @@ namespace Games.Card.TexasHoldEm
 		public override void AskBet(int tokens, ICardTable table)
 		{
 			var mycards = this.Cards.GetPrivateCards();
-			CList<IPlayCard> dealercards = null;
+			IPlayCards dealercards = null;
 			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
-			var hand = this.Cards.GetPrivateCards().Add(dealercards);
+			var hand = this.Cards.GetPrivateCards().Add((CList<IPlayCard>)dealercards);
 			int roundprogress = hand.Count();
 
 			var myrank = new TexasHoldEmRankHand();
@@ -36,7 +37,7 @@ namespace Games.Card.TexasHoldEm
 			// weight: rank of private and public cards (to normal distribution)
 			// weight: rank of dealer cards (posibilites for opponents)
 			// weight: playerprofile
-			// weight: random weight in desicion ?
+			// weight: random weight in decision ?
 
 
 			
@@ -57,7 +58,7 @@ namespace Games.Card.TexasHoldEm
 
 
 		void RandomDecision(int tokens) {
-			// Make a random decission
+			// Make a random decision
 			// if requested tokens == 0 options are check or raise
 			// if requested tokens > 0 optopns are fold, call or raise
 			if (tokens > 0)

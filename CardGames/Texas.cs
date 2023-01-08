@@ -21,7 +21,7 @@ namespace CardGames
 
 			if (result.Length > 0) { 
 				if (result == "?") this.IO.ShowHelp();
-				else IO.ShowProgressMessage($"Invalid argument {result}");
+				else this.IO.ShowProgressMessage($"Invalid argument {result}");
 				return;
 			}
 
@@ -41,7 +41,7 @@ namespace CardGames
 			}
 
 			ShowStatistics(table);
-
+			this.IO.Finish();
 		}
 
 

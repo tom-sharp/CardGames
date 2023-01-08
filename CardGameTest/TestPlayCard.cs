@@ -21,31 +21,31 @@ namespace CardGameTest
 
 
 			Assert.AreEqual(14, Heart14.Rank);
-			Assert.AreEqual(PlayCardSuite.Heart, Heart14.Suite);
+			Assert.AreEqual(PlayCardSuit.Heart, Heart14.Suit);
 			Assert.AreEqual("AH", Heart14.Symbol);
 
 			Assert.AreEqual(14, Diamond14.Rank);
-			Assert.AreEqual(PlayCardSuite.Diamond, Diamond14.Suite);
+			Assert.AreEqual(PlayCardSuit.Diamond, Diamond14.Suit);
 			Assert.AreEqual("AD", Diamond14.Symbol);
 
 			Assert.AreEqual(14, Spade14.Rank);
-			Assert.AreEqual(PlayCardSuite.Spade, Spade14.Suite);
+			Assert.AreEqual(PlayCardSuit.Spade, Spade14.Suit);
 			Assert.AreEqual("AS", Spade14.Symbol);
 
 			Assert.AreEqual(14, Club14.Rank);
-			Assert.AreEqual(PlayCardSuite.Club, Club14.Suite);
+			Assert.AreEqual(PlayCardSuit.Club, Club14.Suit);
 			Assert.AreEqual("AC", Club14.Symbol);
 
 			Assert.AreEqual(0, Joker.Rank);
-			Assert.AreEqual(PlayCardSuite.Joker, Joker.Suite);
+			Assert.AreEqual(PlayCardSuit.Joker, Joker.Suit);
 			Assert.AreEqual("**", Joker.Symbol);
 
 			Assert.AreEqual(0, Invalid1.Rank);
-			Assert.AreEqual(PlayCardSuite.Blank, Invalid1.Suite);
+			Assert.AreEqual(PlayCardSuit.Blank, Invalid1.Suit);
 			Assert.AreEqual("--", Invalid1.Symbol);
 
 			Assert.AreEqual(0, Invalid2.Rank);
-			Assert.AreEqual(PlayCardSuite.Blank, Invalid1.Suite);
+			Assert.AreEqual(PlayCardSuit.Blank, Invalid1.Suit);
 			Assert.AreEqual("--", Invalid1.Symbol);
 
 		}
@@ -56,18 +56,18 @@ namespace CardGameTest
 		{
 			IPlayCard joker = new PlayCardJoker();
 
-			(joker as IPlayCardJoker).Suite = PlayCardSuite.Heart;
+			(joker as IPlayCardJoker).Suit = PlayCardSuit.Heart;
 			(joker as IPlayCardJoker).Rank = 14;
 			joker.Symbol = "Joker";
 
 			Assert.AreEqual(14, joker.Rank);
-			Assert.AreEqual(PlayCardSuite.Heart, joker.Suite);
+			Assert.AreEqual(PlayCardSuit.Heart, joker.Suit);
 			Assert.AreEqual("Joker", joker.Symbol);
 
 			(joker as IPlayCardJoker).Clear();
 
 			Assert.AreEqual(0, joker.Rank);
-			Assert.AreEqual(PlayCardSuite.Joker, joker.Suite);
+			Assert.AreEqual(PlayCardSuit.Joker, joker.Suit);
 			Assert.AreEqual("Joker", joker.Symbol);
 
 		}

@@ -197,25 +197,7 @@ namespace CardGameTest
 
 			var player1 = new TexasHoldEmPlayerRobot(config);
 			var player2 = new TexasHoldEmPlayerRobot(config);
-
-			player1.Name = "Robot1";
-			player1.CashIn(10);
-			player1.Profile.Offensive = 10;
-			player1.Profile.Defensive = 20;
-			player1.Profile.Randomness = 30;
-
-			player2.Name = "Robot2";
-			player2.CashIn(20);
-			player2.Profile.Offensive = 40;
-			player2.Profile.Defensive = 50;
-			player2.Profile.Randomness = 60;
-
-			Assert.AreNotEqual(player1.Name, player2.Name);
-			Assert.AreNotEqual(player1.Tokens, player2.Tokens);
-			Assert.AreNotEqual(player1.Profile.Offensive, player2.Profile.Offensive);
-			Assert.AreNotEqual(player1.Profile.Defensive, player2.Profile.Defensive);
-			Assert.AreNotEqual(player1.Profile.Randomness, player2.Profile.Randomness);
-
+			Assert.IsFalse(ReferenceEquals(player1.Profile, player2.Profile));
 		}
 
 

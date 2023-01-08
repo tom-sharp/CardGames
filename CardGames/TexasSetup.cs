@@ -25,10 +25,11 @@ namespace CardGames
 			this.IO.SupressOverrideRoundSummary = settings.QuietNotSummary;
 			this.IO.SupressOverrideStatistics = settings.QuietNotStatistics;
 
+
 			texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = settings.TableSeats });
 
 			if (settings.EnableStatistics) texastable.Statistics(new TexasHoldEmStatistics());
-
+			if (settings.Quiet) texastable.SleepTime = -1;
 
 			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = settings.Tokens }, this.IO));
 
@@ -36,8 +37,8 @@ namespace CardGames
 			while (++count <= settings.Players)
 			{
 
-				texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Player{count}", Tokens = settings.Tokens }));
-
+				if (count == 5) texastable.Join(new TexasHoldEmPlayerHuman(new CardPlayerConfig() { Name = $"Human", Tokens = settings.Tokens }, IO));
+				else texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Player{count}", Tokens = settings.Tokens }));
 				//				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", tokens, new GamePlayerProfileRandom()));
 				////				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
 				//				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", tokens));
