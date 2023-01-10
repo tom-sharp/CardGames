@@ -73,7 +73,7 @@ namespace CardGames
 		/// Reset to defalt settings
 		/// </summary>
 		public void Default() {
-			RoundsToPlay = 1;
+			RoundsToPlay = 5;
 			TableSeats = 8;
 			Players = 5;
 			Tokens = 1000;
@@ -81,7 +81,7 @@ namespace CardGames
 			Quiet = false;
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
-			SleepTime = 1000;
+			SleepTime = 250;
 		}
 
 

@@ -142,7 +142,7 @@ namespace Games.Card.TexasHoldEm
 			return true;
 		}
 
-		// ask for bets around the table until all active player has placed bets and ther is still at least two player
+		// ask for bets around the table until all active player has placed bets and there is still at least two player
 		private void PlaceBets() {
 
 			// If run immediately after init bets: first seat to be asked is next active after last raise 
@@ -153,6 +153,8 @@ namespace Games.Card.TexasHoldEm
 			while (seat != this.lastBetRaiseSeat) {
 				if (this.gametable.ActiveSeatCount < 2) break;
 				if (seat.IsActive) {
+					this.IO.ShowPlayerActiveSeat(seat);
+					Wait();
 					seat.Player.AskBet(this.requiredbet - seat.Bets, this.gametable);
 					if (this.requiredbet < seat.Bets) {
 						this.requiredbet = seat.Bets;
@@ -194,7 +196,7 @@ namespace Games.Card.TexasHoldEm
 			if (cards < 1) return false;
 
 			if (this.cardStack.CardsLeft < (cards * this.gametable.ActiveSeatCount)) this.cardStack.ShuffleCards();
-			seat.Player.Cards.TakePrivateCard(this.cardStack.NextCard());
+			seat.Player.Cards.TakeCard(this.cardStack.NextCard());
 			IO.ShowPlayerSeat(seat);
 			Wait();
 			seat = this.gametable.NextActiveSeat(seat);
@@ -202,7 +204,7 @@ namespace Games.Card.TexasHoldEm
 			while (seat != this.firstCardSeat) {
 				card = 0;
 				while (card < cards) {
-					seat.Player.Cards.TakePrivateCard(this.cardStack.NextCard()); 
+					seat.Player.Cards.TakeCard(this.cardStack.NextCard()); 
 					card++;
 					IO.ShowPlayerSeat(seat);
 					Wait();
@@ -217,7 +219,7 @@ namespace Games.Card.TexasHoldEm
 			if (cards > this.cardStack.CardsTotal) return false;
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
 			while (card++ < cards) { 
-				this.Cards.TakePublicCard(this.cardStack.NextCard());
+				this.Cards.TakeCard(this.cardStack.NextCard());
 				IO.ShowPlayerSeat(this.TableSeat);
 				Wait();
 			}
@@ -227,7 +229,7 @@ namespace Games.Card.TexasHoldEm
 		private void FindWinner() {
 			ulong winnerrank = 0;
 			var WinnersSeats = new CList<ICardTableSeat>();
-			var texasrank = new TexasHoldEmRankHand();
+			var texasrank = new TexasRankHand();
 			ICardPlayer player;
 
 			foreach (var seat in this.gametable.TableSeats) {
@@ -235,17 +237,17 @@ namespace Games.Card.TexasHoldEm
 					player = seat.Player;
 					if ((seat.IsActive) && (seat.Player != this))
 					{
-						seat.Player.Cards.Rank = texasrank.HandSignature((IPlayCards)seat.Player.Cards.GetCards().Add((CList<IPlayCard>)this.Cards.GetCards()));
-						seat.Player.Status = seat.Player.Cards.Rank.Name;
-						if (winnerrank < seat.Player.Cards.Rank.Rank) winnerrank = seat.Player.Cards.Rank.Rank;
+						seat.Player.Cards.Signature = texasrank.GetSignature(seat.Player.Cards.GetCards().Add(this.Cards.GetCards()));
+						seat.Player.Status = seat.Player.Cards.Signature.Name;
+						if (winnerrank < seat.Player.Cards.Signature.Rank) winnerrank = seat.Player.Cards.Signature.Rank;
 					}
-					else seat.Player.Cards.Rank = new PlayCardHandRankNothing();
+					else seat.Player.Cards.Signature = new TexasRankNothing();
 				}
 			}
 
 			foreach (var seat in this.gametable.TableSeats)	{
 				if (!seat.IsFree && seat.IsActive) {
-					if (seat.Player.Cards.Rank.Rank >= winnerrank) { WinnersSeats.Add(seat); }
+					if (seat.Player.Cards.Signature.Rank >= winnerrank) { WinnersSeats.Add(seat); }
 				}
 			}
 
@@ -268,7 +270,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		private bool SortOnHandRank(ICardTableSeat seat1, ICardTableSeat seat2) {
-			if (seat1.Player.Cards.Rank.Rank < seat2.Player.Cards.Rank.Rank) return true;
+			if (seat1.Player.Cards.Signature.Signature < seat2.Player.Cards.Signature.Rank) return true;
 			return false;
 		}
 
@@ -284,10 +286,10 @@ namespace Games.Card.TexasHoldEm
 				{
 					if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default)) {
 						if (winner && seat.Player.Cards.WinHand) { 
-							stats.StatsAddWinner(seat.Player.Cards.Rank as ITexasHandRank); 
+							stats.StatsAddWinner(seat.Player.Cards.Signature); 
 							winner = false; 
 						}
-						stats.StatsAddHand(seat.Player.Cards.Rank as ITexasHandRank);
+						stats.StatsAddHand(seat.Player.Cards.Signature);
 					}
 				}
 			}

@@ -16,217 +16,63 @@ namespace CardGames
 	public static class TestRank
 	{
 		public static void Run() {
-			var rankit = new TexasHoldEmRankHand();
+			var rankit = new TexasRankHand();
 			var cards = new PlayCards();
-			int cardrank, cardrank1, cardrank2;
-			ulong signature, rank;
-			IPlayCardHandRank handrank;
+			var cards2 = new CList<IPlayCard>();
+			int linebr = 0;
 
-			cardrank = 2;
-			cards.Add(new PlayCardHeart(cardrank));
-			handrank = rankit.HandSignature(cards);
-			Console.WriteLine($" {cardrank,2}:{handrank.Signature}:{handrank.Rank}");
-			cards.Clear();
 
-			cardrank = 3;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
+			Console.Write($"\n Rank of Two cards\n");
+			for (int i = 2; i < 15; i++)
+			{
+				for (int j = 2; j < 15; j++)
+				{
+					cards2.Clear();
+					cards.Add(new PlayCardHeart(i));
+					cards.Add(new PlayCardDiamond(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					cards.Clear();
+					linebr++;
+					//					if (linebr % 5 == 0) Console.Write("\n");
+				}
 
-			cardrank = 4;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardHeart(i));
+					cards.Add(new PlayCardSpade(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					cards.Clear();
+				}
 
-			cardrank = 5;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardHeart(i));
+					cards.Add(new PlayCardClub(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					cards.Clear();
+				}
 
-			cardrank = 6;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardHeart(i));
+					cards.Add(new PlayCardHeart(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					cards.Clear();
+				}
 
-			cardrank = 7;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
 
-			cardrank = 8;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 9;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 10;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 11;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 12;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 13;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank = 14;
-			cards.Add(new PlayCardHeart(cardrank));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank,2}:{signature}:{rank}");
-			cards.Clear();
+			}
 
 
 
-			cardrank1 = 2; cardrank2 = 2;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 3;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 4;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 13;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 14;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 14; cardrank2 = 13;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 14; cardrank2 = 14;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardClub(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
+			return;
 
 
 
-			cardrank1 = 2; cardrank2 = 2;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 3;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 4;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 13;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 2; cardrank2 = 14;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 14; cardrank2 = 13;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
-
-			cardrank1 = 14; cardrank2 = 14;
-			cards.Add(new PlayCardHeart(cardrank1));
-			cards.Add(new PlayCardHeart(cardrank2));
-			signature = rankit.HandSignature(cards).Signature;
-			rank = rankit.HandSignature(cards).Rank;
-			Console.WriteLine($" {cardrank1,2} {cardrank2,2}:{signature}:{rank}");
-			cards.Clear();
 
 		}
 	}

@@ -8,13 +8,14 @@ namespace Games.Card.TexasHoldEm
 	public interface ITexasHoldEmIO
 	{
 		void ShowHelp();
-
+		void ShowMsg(string msg);
 		void ShowNewRound(ICardTable table);
 
 		void ReDrawGameTable();
 		void ShowProgressMessage(string msg);
 
 		void ShowPlayerSeat(ICardTableSeat seat);
+		void ShowPlayerActiveSeat(ICardTableSeat seat);
 
 		void Finish();
 

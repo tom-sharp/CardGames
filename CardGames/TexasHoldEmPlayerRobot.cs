@@ -16,20 +16,27 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(tokens);
 		}
 
+		public override bool GetReady()
+		{
+			this.Cards.ClearHand();
+			this.Status = "Ready";
+			return true;
+		}
+
 
 		// return true if accept or raise bet or false if fold
 		public override void AskBet(int tokens, ICardTable table)
 		{
-			var mycards = this.Cards.GetPrivateCards();
+			var mycardsrank = this.Cards.GetCards().Rank;
 			IPlayCards dealercards = null;
 			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
-			var hand = this.Cards.GetPrivateCards().Add((CList<IPlayCard>)dealercards);
-			int roundprogress = hand.Count();
+			var hand = this.Cards.GetCards().Add(dealercards);
+			int roundprogress = hand.Count;
 
-			var myrank = new TexasHoldEmRankHand();
-			var dealerrank = new TexasHoldEmRankHand();
-			var totalrank = new TexasHoldEmRankHand();
-			myrank.RankHand(mycards);
+			var myrank = new TexasRankHand();
+			var dealerrank = new TexasRankHand();
+			var totalrank = new TexasRankHand();
+
 
 			// SOME DECISION MAKING HERE
 			// weight: progress 2, 5, 6, 7 cards ?
@@ -63,12 +70,12 @@ namespace Games.Card.TexasHoldEm
 			// if requested tokens > 0 optopns are fold, call or raise
 			if (tokens > 0)
 			{
-				if (CRandom.Random.RandomBool(percentchance: 5)) FoldBet();
-				else if (CRandom.Random.RandomBool(percentchance: 5)) RaiseBet(tokens, tokens + 1);
+				if (CRandom.Random.RandomBool( percentchance: this.Profile.Defensive)) FoldBet();
+				else if (CRandom.Random.RandomBool(percentchance: this.Profile.Offensive)) RaiseBet(tokens, tokens + 1);
 				else CallBet(tokens);
 			}
 			else {
-				if (CRandom.Random.RandomBool(percentchance: 5)) RaiseBet(tokens, tokens + 1);
+				if (CRandom.Random.RandomBool(percentchance: this.Profile.Offensive)) RaiseBet(tokens, tokens + 1);
 				else CheckBet();
 			}
 		}

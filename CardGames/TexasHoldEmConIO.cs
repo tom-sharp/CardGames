@@ -1,6 +1,7 @@
 ﻿using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
+using Syslib.ConUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +24,9 @@ namespace Games.Card.TexasHoldEm
 		public bool SupressOverrideRoundSummary { get; set; }
 		public bool SupressOverrideStatistics { get; set; }
 
+		public void Clear() {
+			Console.Clear();
+		}
 
 		public void ShowHelp() {
 			ShowMsg("Arguments:");
@@ -71,7 +75,7 @@ namespace Games.Card.TexasHoldEm
 			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
 
 			int counter = 0;
-			CList<IPlayCard> playerhand;
+			IPlayCards playerhand;
 
 			if (!SupressOutput) Console.Clear();
 
@@ -81,7 +85,7 @@ namespace Games.Card.TexasHoldEm
 				{
 					msg.Clear();
 					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{seat.Player.Name,-15}  {seat.Player.Tokens,10}  {seat.IsActive,5}   { seat.Player.Cards.Rank.Name,-20 } ");
+					msg.Append($"{seat.Player.Name,-15}  {seat.Player.Tokens,10}  {seat.IsActive,5}   { seat.Player.Cards.Signature.Name,-20 } ");
 					if (seat.Player.Cards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
 					playerhand = seat.Player.Cards.GetCards().Sort(SortCardsFunc);
 					foreach (var card in playerhand)
@@ -112,7 +116,7 @@ namespace Games.Card.TexasHoldEm
 					hand = 100 * statistics.StatsHands[count];
 					handwin = 100 * statistics.StatsWinnerHands[count];
 					winpct = handwin / handswin; handpct = hand / hands;
-					ShowMsg($"{count,2}.  {(TexasHoldEmHand)count,-20}   {winpct,5:f1} %   {statistics.StatsWinnerHands[count],7}           {handpct,5:f1} %   {statistics.StatsHands[count],7}");
+					ShowMsg($"{count,2}.  {(PokerHand)count,-20}   {winpct,5:f1} %   {statistics.StatsWinnerHands[count],7}           {handpct,5:f1} %   {statistics.StatsHands[count],7}");
 				}
 				ShowMsg($"-Rounds played {statistics.GamesPlayed,7}        Total:  {TotalWin,7}                     {TotalHands,7}");
 			}
@@ -135,8 +139,8 @@ namespace Games.Card.TexasHoldEm
 
 			if (SupressOutput) return;
 
-			var playercards = playerseat.Player.Cards.GetPrivateCards();
-			var dealercards = dealerset.Player.Cards.GetPublicCards();
+			var playercards = playerseat.Player.Cards.GetCards();
+			var dealercards = dealerset.Player.Cards.GetCards();
 			msg.Str($" {playerseat.Player.Name}: ");
 			foreach (var c in playercards) {
 				msg.Append($" {c.Symbol} ");
@@ -164,6 +168,18 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
+		public void ShowPlayerActiveSeat(ICardTableSeat seat)
+		{
+			foreach (var s in playerseats)
+			{
+				if (s.Seat.Player != null && s.Seat == seat)
+				{
+					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDealerActive(s);
+					else UpdatePlayerActive(s);
+					break;
+				}
+			}
+		}
 
 
 		// respond to request fold/check/call/raise
@@ -186,7 +202,7 @@ namespace Games.Card.TexasHoldEm
 
 
 
-		void ShowMsg(string msg)
+		public void ShowMsg(string msg)
 		{
 			if (msg == null) Console.WriteLine("");
 			else Console.WriteLine(msg);
@@ -198,7 +214,7 @@ namespace Games.Card.TexasHoldEm
 			{
 				if (seat.Seat.IsFree)
 				{
-					WriteXY(seat.X, seat.Y, "Empty");
+					ConIO.PInstance.ShowXY(seat.X, seat.Y, "Empty");
 				}
 				else if (seat.Seat.Player.Type == GamePlayerType.Default)
 				{
@@ -221,19 +237,52 @@ namespace Games.Card.TexasHoldEm
 			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
 		}
 
+		void UpdateDealerActive(PlayerSeat seat)
+		{
+			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Hand = new CStr();
+			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
+			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
+			ConIO.PInstance.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+			ConIO.PInstance.ShowXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
+			ConIO.PInstance.RestoreColor();
+			WriteXY(seat.X, seat.Y + 2, $"Pot{this.table.TablePot.Tokens,7}");
+			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
+		}
+
+
 		void UpdatePlayer(PlayerSeat seat)
 		{
 			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
 			var Hand = new CStr();
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
-			if (seat.Seat.Player.Cards.Rank != null) seat.Hand = seat.Seat.Player.Cards.Rank.Name;
+			if (seat.Seat.Player.Cards.Signature != null) seat.Hand = seat.Seat.Player.Cards.Signature.Name;
 			WriteXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
 			WriteXY(seat.X, seat.Y + 1, $"Tkns{seat.Seat.Player.Tokens,6}");
 			WriteXY(seat.X, seat.Y + 2, $"Bet{seat.Seat.Bets,7}");
 			WriteXY(seat.X, seat.Y + 3, $"{seat.Seat.Player.Status,-10}");
 			WriteXY(seat.X, seat.Y + 4, $"{seat.Cards}");
 			if (seat.Seat.Player.Cards.WinHand) WriteXY(seat.X, seat.Y + 5, $"*WIN*");
+		}
+
+		void UpdatePlayerActive(PlayerSeat seat)
+		{
+			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Hand = new CStr();
+			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
+			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
+			if (seat.Seat.Player.Cards.Signature != null) seat.Hand = seat.Seat.Player.Cards.Signature.Name;
+			ui.PushColor();
+			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+			ConIO.PInstance.ShowXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
+			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
+			ConIO.PInstance.ShowXY(seat.X, seat.Y + 1, $"Tkns{seat.Seat.Player.Tokens,6}");
+			ConIO.PInstance.ShowXY(seat.X, seat.Y + 2, $"Bet{seat.Seat.Bets,7}");
+			ConIO.PInstance.ShowXY(seat.X, seat.Y + 3, $"{seat.Seat.Player.Status,-10}");
+			ConIO.PInstance.ShowXY(seat.X, seat.Y + 4, $"{seat.Cards}");
+			ui.PopColor();
+			if (seat.Seat.Player.Cards.WinHand) ConIO.PInstance.ShowXY(seat.X, seat.Y + 5, $"*WIN*");
 		}
 
 		void UpdateMessageLog() {
@@ -306,7 +355,7 @@ namespace Games.Card.TexasHoldEm
 			public int Y { get; set; }
 			int mnuret;
 			public int Ask(int tokens) {
-				var mnu = new Syslib.ConsoleIO.ConMenu(X, Y, 15, true, false);
+				var mnu = new Syslib.ConUI.ConMenu(X, Y, 15, true, false);
 				mnuret = 0;
 				if (tokens > 0)
 				{
@@ -336,7 +385,7 @@ namespace Games.Card.TexasHoldEm
 
 			int RespondRaise()
 			{
-				var mnu = new Syslib.ConsoleIO.ConMenu(X+1, Y+1, 18, true, false);
+				var mnu = new Syslib.ConUI.ConMenu(X+1, Y+1, 18, true, false);
 				mnu.AddItem($"Raise 1 token");
 				mnu.AddItem($"Raise 2 tokens");
 				mnu.AddItem($"Raise 3 tokens");
@@ -359,12 +408,18 @@ namespace Games.Card.TexasHoldEm
 		void WriteXY(int x, int y, string msg) { Console.CursorLeft = x; Console.CursorTop = y; Console.Write(msg); }
 
 
+		ConIO ui = ConIO.PInstance;
 		CList<PlayerSeat> playerseats;
-		ProgressLog MsgLog = new ProgressLog();
-		Menu menu = new Menu();
+		ProgressLog MsgLog = new();
+		Menu menu = new();
 		ICardTable table;
 		CStr msg;
 		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }
 
 	}
+
+
+
+
+
 }

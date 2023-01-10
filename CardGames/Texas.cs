@@ -17,16 +17,18 @@ namespace CardGames
 
 		public void Run(string[] args) {
 
+			// Get configuration
 			string result = settings.ProcessArguments(args);
-
 			if (result.Length > 0) { 
 				if (result == "?") this.IO.ShowHelp();
 				else this.IO.ShowProgressMessage($"Invalid argument {result}");
 				return;
 			}
 
+			// Set up game based on  configuration
 			var table = setup.TexasTable(settings);
 
+			// Run Game
 			while (true) {
 
 				if (settings.RoundsToPlay > 0 && table.GetStatistics().GamesPlayed >= settings.RoundsToPlay) break;

@@ -13,24 +13,24 @@ namespace Games.Card.TexasHoldEm
 	{
 		public TexasHoldEmStatistics()
 		{
-			statsWinners = new int[(int)TexasHoldEmHand.RoyalStraightFlush + 1];
-			statsHands = new int[(int)TexasHoldEmHand.RoyalStraightFlush + 1];
-			allhands = new CList<ITexasHandRank>();
-			winnerhands = new CList<ITexasHandRank>();
+			statsWinners = new int[(int)PokerHand.RoyalStraightFlush + 1];
+			statsHands = new int[(int)PokerHand.RoyalStraightFlush + 1];
+			allhands = new CList<IPlayCardsSignature>();
+			winnerhands = new CList<IPlayCardsSignature>();
 		}
 
-		public void StatsAddWinner(ITexasHandRank hand)
+		public void StatsAddWinner(IPlayCardsSignature hand)
 		{
 			if (hand == null) return;
 			this.winnerhands.Add(hand);
-			statsWinners[(int)hand.Id]++;
+			statsWinners[hand.RankId]++;
 		}
 
-		public void StatsAddHand(ITexasHandRank hand)
+		public void StatsAddHand(IPlayCardsSignature hand)
 		{
 			if (hand == null) return;
 			this.allhands.Add(hand);
-			statsHands[(int)hand.Id]++;
+			statsHands[hand.RankId]++;
 		}
 
 
@@ -38,13 +38,13 @@ namespace Games.Card.TexasHoldEm
 		public int[] StatsHands { get { return this.statsHands; } }
 
 
-		public CList<ITexasHandRank> WinnerHands { get { return this.winnerhands; } }
-		public CList<ITexasHandRank> AllHands { get { return this.allhands; } }
+		public CList<IPlayCardsSignature> WinnerHands { get { return this.winnerhands; } }
+		public CList<IPlayCardsSignature> AllHands { get { return this.allhands; } }
 
 		int[] statsWinners;
 		int[] statsHands;
-		CList<ITexasHandRank> allhands;
-		CList<ITexasHandRank> winnerhands;
+		CList<IPlayCardsSignature> allhands;
+		CList<IPlayCardsSignature> winnerhands;
 
 	}
 }
