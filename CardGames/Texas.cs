@@ -7,11 +7,12 @@ namespace CardGames
 {
 	public class Texas
 	{
-		public Texas(ITexasHoldEmIO UI)
+		public Texas(ITexasHoldEmIO UI, TexasDbContext dbcontext)
 		{
+			this.DB = new TexasDb(dbcontext);
 			this.IO = UI;
 			this.settings = new TexasSettings();
-			this.setup = new TexasSetup(UI);
+			this.setup = new TexasSetup(UI, DB);
 		}
 
 
@@ -26,7 +27,7 @@ namespace CardGames
 			}
 
 			// Set up game based on  configuration
-			var table = setup.TexasTable(settings);
+			var table = (TexasHoldEmTable)setup.TexasTable(settings);
 
 			// Run Game
 			while (true) {
@@ -58,5 +59,6 @@ namespace CardGames
 		ITexasHoldEmIO IO;
 		TexasSettings settings;
 		TexasSetup setup;
+		readonly TexasDb DB;
 	}
 }

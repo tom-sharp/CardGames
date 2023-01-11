@@ -50,6 +50,7 @@ namespace Games.Card.TexasHoldEm
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 			this.IO = UI;
+			this.StatsHand = new TexasStatisticsEntity();
 		}
 
 		public override void PlaceBet(int tokens, ICardTable table)
@@ -113,6 +114,7 @@ namespace Games.Card.TexasHoldEm
 			this.IO.ReDrawGameTable();
 			PlaceBets();
 			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
+			Statistics(this.Cards.GetCards());
 			PlaceBets();
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
@@ -120,7 +122,7 @@ namespace Games.Card.TexasHoldEm
 			PlaceBets();
 			FindWinner();
 			this.IO.ShowRoundSummary(this.gametable);
-			Statistics();
+			Statistics(this.Cards.GetCards());
 			Wait(5000);
 		}
 
@@ -220,7 +222,7 @@ namespace Games.Card.TexasHoldEm
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
 			while (card++ < cards) { 
 				this.Cards.TakeCard(this.cardStack.NextCard());
-				IO.ShowPlayerSeat(this.TableSeat);
+				IO.ShowPlayerActiveSeat(this.TableSeat);
 				Wait();
 			}
 			return true;
@@ -229,7 +231,7 @@ namespace Games.Card.TexasHoldEm
 		private void FindWinner() {
 			ulong winnerrank = 0;
 			var WinnersSeats = new CList<ICardTableSeat>();
-			var texasrank = new TexasRankHand();
+			var texasrank = new TexasRankOn5Cards();
 			ICardPlayer player;
 
 			foreach (var seat in this.gametable.TableSeats) {
@@ -278,25 +280,61 @@ namespace Games.Card.TexasHoldEm
 
 		// Add statistics if requested - only add active hands from
 		// end of game as inactive may not have a complete hand
-		private void Statistics() {
+		// this function is called twice ; first time after three public cards and at the end
+		// when all is finished
+		private void Statistics(IPlayCards commoncards) {
 			var stats = this.gametable.GetStatistics() as TexasHoldEmStatistics;
 			if (stats != null) {
 				bool winner = true;
-				foreach (var seat in this.gametable.TableSeats)
+				IPlayCards cards;
+				byte cardid;
+				if (commoncards.Count == 3)
 				{
-					if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default)) {
-						if (winner && seat.Player.Cards.WinHand) { 
-							stats.StatsAddWinner(seat.Player.Cards.Signature); 
-							winner = false; 
+					StatsHand.CommonCard1 = PlayCard.Id(commoncards.First());
+					StatsHand.CommonCard2 = PlayCard.Id(commoncards.Next());
+					StatsHand.CommonCard3 = PlayCard.Id(commoncards.Next());
+					StatsHand.CommonCard4 = 0;
+					StatsHand.CommonCard5 = 0;
+				}
+				else {
+					TexasStatisticsEntity entity;
+					byte playercnt = (byte)this.gametable.PlayerCount;
+					foreach (var c in commoncards) {
+						cardid = PlayCard.Id(c);
+						if (cardid == StatsHand.CommonCard1) { }
+						else if (cardid == StatsHand.CommonCard2) { }
+						else if (cardid == StatsHand.CommonCard3) { }
+						else if (StatsHand.CommonCard4 == 0) StatsHand.CommonCard4 = cardid;
+						else if (StatsHand.CommonCard5 == 0) StatsHand.CommonCard5 = cardid;
+						else throw new ApplicationException("Add Sataistics - more than 5 common cards!");
+					}
+					foreach (var seat in this.gametable.TableSeats)
+					{
+						if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default))
+						{
+							entity = new TexasStatisticsEntity();
+							entity.CommonCard1 = StatsHand.CommonCard1;
+							entity.CommonCard2 = StatsHand.CommonCard2;
+							entity.CommonCard3 = StatsHand.CommonCard3;
+							entity.CommonCard4 = StatsHand.CommonCard4;
+							entity.CommonCard5 = StatsHand.CommonCard5;
+							entity.Players = playercnt;
+							cards = seat.Player.Cards.GetCards();
+							entity.PrivateCard1 = PlayCard.Id(cards.First());
+							entity.PrivateCard2 = PlayCard.Id(cards.Next());
+							entity.Win = false;
+							entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
+							if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }
+							stats.StatsAddHand(entity);
 						}
-						stats.StatsAddHand(seat.Player.Cards.Signature);
 					}
 				}
+
 			}
 		}
 
-
-		ITexasHoldEmIO IO;
+		readonly TexasStatisticsEntity StatsHand;
+		readonly ITexasHoldEmIO IO;
 		IPlayCardStack cardStack;
 		int requiredbet;
 		ICardTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table

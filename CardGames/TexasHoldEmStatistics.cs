@@ -11,40 +11,37 @@ namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmStatistics : GameStatistics
 	{
-		public TexasHoldEmStatistics()
+		public TexasHoldEmStatistics(ITexasDb db)
 		{
-			statsWinners = new int[(int)PokerHand.RoyalStraightFlush + 1];
-			statsHands = new int[(int)PokerHand.RoyalStraightFlush + 1];
-			allhands = new CList<IPlayCardsSignature>();
-			winnerhands = new CList<IPlayCardsSignature>();
+			this.db = db;
+			allhands = new CList<TexasStatisticsEntity>();
 		}
 
-		public void StatsAddWinner(IPlayCardsSignature hand)
-		{
-			if (hand == null) return;
-			this.winnerhands.Add(hand);
-			statsWinners[hand.RankId]++;
-		}
-
-		public void StatsAddHand(IPlayCardsSignature hand)
+		public void StatsAddHand(TexasStatisticsEntity hand)
 		{
 			if (hand == null) return;
 			this.allhands.Add(hand);
-			statsHands[hand.RankId]++;
+		}
+
+		public int SaveToDb(TexasStatisticsEntity hand) {
+			if ((hand == null) || (this.db == null)) return 0;
+			if (QueToDb > 10) {	SaveDb(); QueToDb = 0; }
+			this.db.AddHand(hand);
+			return ++QueToDb;
+		}
+
+		public int SaveDb()
+		{
+			if (this.db == null) return 0;
+			return this.db.SaveChanges();
 		}
 
 
-		public int[] StatsWinnerHands { get { return this.statsWinners; } }
-		public int[] StatsHands { get { return this.statsHands; } }
+		public CList<TexasStatisticsEntity> AllHands { get { return this.allhands; } }
 
-
-		public CList<IPlayCardsSignature> WinnerHands { get { return this.winnerhands; } }
-		public CList<IPlayCardsSignature> AllHands { get { return this.allhands; } }
-
-		int[] statsWinners;
-		int[] statsHands;
-		CList<IPlayCardsSignature> allhands;
-		CList<IPlayCardsSignature> winnerhands;
+		readonly CList<TexasStatisticsEntity> allhands;
+		readonly ITexasDb db;
+		int QueToDb = 0;
 
 	}
 }

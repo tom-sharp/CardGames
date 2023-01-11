@@ -11,9 +11,10 @@ namespace CardGames
 {
 	class TexasSetup
 	{
-		public TexasSetup(ITexasHoldEmIO UI)
+		public TexasSetup(ITexasHoldEmIO UI, ITexasDb db)
 		{
 			this.IO = UI;
+			this.DB = db;
 		}
 
 
@@ -28,7 +29,17 @@ namespace CardGames
 
 			texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = settings.TableSeats });
 
-			if (settings.EnableStatistics) texastable.Statistics(new TexasHoldEmStatistics());
+			if (settings.EnableStatistics) {
+				if (settings.UseDb)
+				{
+					if (this.DB != null) this.DB.MigrateDb();
+					texastable.Statistics(new TexasHoldEmStatistics(this.DB));
+				}
+				else { 
+					texastable.Statistics(new TexasHoldEmStatistics(null));
+				}
+			}
+
 			if (settings.Quiet) texastable.SleepTime = -1;
 			else texastable.SleepTime = settings.SleepTime;
 
@@ -60,7 +71,7 @@ namespace CardGames
 
 
 		ITexasHoldEmIO IO;
-		
+		ITexasDb DB;
 
 	}
 }

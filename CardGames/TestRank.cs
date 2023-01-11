@@ -16,9 +16,8 @@ namespace CardGames
 	public static class TestRank
 	{
 		public static void Run() {
-			var rankit = new TexasRankHand();
+			var rankit = new TexasRankOn5Cards();
 			var cards = new PlayCards();
-			var cards2 = new CList<IPlayCard>();
 			int linebr = 0;
 
 
@@ -27,11 +26,10 @@ namespace CardGames
 			{
 				for (int j = 2; j < 15; j++)
 				{
-					cards2.Clear();
 					cards.Add(new PlayCardHeart(i));
 					cards.Add(new PlayCardDiamond(j));
 					cards.RankCards(rankit);
-					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
 					cards.Clear();
 					linebr++;
 					//					if (linebr % 5 == 0) Console.Write("\n");
@@ -42,7 +40,7 @@ namespace CardGames
 					cards.Add(new PlayCardHeart(i));
 					cards.Add(new PlayCardSpade(j));
 					cards.RankCards(rankit);
-					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
 					cards.Clear();
 				}
 
@@ -51,7 +49,7 @@ namespace CardGames
 					cards.Add(new PlayCardHeart(i));
 					cards.Add(new PlayCardClub(j));
 					cards.RankCards(rankit);
-					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
 					cards.Clear();
 				}
 
@@ -60,14 +58,75 @@ namespace CardGames
 					cards.Add(new PlayCardHeart(i));
 					cards.Add(new PlayCardHeart(j));
 					cards.RankCards(rankit);
-					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.Rank,-10}\n");
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+				}
+			}
+
+			for (int i = 2; i < 15; i++)
+			{
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardDiamond(i));
+					cards.Add(new PlayCardDiamond(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+					linebr++;
+					//					if (linebr % 5 == 0) Console.Write("\n");
+				}
+
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardDiamond(i));
+					cards.Add(new PlayCardSpade(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
 					cards.Clear();
 				}
 
-
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardDiamond(i));
+					cards.Add(new PlayCardClub(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+				}
 			}
 
+			for (int i = 2; i < 15; i++)
+			{
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardSpade(i));
+					cards.Add(new PlayCardSpade(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+				}
 
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardSpade(i));
+					cards.Add(new PlayCardClub(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+				}
+			}
+
+			for (int i = 2; i < 15; i++)
+			{
+				for (int j = 2; j < 15; j++)
+				{
+					cards.Add(new PlayCardClub(i));
+					cards.Add(new PlayCardClub(j));
+					cards.RankCards(rankit);
+					Console.Write($"{cards.First().Symbol},{cards.Next().Symbol},{cards.RankSignature.Rank,-10}\n");
+					cards.Clear();
+				}
+			}
 
 			return;
 

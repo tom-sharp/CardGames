@@ -27,15 +27,15 @@ namespace Games.Card.TexasHoldEm
 		// return true if accept or raise bet or false if fold
 		public override void AskBet(int tokens, ICardTable table)
 		{
-			var mycardsrank = this.Cards.GetCards().Rank;
+			var mycardsrank = this.Cards.GetCards();
 			IPlayCards dealercards = null;
 			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
 			var hand = this.Cards.GetCards().Add(dealercards);
 			int roundprogress = hand.Count;
 
-			var myrank = new TexasRankHand();
-			var dealerrank = new TexasRankHand();
-			var totalrank = new TexasRankHand();
+			var myrank = new TexasRankOn5Cards();
+			var dealerrank = new TexasRankOn5Cards();
+			var totalrank = new TexasRankOn5Cards();
 
 
 			// SOME DECISION MAKING HERE

@@ -45,6 +45,7 @@ namespace CardGames
 		/// </summary>
 		public bool EnableStatistics { get; set; }
 
+		public bool UseDb { get; set; }
 
 		/// <summary>
 		/// Quiet output
@@ -78,6 +79,7 @@ namespace CardGames
 			Players = 5;
 			Tokens = 1000;
 			EnableStatistics = false;
+			UseDb = false;
 			Quiet = false;
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
@@ -100,6 +102,7 @@ namespace CardGames
 					str.Str(arg).ToLower();
 					if (str.BeginWith("?")) { return "?"; }
 					else if (str.BeginWith("-s")) { EnableStatistics = true; QuietNotStatistics = true; }
+					else if (str.BeginWith("-db")) UseDb = true;
 					else if (str.BeginWith("-qr")) { Quiet = true; QuietNotSummary = true; }
 					else if (str.BeginWith("-q")) Quiet = true;
 					else if (str.BeginWith("r")) RoundsToPlay = str.FilterKeep(filter).ToInt32();
