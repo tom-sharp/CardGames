@@ -69,6 +69,8 @@ namespace CardGames
 			}
 
 
+
+
 			return texastable;
 		}
 

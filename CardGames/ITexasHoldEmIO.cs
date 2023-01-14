@@ -19,7 +19,7 @@ namespace Games.Card.TexasHoldEm
 
 		void Finish();
 
-		void ShowRoundSummary(ICardTable table);
+		void ShowRoundSummary(ICardTable table, bool samepage);
 
 		void ShowGameStatistics(TexasHoldEmStatistics statistics);
 		void ShowGamePlayerStatistics(ICardTable table);

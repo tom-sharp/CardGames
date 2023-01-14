@@ -3,6 +3,8 @@ using System.Threading;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
+using Games.Card.TexasHoldEm.Misc;
+
 
 namespace Games.Card.TexasHoldEm
 {
@@ -47,6 +49,7 @@ namespace Games.Card.TexasHoldEm
 
 		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
 			this.cardStack = new PlayCardStack(decks: 1);
+			UpdatePlayCardSymbols.SetNewAsciiCardSymbols(this.cardStack);
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 			this.IO = UI;
@@ -131,7 +134,7 @@ namespace Games.Card.TexasHoldEm
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
 			FindWinner();
-			this.IO.ShowRoundSummary(this.gametable);
+			this.IO.ShowRoundSummary(this.gametable, samepage: true);
 			Statistics(this.Cards.GetCards());
 		}
 
