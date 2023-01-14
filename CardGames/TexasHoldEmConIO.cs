@@ -29,6 +29,8 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public void ShowHelp() {
+			ui.PushColor();
+			SetStdColor();
 			ShowMsg("Arguments:");
 			ShowMsg(" r = rounds to play     s = number of table seats    p = number of players");
 			ShowMsg(" t = player tokens      ? = help");
@@ -41,6 +43,7 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -q");
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -qr");
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -qr -db");
+			ui.PopColor();
 		}
 
 
@@ -60,8 +63,9 @@ namespace Games.Card.TexasHoldEm
 
 
 			if (SupressOutput) return;
+			SetStdColor();
 			Console.CursorVisible = false;
-			Console.Clear();
+			ui.ClearScrn();
 			playerseats.Clear();
 			MsgLog.Clear();
 
@@ -81,25 +85,37 @@ namespace Games.Card.TexasHoldEm
 			IPlayCards playerhand;
 
 			if (!SupressOutput) Console.Clear();
+			SetStdColor();
 
 			foreach (var seat in table.TableSeats)
 			{
 				if (!seat.IsFree)
 				{
 					msg.Clear();
-					msg.Append($" Seat {counter,2}. ");
-					msg.Append($"{seat.Player.Name,-15}  {seat.Player.Tokens,10}  {seat.IsActive,5}   { seat.Player.Cards.Signature.Name,-20 } ");
-					if (seat.Player.Cards.WinHand) msg.Append(" *WIN* "); else msg.Append("       ");
-					playerhand = seat.Player.Cards.GetCards().Sort(SortCardsFunc);
-					foreach (var card in playerhand)
-					{
-						msg.Append($"  {card.Symbol}");
+					msg.Append($" Seat {counter,2}. {seat.Player.Name,-15}  ");
+					if (seat.Player.Type == GamePlayerType.Default) { msg.Append(new CStr(12, 32));  }
+					else msg.Append($"{seat.Player.Tokens,10}  ");
+					if (seat.IsActive) {
+						if (seat.Player.Type == GamePlayerType.Default) { msg.Append(new CStr(20, 32)); SetActiveColor(); }
+						else msg.Append($"{seat.Player.Cards.Signature.Name,-20 }");
+						if (seat.Player.Cards.WinHand) { msg.Append(" *WIN* "); SetActiveColor(); } else msg.Append("       "); 
+						playerhand = seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+						foreach (var card in playerhand)
+						{
+							msg.Append($"  {card.Symbol}");
+						}
 					}
-					ShowMsg(msg.ToString());
+					ui.Show(msg.Append("\n").ToString());
+					SetStdColor();
 				}
 				counter++;
 			}
-			ShowMsg($" Pot tokens:             {table.TablePot.Tokens,12}");
+			ui.Show(msg.Append("\n").ToString());
+			if (!SupressOutput) {
+				SetHighLightColor();
+				ui.GetKey("Press Any Key");
+				SetStdColor();
+			}
 		}
 
 
@@ -126,7 +142,7 @@ namespace Games.Card.TexasHoldEm
 				ShowMsg("\nStatistics:                  Winning Hand                Hands");
 				double winpct, handpct, hands, handswin, hand, handwin;
 				hands = TotalHands; handswin = TotalWin;
-				for (int count = 0; count < (int)PokerHand.RoyalStraightFlush; count++)
+				for (int count = 0; count <= (int)PokerHand.RoyalStraightFlush; count++)
 				{
 					hand = 100 * TotalRank[count];
 					handwin = 100 * WinningRank[count];
@@ -142,10 +158,11 @@ namespace Games.Card.TexasHoldEm
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
 
 			if (table != null) {
-				ShowMsg("Players:");
+				SetStdColor();
+				ui.Show("Players:\n");
 				foreach (var seat in table.TableSeats)
 				{
-					if (!seat.IsFree) ShowMsg($" {seat.Player.Name,-20} Tokens {seat.Player.Tokens,10}");
+					if (!seat.IsFree) ui.Show($" {seat.Player.Name,-20} Tokens {seat.Player.Tokens,10}\n");
 				}
 			}
 		}
@@ -202,7 +219,6 @@ namespace Games.Card.TexasHoldEm
 		public int AskForBet(int tokens)
 		{
 			if (SupressOutput) return 0;
-
 			int result = this.menu.Ask(tokens);
 			Cleanup(this.menu.X, this.menu.Y, 21, 10);
 			return result;
@@ -212,6 +228,7 @@ namespace Games.Card.TexasHoldEm
 			var str = new CStr(width, 32);
 			int count = 0;
 			while (count < height) { WriteXY(x, y + count, str.ToString()); count++; }
+			ui.HideCursor();
 		}
 
 
@@ -261,9 +278,11 @@ namespace Games.Card.TexasHoldEm
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
 
 			ui.PushColor();
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+			SetHighLightColor();
+//			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
 			ui.ShowXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
+			SetActiveColor();
+//			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
 			ui.ShowXY(seat.X, seat.Y + 2, $"Pot{this.table.TablePot.Tokens,7}");
 			ui.ShowXY(seat.X, seat.Y + 4, $"{seat.Cards}");
 			ui.PopColor();
@@ -280,7 +299,7 @@ namespace Games.Card.TexasHoldEm
 				foreach (var c in Cards) { Hand.Append($"**  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
 			if (seat.Seat.Player.Cards.Signature != null) seat.Hand = seat.Seat.Player.Cards.Signature.Name;
-			SetStdColor();
+			if (seat.Seat.IsActive) SetStdColor(); else SetInactiveColor();
 			ui.ShowXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
 			ui.ShowXY(seat.X, seat.Y + 1, $"Tkns{seat.Seat.Player.Tokens,6}");
 			ui.ShowXY(seat.X, seat.Y + 2, $"Bet{seat.Seat.Bets,7}");
@@ -300,9 +319,11 @@ namespace Games.Card.TexasHoldEm
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
 			if (seat.Seat.Player.Cards.Signature != null) seat.Hand = seat.Seat.Player.Cards.Signature.Name;
 			ui.PushColor();
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+//			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+			SetHighLightColor();
 			ui.ShowXY(seat.X, seat.Y, $"{seat.Seat.Player.Name}");
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
+			SetActiveColor();
+//			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
 			ui.ShowXY(seat.X, seat.Y + 1, $"Tkns{seat.Seat.Player.Tokens,6}");
 			ui.ShowXY(seat.X, seat.Y + 2, $"Bet{seat.Seat.Bets,7}");
 			ui.ShowXY(seat.X, seat.Y + 3, $"{seat.Seat.Player.Status,-10}");
@@ -313,10 +334,11 @@ namespace Games.Card.TexasHoldEm
 
 		void UpdateMessageLog() {
 			int y = 0;
+			SetStdColor();
 
 			foreach (var message in this.MsgLog.Msg)
 			{
-				WriteXY(MsgLog.X, MsgLog.Y + y, $"{message}");
+				ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"{message}");
 				y++;
 			}
 
@@ -373,7 +395,7 @@ namespace Games.Card.TexasHoldEm
 			}
 
 			const int loglength = 5;
-			const int logwidth = 30;
+			const int logwidth = 35;
 
 			public int Width { get { return logwidth; } }
 			public string[] Msg  = new string[loglength];
@@ -438,6 +460,21 @@ namespace Games.Card.TexasHoldEm
 
 		void SetStdColor() { 
 			ui.SetColor(ConsoleColor.Green, ConsoleColor.Black);
+		}
+
+		void SetInactiveColor()
+		{
+			ui.SetColor(ConsoleColor.DarkGreen, ConsoleColor.Black);
+		}
+
+		void SetActiveColor()
+		{
+			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
+		}
+
+		void SetHighLightColor()
+		{
+			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
 		}
 
 		ConIO ui = ConIO.PInstance;

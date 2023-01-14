@@ -3,9 +3,9 @@
 
 namespace Games.Card.TexasHoldEm
 {
-	class TexasRankNothing : PlayCardsSignature
+	class TexasRankNothing : PlayCardsRankSignature
 	{
-		public TexasRankNothing() : base(0, null)
+		public TexasRankNothing() : base(0)
 		{
 			this.rankname = "Nothing";
 		}

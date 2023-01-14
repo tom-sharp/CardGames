@@ -1,14 +1,14 @@
 ﻿using Syslib;
 using Syslib.Games.Card;
-using Syslib.Games.Card.TexasHoldEm;
 using Syslib.Games;
 using System.Threading;
 
 namespace Games.Card.TexasHoldEm
 {
-	public class TexasHoldEmPlayerRobot : CardPlayerRobot, ITexasHoldEmPlayer
+	public class TexasHoldEmPlayerAi : CardPlayerAi, ITexasHoldEmPlayer
 	{
-		public TexasHoldEmPlayerRobot(ICardPlayerConfig config) : base(config)
+
+		public TexasHoldEmPlayerAi(ICardPlayerConfig config) : base(config)
 		{
 		}
 
@@ -28,28 +28,35 @@ namespace Games.Card.TexasHoldEm
 
 
 		// return true if accept or raise bet or false if fold
-		// need to know here is common cards, active players
 		public override void AskBet(int tokens, ICardTable table)
 		{
 			this.maxbetraises = table.MaxBetRaises;
 
+			var mycardsrank = this.Cards.GetCards();
+			IPlayCards dealercards = null;
+			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
+			var hand = this.Cards.GetCards().Add(dealercards);
+			int roundprogress = hand.Count;
+
+			var myrank = new TexasRankOn5Cards();
+			var dealerrank = new TexasRankOn5Cards();
+			var totalrank = new TexasRankOn5Cards();
+
+
+			// SOME DECISION MAKING HERE
+			// weight: progress 2, 5, 6, 7 cards ?
+			// weight: rank of two private cards
+			// weight: rank of private and public cards (to normal distribution)
+			// weight: rank of dealer cards (posibilites for opponents)
+			// weight: playerprofile
+			// weight: random weight in decision ?
+
+
+			
 			if (CRandom.Random.RandomBool(this.Profile.Randomness))
 			{
 				RandomDecision(tokens);
 				return;
-			}
-
-			var mycards = this.Cards.GetCards();
-			IPlayCards dealercards = null;
-			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
-			var hand = this.Cards.GetCards().Add(dealercards);
-
-			// find out: 2 cards, 2+3, 2+4, 2+5 (flop, turn,river, showdown)
-			switch (hand.Count) {
-				case 2: flop(tokens, mycards, table.ActiveSeatCount); return;
-				case 5: turn(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;
-				case 6: river(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;
-				case 7: showdown(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;
 			}
 
 
@@ -59,32 +66,7 @@ namespace Games.Card.TexasHoldEm
 
 		}
 
-		// 2 cards
-		void flop(int tokens, IPlayCards mycards, int players) {
 
-			var rank2card = mycards.RankCards(new TexasRankOn2Cards()).RankSignature.Rank;
-			int result = new EvaluateTexasHand().EvaluateFlop(rank2card, this.Profile.Weight, players);
-
-			if (result < 0) { if (tokens > 0) FoldBet(); }
-			else if (result == 0) { if (tokens > 0) CallBet(tokens); else CheckBet(); }
-			else RaiseBet(tokens, tokens + result);
-
-
-
-
-		}
-
-		// 5 cards
-		void river(int tokens, IPlayCards mycards, IPlayCards dealercards, IPlayCards allcards, int players) { 
-		}
-
-		// 6 cards
-		void turn(int tokens, IPlayCards mycards, IPlayCards dealercards, IPlayCards allcards, int players) { 
-		}
-
-		// 7 cards
-		void showdown(int tokens, IPlayCards mycards, IPlayCards dealercards, IPlayCards allcards, int players) { 
-		}
 
 
 		void RandomDecision(int tokens) {
@@ -102,6 +84,11 @@ namespace Games.Card.TexasHoldEm
 				else CheckBet();
 			}
 		}
+
+
+
+
+
 
 		void FoldBet()
 		{
@@ -132,8 +119,8 @@ namespace Games.Card.TexasHoldEm
 			this.Status = "Raise";
 		}
 
-
 		int maxbetraises;
+
 
 	}
 }

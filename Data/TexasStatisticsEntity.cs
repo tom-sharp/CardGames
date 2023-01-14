@@ -15,6 +15,9 @@ namespace Games.Card.TexasHoldEm
 		public byte Players { get; set; }
 
 		public byte RankId { get; set; }
+		public byte RankId2Cards { get; set; }
+		public byte RankId5Cards { get; set; }
+		public byte RankId6Cards { get; set; }
 
 		public byte PrivateCard1 { get; set; }
 		public byte PrivateCard2 { get; set; }

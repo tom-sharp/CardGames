@@ -71,12 +71,26 @@ namespace CardGames
 
 
 		/// <summary>
+		/// 
+		/// Number of raies a player can do in one round, unlimited if 0
+		/// 
+		/// </summary>
+		public int MaxBetRaises { get; set; }
+
+		/// <summary>
+		/// 
+		/// Max BetRaise Limit, 0 for unlimited
+		/// 
+		/// </summary>
+		public int MaxBetLimit { get; set; }
+
+		/// <summary>
 		/// Reset to defalt settings
 		/// </summary>
 		public void Default() {
 			RoundsToPlay = 5;
-			TableSeats = 8;
-			Players = 5;
+			TableSeats = 9;
+			Players = 9;
 			Tokens = 1000;
 			EnableStatistics = false;
 			UseDb = false;
@@ -84,6 +98,8 @@ namespace CardGames
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
 			SleepTime = 250;
+			MaxBetRaises = 4;
+			MaxBetLimit = 0;
 		}
 
 

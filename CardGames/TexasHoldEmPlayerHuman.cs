@@ -4,7 +4,7 @@ using Syslib.Games;
 
 namespace Games.Card.TexasHoldEm
 {
-	public class TexasHoldEmPlayerHuman : CardPlayerHuman
+	public class TexasHoldEmPlayerHuman : CardPlayerHuman, ITexasHoldEmPlayer
 	{
 		public TexasHoldEmPlayerHuman(ICardPlayerConfig config, ITexasHoldEmIO inout):base(config)
 		{
@@ -17,9 +17,19 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(tokens);
 		}
 
+		public int BetRaiseCounter { get; private set; }
+		public override bool GetReady()
+		{
+			this.Cards.ClearHand();
+			this.Status = "Ready";
+			BetRaiseCounter = 0;
+			return true;
+		}
+
 
 		public override void AskBet(int tokens, ICardTable table)
 		{
+			this.maxbetraises = table.MaxBetRaises;
 
 			int returnbet = this.IO.AskForBet(tokens);
 			if (returnbet < 0) FoldBet();
@@ -56,12 +66,14 @@ namespace Games.Card.TexasHoldEm
 
 		void RaiseBet(int tokensrequested, int tokensplaced)
 		{
+			if (this.maxbetraises > 0 && maxbetraises <= BetRaiseCounter++) { if (tokensrequested > 0) CallBet(tokensrequested); else CheckBet(); return; }
 			this.TableSeat.PlaceBet(tokensplaced);
 			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
 			this.Status = "Raised";
 		}
 
+		int maxbetraises;
 
 		ITexasHoldEmIO IO;
 

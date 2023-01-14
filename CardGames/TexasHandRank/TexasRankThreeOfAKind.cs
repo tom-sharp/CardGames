@@ -3,9 +3,9 @@
 
 namespace Games.Card.TexasHoldEm
 {
-	class TexasRankThreeOfAKind : PlayCardsSignature
+	class TexasRankThreeOfAKind : PlayCardsRankSignature
 	{
-		public TexasRankThreeOfAKind(ulong rank, IPlayCardsRank ranksource) : base(rank, ranksource)
+		public TexasRankThreeOfAKind(ulong signature) : base(signature)
 		{
 			this.rankname = "Three of a kind";
 		}

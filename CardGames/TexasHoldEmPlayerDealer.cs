@@ -42,7 +42,7 @@ namespace Games.Card.TexasHoldEm
 	*/
 
 
-	public class TexasHoldEmPlayerDealer : CardPlayerDefault
+	public class TexasHoldEmPlayerDealer : CardPlayerDefault, ITexasHoldEmPlayer
 	{
 
 		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
@@ -52,6 +52,16 @@ namespace Games.Card.TexasHoldEm
 			this.IO = UI;
 			this.StatsHand = new TexasStatisticsEntity();
 		}
+
+		public int BetRaiseCounter { get; private set; }
+		public override bool GetReady()
+		{
+			this.Cards.ClearHand();
+			this.Status = "Ready";
+			BetRaiseCounter = 0;
+			return true;
+		}
+
 
 		public override void PlaceBet(int tokens, ICardTable table)
 		{
@@ -123,7 +133,6 @@ namespace Games.Card.TexasHoldEm
 			FindWinner();
 			this.IO.ShowRoundSummary(this.gametable);
 			Statistics(this.Cards.GetCards());
-			Wait(5000);
 		}
 
 
@@ -290,9 +299,9 @@ namespace Games.Card.TexasHoldEm
 				byte cardid;
 				if (commoncards.Count == 3)
 				{
-					StatsHand.CommonCard1 = PlayCard.Id(commoncards.First());
-					StatsHand.CommonCard2 = PlayCard.Id(commoncards.Next());
-					StatsHand.CommonCard3 = PlayCard.Id(commoncards.Next());
+					StatsHand.CommonCard1 = PlayCard.Signature(commoncards.First());
+					StatsHand.CommonCard2 = PlayCard.Signature(commoncards.Next());
+					StatsHand.CommonCard3 = PlayCard.Signature(commoncards.Next());
 					StatsHand.CommonCard4 = 0;
 					StatsHand.CommonCard5 = 0;
 				}
@@ -300,7 +309,7 @@ namespace Games.Card.TexasHoldEm
 					TexasStatisticsEntity entity;
 					byte playercnt = (byte)this.gametable.PlayerCount;
 					foreach (var c in commoncards) {
-						cardid = PlayCard.Id(c);
+						cardid = PlayCard.Signature(c);
 						if (cardid == StatsHand.CommonCard1) { }
 						else if (cardid == StatsHand.CommonCard2) { }
 						else if (cardid == StatsHand.CommonCard3) { }
@@ -320,8 +329,8 @@ namespace Games.Card.TexasHoldEm
 							entity.CommonCard5 = StatsHand.CommonCard5;
 							entity.Players = playercnt;
 							cards = seat.Player.Cards.GetCards();
-							entity.PrivateCard1 = PlayCard.Id(cards.First());
-							entity.PrivateCard2 = PlayCard.Id(cards.Next());
+							entity.PrivateCard1 = PlayCard.Signature(cards.First());
+							entity.PrivateCard2 = PlayCard.Signature(cards.Next());
 							entity.Win = false;
 							entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
 							if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }

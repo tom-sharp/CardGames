@@ -41,11 +41,11 @@ namespace CardGameTest
 			Assert.AreEqual("**", Joker.Symbol);
 
 			Assert.AreEqual(0, Invalid1.Rank);
-			Assert.AreEqual(PlayCardSuit.Blank, Invalid1.Suit);
+			Assert.AreEqual(PlayCardSuit.Invalid, Invalid1.Suit);
 			Assert.AreEqual("--", Invalid1.Symbol);
 
 			Assert.AreEqual(0, Invalid2.Rank);
-			Assert.AreEqual(PlayCardSuit.Blank, Invalid1.Suit);
+			Assert.AreEqual(PlayCardSuit.Invalid, Invalid1.Suit);
 			Assert.AreEqual("--", Invalid1.Symbol);
 
 		}
