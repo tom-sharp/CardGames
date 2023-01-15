@@ -10,55 +10,93 @@ namespace CardGames
 		public Texas(ITexasHoldEmIO UI, TexasDbContext dbcontext)
 		{
 			this.DB = new TexasDb(dbcontext);
-			this.IO = UI;
-			this.settings = new TexasSettings();
-			this.setup = new TexasSetup(UI, DB);
+			this.UI = UI;
+			this.game = null;
+			this.RoundsToPlay = -1;
 		}
 
+		public Texas Setup(string[] arguments = null, ITexasHoldEmSettings usesettings = null) {
+			ITexasHoldEmSettings settings = usesettings;
+			if (settings == null) settings = new TexasHoldEmSettings();
 
-		public void Run(string[] args) {
-
-			// Get configuration
-			string result = settings.ProcessArguments(args);
-			if (result.Length > 0) { 
-				if (result == "?") this.IO.ShowHelp();
-				else this.IO.ShowProgressMessage($"Invalid argument {result}");
-				return;
+			string result = ProcessArguments(arguments, settings);
+			if (result != null) {
+				if (result == "?") this.UI.ShowHelp();
+				else this.UI.ShowMsg($"Invalid argument {result}");
+				return this;
 			}
 
 			// Set up game based on  configuration
-			var table = (TexasHoldEmTable)setup.TexasTable(settings);
+			this.game = new TexasHoldEmFactory(this.UI, this.DB).TexasTable(settings);
+
+			this.RoundsToPlay = settings.RoundsToPlay;
+
+			return this;
+		}
+
+
+		public void Run()
+		{
+
+			if (this.RoundsToPlay < 0) return;
 
 			// Run Game
-			while (true) {
+			while (true)
+			{
 
-				if (settings.RoundsToPlay > 0 && table.GetStatistics().GamesPlayed >= settings.RoundsToPlay) break;
+				if (this.RoundsToPlay > 0 && game.GetStatistics().GamesPlayed >= this.RoundsToPlay) break;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
 
-				if (table.PlayerCount < 2) break;
+				if (game.PlayerCount < 2) break;
 
-				table.PlayGame();
+				game.PlayGame();
 
 			}
 
-			ShowStatistics(table);
-			this.IO.Finish();
+			ShowStatistics(game);
+			this.UI.Finish();
+		}
+
+
+		string ProcessArguments(string[] args, ITexasHoldEmSettings settings)
+		{
+			if ((args != null) && (args.Length > 0))
+			{
+				var str = new CStr();
+				var filter = new CStr("0123456789");
+				foreach (var arg in args)
+				{
+					str.Str(arg).ToLower();
+					if (str.BeginWith("?")) { return "?"; }
+					else if (str.BeginWith("-s")) { settings.EnableStatistics = true; settings.QuietNotStatistics = true; }
+					else if (str.BeginWith("-db")) settings.UseDb = true;
+					else if (str.BeginWith("-qr")) { settings.Quiet = true; settings.QuietNotSummary = true; }
+					else if (str.BeginWith("-q")) settings.Quiet = true;
+					else if (str.BeginWith("r")) settings.RoundsToPlay = str.FilterKeep(filter).ToInt32();
+					else if (str.BeginWith("s")) settings.TableSeats = str.FilterKeep(filter).ToInt32();
+					else if (str.BeginWith("p")) settings.Players = str.FilterKeep(filter).ToInt32();
+					else if (str.BeginWith("t")) settings.Tokens = str.FilterKeep(filter).ToInt32();
+					else return arg;
+				}
+			}
+
+			return null;
 		}
 
 
 
 
-		private void ShowStatistics(ICardTable table) {
-			this.IO.ShowGameStatistics(table.GetStatistics() as TexasHoldEmStatistics);
-			this.IO.ShowGamePlayerStatistics(table);
+		void ShowStatistics(ICardTable table) {
+			this.UI.ShowGameStatistics(table.GetStatistics() as TexasHoldEmStatistics);
+			this.UI.ShowGamePlayerStatistics(table);
 		}
 
-
-		ITexasHoldEmIO IO;
-		TexasSettings settings;
-		TexasSetup setup;
+		int RoundsToPlay;
+		ITexasHoldEmIO UI;
+		TexasHoldEmTable game;
 		readonly TexasDb DB;
+
 	}
 }

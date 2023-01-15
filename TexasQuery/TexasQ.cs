@@ -11,8 +11,9 @@ namespace TexasQuery
 	public class TexasQ
 	{
 		public void Run(string[] args) {
-			new Texas(UI: new TexasHoldEmConIO(), new TexasDbContext()).Run(args);
-
+			new Texas(UI: new TexasHoldEmConIO(), new TexasDbContext())
+				.Setup(arguments: args)
+				.Run();
 		}
 	}
 }

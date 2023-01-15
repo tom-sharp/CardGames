@@ -8,8 +8,9 @@ namespace CardGames
 		static void Main(string[] args)
 		{
 			CSyslib.MinVersion(1,0,3);
-			new Texas(UI: new TexasHoldEmConIO(), new TexasDbContext()).Run(args);
-//			TestRank.Run();
+			new Texas(UI: new TexasHoldEmConIO(), new TexasDbContext())
+				.Setup(arguments: args)
+				.Run();
 		}
 	}
 }

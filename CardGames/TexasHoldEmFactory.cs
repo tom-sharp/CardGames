@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace CardGames
 {
-	class TexasSetup
+	class TexasHoldEmFactory
 	{
-		public TexasSetup(ITexasHoldEmIO UI, ITexasDb db)
+		public TexasHoldEmFactory(ITexasHoldEmIO UI, ITexasDb db)
 		{
 			this.IO = UI;
 			this.DB = db;
 		}
 
 
-		public ICardTable TexasTable(TexasSettings settings)
+		public TexasHoldEmTable TexasTable(ITexasHoldEmSettings settings)
 		{
-			CardTable texastable;
+			TexasHoldEmTable texastable;
 			this.IO.ShowMsg($"Playing {settings.RoundsToPlay} rounds with {settings.Players} players having {settings.Tokens} tokens each at table with {settings.TableSeats} seats ");
 			this.IO.SupressOutput = settings.Quiet;
 			this.IO.SupressOverrideRoundSummary = settings.QuietNotSummary;
@@ -74,9 +74,8 @@ namespace CardGames
 			return texastable;
 		}
 
-
-		ITexasHoldEmIO IO;
-		ITexasDb DB;
+		readonly ITexasHoldEmIO IO;
+		readonly ITexasDb DB;
 
 	}
 }
