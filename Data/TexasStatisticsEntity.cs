@@ -8,6 +8,10 @@ namespace Games.Card.TexasHoldEm
 {
 	public class TexasStatisticsEntity
 	{
+		public TexasStatisticsEntity()
+		{
+			CardsSignature = new byte[8];
+		}
 		public int Id { get; set; }
 
 
@@ -18,14 +22,9 @@ namespace Games.Card.TexasHoldEm
 		public byte RankId2Cards { get; set; }
 		public byte RankId5Cards { get; set; }
 		public byte RankId6Cards { get; set; }
-
-		public byte PrivateCard1 { get; set; }
-		public byte PrivateCard2 { get; set; }
-		public byte CommonCard1 { get; set; }
-		public byte CommonCard2 { get; set; }
-		public byte CommonCard3 { get; set; }
-		public byte CommonCard4 { get; set; }
-		public byte CommonCard5 { get; set; }
+		public byte RankIdCommonCards { get; set; }
+		
+		public byte[] CardsSignature { get; set; }
 
 	}
 }

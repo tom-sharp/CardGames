@@ -127,7 +127,6 @@ namespace Games.Card.TexasHoldEm
 			this.IO.ReDrawGameTable();
 			PlaceBets();
 			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
-			Statistics(this.Cards.GetCards());
 			PlaceBets();
 			DealPublicCards(cards: 1);                      // deal 1 public cards (dealer hand)
 			PlaceBets();
@@ -244,18 +243,20 @@ namespace Games.Card.TexasHoldEm
 			ulong winnerrank = 0;
 			var WinnersSeats = new CList<ICardTableSeat>();
 			var texasrank = new TexasRankOn5Cards();
-			ICardPlayer player;
+
+			// rank all hands, even those who fold (for statistics only)
 
 			foreach (var seat in this.gametable.TableSeats) {
 				if (!seat.IsFree) {
-					player = seat.Player;
-					if ((seat.IsActive) && (seat.Player != this))
+					seat.Player.Cards.RankCards(texasrank); // rank all player cards individually (for statistics)
+					if (seat.Player != this)
 					{
 						seat.Player.Cards.Signature = texasrank.GetSignature(seat.Player.Cards.GetCards().Add(this.Cards.GetCards()));
-						seat.Player.Status = seat.Player.Cards.Signature.Name;
-						if (winnerrank < seat.Player.Cards.Signature.Rank) winnerrank = seat.Player.Cards.Signature.Rank;
+						if (seat.IsActive) {
+							seat.Player.Status = seat.Player.Cards.Signature.Name;
+							if (winnerrank < seat.Player.Cards.Signature.Rank) winnerrank = seat.Player.Cards.Signature.Rank;
+						}
 					}
-					else seat.Player.Cards.Signature = new TexasRankNothing();
 				}
 			}
 
@@ -283,65 +284,49 @@ namespace Games.Card.TexasHoldEm
 			this.IO.ReDrawGameTable();
 		}
 
-		private bool SortOnHandRank(ICardTableSeat seat1, ICardTableSeat seat2) {
-			if (seat1.Player.Cards.Signature.Signature < seat2.Player.Cards.Signature.Rank) return true;
-			return false;
-		}
-
-
 
 		// Add statistics if requested - only add active hands from
 		// end of game as inactive may not have a complete hand
-		// this function is called twice ; first time after three public cards and at the end
-		// when all is finished
 		private void Statistics(IPlayCards commoncards) {
 			var stats = this.gametable.GetStatistics() as TexasHoldEmStatistics;
 			if (stats != null) {
 				bool winner = true;
 				IPlayCards cards;
-				byte cardid;
-				if (commoncards.Count == 3)
-				{
-					StatsHand.CommonCard1 = PlayCard.Signature(commoncards.First());
-					StatsHand.CommonCard2 = PlayCard.Signature(commoncards.Next());
-					StatsHand.CommonCard3 = PlayCard.Signature(commoncards.Next());
-					StatsHand.CommonCard4 = 0;
-					StatsHand.CommonCard5 = 0;
-				}
-				else {
-					TexasStatisticsEntity entity;
-					byte playercnt = (byte)this.gametable.PlayerCount;
-					foreach (var c in commoncards) {
-						cardid = PlayCard.Signature(c);
-						if (cardid == StatsHand.CommonCard1) { }
-						else if (cardid == StatsHand.CommonCard2) { }
-						else if (cardid == StatsHand.CommonCard3) { }
-						else if (StatsHand.CommonCard4 == 0) StatsHand.CommonCard4 = cardid;
-						else if (StatsHand.CommonCard5 == 0) StatsHand.CommonCard5 = cardid;
-						else throw new ApplicationException("Add Sataistics - more than 5 common cards!");
-					}
-					foreach (var seat in this.gametable.TableSeats)
-					{
-						if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default))
-						{
-							entity = new TexasStatisticsEntity();
-							entity.CommonCard1 = StatsHand.CommonCard1;
-							entity.CommonCard2 = StatsHand.CommonCard2;
-							entity.CommonCard3 = StatsHand.CommonCard3;
-							entity.CommonCard4 = StatsHand.CommonCard4;
-							entity.CommonCard5 = StatsHand.CommonCard5;
-							entity.Players = playercnt;
-							cards = seat.Player.Cards.GetCards();
-							entity.PrivateCard1 = PlayCard.Signature(cards.First());
-							entity.PrivateCard2 = PlayCard.Signature(cards.Next());
-							entity.Win = false;
-							entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
-							if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }
-							stats.StatsAddHand(entity);
-						}
-					}
+				int cardno = 0;
+
+				TexasStatisticsEntity entity;
+				byte playercnt = (byte)this.gametable.PlayerCount;
+
+				cardno += 2;
+				foreach (var c in commoncards) {
+					if (cardno >= StatsHand.CardsSignature.Length) throw new ApplicationException("Add Sataistics - more than 5 common cards!");
+					StatsHand.CardsSignature[cardno++] = PlayCard.Signature(c);
 				}
 
+				foreach (var seat in this.gametable.TableSeats)
+				{
+					if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default))
+					{
+						entity = new TexasStatisticsEntity();
+						cardno = 0;
+						cards = seat.Player.Cards.GetCards();
+
+						entity.CardsSignature[cardno++] = PlayCard.Signature(cards.First());
+						entity.CardsSignature[cardno++] = PlayCard.Signature(cards.Next());
+						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.Players = playercnt;
+						entity.Win = false;
+						entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
+						entity.RankId2Cards = PlayCards.RankId(cards.RankSignature.Signature);
+						entity.RankIdCommonCards = commoncards.RankSignature.RankId;
+						if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }
+						stats.StatsAddHand(entity);
+					}
+				}
 			}
 		}
 

@@ -145,7 +145,6 @@ namespace Games.Card.TexasHoldEm
 					TotalRank[entity.RankId]++;
 					if (entity.Win) { TotalWin++; WinningRank[entity.RankId]++; }
 					statistics.SaveToDb(entity);
-					if (TotalHands % 1000 == 0) Console.Write($"\r{TotalHands}");
 				}
 				statistics.SaveDb();
 
@@ -264,7 +263,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		void UpdateDealer(PlayerSeat seat) {
-			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Cards = seat.Seat.Player.Cards.GetCards();
 			var Hand = new CStr();
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
@@ -277,7 +276,7 @@ namespace Games.Card.TexasHoldEm
 
 		void UpdateDealerActive(PlayerSeat seat)
 		{
-			var Cards = seat.Seat.Player.Cards.GetCards().Sort(SortCardsFunc);
+			var Cards = seat.Seat.Player.Cards.GetCards();
 			var Hand = new CStr();
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();

@@ -61,10 +61,8 @@ namespace CardGames
 //				else if (count == 3) texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"RndRobot", Tokens = settings.Tokens, PlayerProfile = RandomProfile}));
 //				else if (count == 6) texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"RndRobot", Tokens = settings.Tokens, PlayerProfile = AlwaysCallProfile}));
 //				else if (count == 8) texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"RndRobot", Tokens = settings.Tokens, PlayerProfile = AlwaysCallProfile}));
-				else texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Robot{count}", Tokens = settings.Tokens, PlayerProfile = NeutralProfile }));
-//				if (count == 2) playerlist.Add(new CardPlayerRobot(name: $"Player{count} rnd", tokens, new GamePlayerProfileRandom()));
-				////				else if (count == 3) playerlist.Add(new CardPlayerHuman(name: $"Human", new TokenWallet(tokens: tokens)));
-				//				else playerlist.Add(new CardPlayerRobot(name: $"Player{count}", tokens));
+//				else texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"Robot{count}", Tokens = settings.Tokens, PlayerProfile = NeutralProfile }));
+				else  texastable.Join(new TexasHoldEmPlayerRobot(new CardPlayerConfig() { Name = $"RndRobot", Tokens = settings.Tokens, PlayerProfile = AlwaysCallProfile}));
 
 			}
 

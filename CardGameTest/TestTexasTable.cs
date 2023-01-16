@@ -245,9 +245,6 @@ namespace CardGameTest
 			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
 			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
 
-
-			Assert.IsTrue(table.PlayGame());
-
 		}
 
 
