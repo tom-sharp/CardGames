@@ -292,37 +292,35 @@ namespace Games.Card.TexasHoldEm
 			if (stats != null) {
 				bool winner = true;
 				IPlayCards cards;
-				int cardno = 0;
 
 				TexasStatisticsEntity entity;
 				byte playercnt = (byte)this.gametable.PlayerCount;
 
-				cardno += 2;
-				foreach (var c in commoncards) {
-					if (cardno >= StatsHand.CardsSignature.Length) throw new ApplicationException("Add Sataistics - more than 5 common cards!");
-					StatsHand.CardsSignature[cardno++] = PlayCard.Signature(c);
-				}
 
 				foreach (var seat in this.gametable.TableSeats)
 				{
-					if ((seat.IsActive) && (seat.Player.Type != GamePlayerType.Default))
+					if ((!seat.IsFree) && (seat.Player.Type != GamePlayerType.Default))
 					{
 						entity = new TexasStatisticsEntity();
-						cardno = 0;
+
 						cards = seat.Player.Cards.GetCards();
 
-						entity.CardsSignature[cardno++] = PlayCard.Signature(cards.First());
-						entity.CardsSignature[cardno++] = PlayCard.Signature(cards.Next());
-						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
-						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
-						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
-						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
-						entity.CardsSignature[cardno] = StatsHand.CardsSignature[cardno++];
+						entity.PrivateCard1 = PlayCard.Signature(cards.First());
+						entity.PrivateCard2 = PlayCard.Signature(cards.Next());
+						entity.CommonCard1 = PlayCard.Signature(commoncards.First());
+						entity.CommonCard2 = PlayCard.Signature(commoncards.Next());
+						entity.CommonCard3 = PlayCard.Signature(commoncards.Next());
+						entity.CommonCard4 = PlayCard.Signature(commoncards.Next());
+						entity.CommonCard5 = PlayCard.Signature(commoncards.Next());
 						entity.Players = playercnt;
 						entity.Win = false;
 						entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
-						entity.RankId2Cards = PlayCards.RankId(cards.RankSignature.Signature);
+						entity.RankIdPrivateCards = PlayCards.RankId(cards.RankSignature.Signature);
 						entity.RankIdCommonCards = commoncards.RankSignature.RankId;
+						entity.RankName = seat.Player.Cards.Signature.Name;
+						entity.RankNamePrivate = cards.RankSignature.Name;
+						entity.RankNameCommon = commoncards.RankSignature.Name;
+
 						if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }
 						stats.StatsAddHand(entity);
 					}

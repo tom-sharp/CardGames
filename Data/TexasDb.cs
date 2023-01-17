@@ -37,8 +37,8 @@ namespace Games.Card.TexasHoldEm
 		public async Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand, byte card1, byte card2)
 		{
 			return await db.TexasHands.AsNoTracking().Where(hand => hand.Win == winhand && 
-				((card1 == hand.CardsSignature[0] && card2 == hand.CardsSignature[1]) || 
-				(card2 == hand.CardsSignature[1] && card1 == hand.CardsSignature[0]))).ToListAsync();
+				((card1 == hand.PrivateCard1 && card2 == hand.PrivateCard2) || 
+				(card2 == hand.PrivateCard2 && card1 == hand.PrivateCard1))).ToListAsync();
 		}
 
 

@@ -48,13 +48,16 @@ namespace Games.Card.TexasHoldEm
 
 
 		public void ShowProgressMessage(string msg) {
-
 			if (SupressOutput) return;
-			MsgLog.AddMsg(msg);
+			var str = new CStr(msg);
+			while (str.Length() < this.MsgLog.Width) str.Append(' ');
+			str.Set(MsgLog.Width, 0);
+			MsgLog.Add(str);
 			UpdateMessageLog();
 		}
 
 		public void Finish() {
+			if (SupressOutput) return;
 			ui.RestoreColor();
 			ui.HideCursor(false);
 		}
@@ -171,7 +174,12 @@ namespace Games.Card.TexasHoldEm
 				ui.Show("Players:\n");
 				foreach (var seat in table.TableSeats)
 				{
-					if (!seat.IsFree) ui.Show($" {seat.Player.Name,-20} Tokens {seat.Player.Tokens,10}\n");
+					if (!seat.IsFree) { 
+						if (seat.Player.Type == GamePlayerType.Default)
+							ui.Show($" {seat.Player.Name,-20}\n");
+						else
+							ui.Show($" {seat.Player.Name,-20} Tokens {seat.Player.Tokens,10}\n");
+					}
 				}
 			}
 		}
@@ -363,7 +371,9 @@ namespace Games.Card.TexasHoldEm
 			int y = 0;
 			SetStdColor();
 
-			foreach (var message in this.MsgLog.Msg)
+			while (this.MsgLog.Count() > this.MsgLog.Height) { this.MsgLog.First(); this.MsgLog.Remove(); }
+
+			foreach (var message in this.MsgLog)
 			{
 				ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"{message}");
 				y++;
@@ -411,24 +421,12 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		class ProgressLog {
+		class ProgressLog : CList<CStr> {
 			public int X { get; set; }
 			public int Y { get; set; }
-			public void Clear() { for (int i = 0; i < loglength; i++) Msg[i] = ""; }
-			public void AddMsg(string msg) {
-				var msgstr = new CStr(msg);
-				int i = loglength; 
-				while (--i > 0) { Msg[i] = Msg[i - 1]; }
-				msgstr.Set(logwidth, 0);
-				if (msgstr.Length() < logwidth) msgstr.Append(new CStr(logwidth - msgstr.Length(), 32));
-				Msg[0] = msgstr.ToString();
-			}
+			public int Width => 43;
+			public int Height => 5;
 
-			const int loglength = 5;
-			const int logwidth = 43;
-
-			public int Width { get { return logwidth; } }
-			public string[] Msg  = new string[loglength];
 		}
 
 		class Menu {

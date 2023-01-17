@@ -1,0 +1,20 @@
+Playing 1000 rounds with 3 players having 1000 tokens each at table with 9 seats 
+
+Statistics:                  Winning Hand                Hands
+ 0.  Nothing                  0,0 %         0             0,0 %         0
+ 1.  HighCard                 1,7 %        17            17,5 %       524
+ 2.  Pair                    31,6 %       316            44,3 %      1328
+ 3.  TwoPair                 32,1 %       321            22,4 %       672
+ 4.  ThreeOfAKind             9,4 %        94             5,4 %       163
+ 5.  Straight                10,7 %       107             4,7 %       140
+ 6.  Flush                    6,0 %        60             2,6 %        77
+ 7.  FullHouse                8,0 %        80             3,0 %        91
+ 8.  FourOfAKind              0,4 %         4             0,1 %         4
+ 9.  StraightFlush            0,1 %         1             0,0 %         1
+10.  RoyalStraightFlush       0,0 %         0             0,0 %         0
+-Rounds played    1000        Total:     1000                        3000
+Players:
+ Dealer              
+ RndRobot             Tokens        874
+ RndRobot             Tokens       1066
+ RndRobot             Tokens       1027

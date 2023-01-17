@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,6 @@ namespace Games.Card.TexasHoldEm
 	{
 		public TexasStatisticsEntity()
 		{
-			CardsSignature = new byte[8];
 		}
 		public int Id { get; set; }
 
@@ -19,12 +19,26 @@ namespace Games.Card.TexasHoldEm
 		public byte Players { get; set; }
 
 		public byte RankId { get; set; }
-		public byte RankId2Cards { get; set; }
-		public byte RankId5Cards { get; set; }
-		public byte RankId6Cards { get; set; }
+
+		[StringLength(30)]
+		public string RankName { get; set; }
+		[StringLength(30)]
+		public string RankNamePrivate { get; set; }
+		[StringLength(30)]
+		public string RankNameCommon { get; set; }
+
+		public byte RankIdPrivateCards { get; set; }
 		public byte RankIdCommonCards { get; set; }
-		
-		public byte[] CardsSignature { get; set; }
+
+		public byte PrivateCard1 { get; set; }
+		public byte PrivateCard2 { get; set; }
+
+
+		public byte CommonCard1 { get; set; }
+		public byte CommonCard2 { get; set; }
+		public byte CommonCard3 { get; set; }
+		public byte CommonCard4 { get; set; }
+		public byte CommonCard5 { get; set; }
 
 	}
 }
