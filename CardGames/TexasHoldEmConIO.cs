@@ -141,12 +141,16 @@ namespace Games.Card.TexasHoldEm
 				int[] WinningRank = new int[(int)PokerHand.RoyalStraightFlush + 1];
 				int[] TotalRank = new int[(int)PokerHand.RoyalStraightFlush + 1];
 
-				foreach (var entity in statistics.AllHands)
+				foreach (var entity in statistics.PlayRounds)
 				{
-					if (entity.RankId > (int)PokerHand.RoyalStraightFlush) BugCheck.Critical(this, "ShowGameStatistics - Unexpected Rank Id");
-					TotalHands++;
-					TotalRank[entity.RankId]++;
-					if (entity.Win) { TotalWin++; WinningRank[entity.RankId]++; }
+					
+					if (entity.WinRankId > (int)PokerHand.RoyalStraightFlush) BugCheck.Critical(this, "ShowGameStatistics - Unexpected Rank Id");
+					TotalWin++;
+					TotalRank[entity.WinRankId]++;
+					foreach (var h in entity.PlayerHands) { 
+						TotalRank[h.HandRankId]++;
+						TotalHands++;
+					}
 					statistics.SaveToDb(entity);
 				}
 				statistics.SaveDb();

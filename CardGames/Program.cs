@@ -1,4 +1,5 @@
-﻿using Games.Card.TexasHoldEm;
+﻿using Games.Card.TexasHoldEm.Data;
+using Games.Card.TexasHoldEm;
 using Syslib;
 
 namespace CardGames

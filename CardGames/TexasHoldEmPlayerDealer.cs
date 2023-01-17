@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using Games.Card.TexasHoldEm.Data;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
@@ -287,44 +289,82 @@ namespace Games.Card.TexasHoldEm
 		// Add statistics if requested - only add active hands from
 		// end of game as inactive may not have a complete hand
 		private void Statistics(IPlayCards commoncards) {
-			var stats = this.gametable.GetStatistics() as TexasHoldEmStatistics;
-			if (stats != null) {
-				bool winner = true;
-				IPlayCards cards;
 
-				TexasStatisticsEntity entity;
-				byte playercnt = (byte)this.gametable.PlayerCount;
+			var statistics = this.gametable.GetStatistics() as TexasHoldEmStatistics;
+			if (statistics == null) return;
+			if (commoncards == null || commoncards.Count != 5) return;
+
+			TexasPlayRoundEntity roundentity;
+			TexasPlayerHandEntity handentity;
+
+			roundentity = new TexasPlayRoundEntity();
+			var rank5 = new TexasRankOn5Cards();
+			var cards = new PlayCards();
+
+			IPlayCardsRankSignature cardsranksignature;
+			roundentity.Card1Signature = PlayCard.Signature(commoncards.First());
+			roundentity.Card2Signature = PlayCard.Signature(commoncards.Next());
+			roundentity.Card3Signature = PlayCard.Signature(commoncards.Next());
+			roundentity.Card4Signature = PlayCard.Signature(commoncards.Next());
+			roundentity.Card5Signature = PlayCard.Signature(commoncards.Next());
+
+			cards.Clear();
+			cards.Add(commoncards.First()); 
+			cards.Add(commoncards.Next()); 
+			cards.Add(commoncards.Next());
+			cardsranksignature = rank5.GetSignature(cards);
+			roundentity.Card3RankId = cardsranksignature.RankId;
+
+			cards.Add(commoncards.Next());
+			cardsranksignature = rank5.GetSignature(cards);
+			roundentity.Card4RankId = cardsranksignature.RankId;
+
+			cards.Add(commoncards.Next());
+			cardsranksignature = rank5.GetSignature(cards);
+			roundentity.Card5RankId = cardsranksignature.RankId;
+			roundentity.Card5RankName = cardsranksignature.Name;
+			roundentity.WinRankId = 0;
+			roundentity.Players = (byte)this.gametable.PlayerCount;
+			roundentity.PlayerHands = new List<TexasPlayerHandEntity>();
 
 
-				foreach (var seat in this.gametable.TableSeats)
+			foreach (var seat in this.gametable.TableSeats)
+			{
+				if ((!seat.IsFree) && (seat.Player.Type != GamePlayerType.Default))
 				{
-					if ((!seat.IsFree) && (seat.Player.Type != GamePlayerType.Default))
-					{
-						entity = new TexasStatisticsEntity();
+					handentity = new TexasPlayerHandEntity();
+					cards.Clear();
+					cards.Add(seat.Player.Cards.GetCards());
 
-						cards = seat.Player.Cards.GetCards();
+					if (cards.Count != 2) continue;
 
-						entity.PrivateCard1 = PlayCard.Signature(cards.First());
-						entity.PrivateCard2 = PlayCard.Signature(cards.Next());
-						entity.CommonCard1 = PlayCard.Signature(commoncards.First());
-						entity.CommonCard2 = PlayCard.Signature(commoncards.Next());
-						entity.CommonCard3 = PlayCard.Signature(commoncards.Next());
-						entity.CommonCard4 = PlayCard.Signature(commoncards.Next());
-						entity.CommonCard5 = PlayCard.Signature(commoncards.Next());
-						entity.Players = playercnt;
-						entity.Win = false;
-						entity.RankId = PlayCards.RankId(seat.Player.Cards.Signature.Signature);
-						entity.RankIdPrivateCards = PlayCards.RankId(cards.RankSignature.Signature);
-						entity.RankIdCommonCards = commoncards.RankSignature.RankId;
-						entity.RankName = seat.Player.Cards.Signature.Name;
-						entity.RankNamePrivate = cards.RankSignature.Name;
-						entity.RankNameCommon = commoncards.RankSignature.Name;
+					handentity.WinRound = seat.Player.Cards.WinHand;
+					handentity.Card1Signature = PlayCard.Signature(cards.First());
+					handentity.Card2Signature = PlayCard.Signature(cards.Next());
 
-						if (winner && seat.Player.Cards.WinHand) { entity.Win = true; winner = false; }
-						stats.StatsAddHand(entity);
+					cardsranksignature = rank5.GetSignature(cards);
+					handentity.Card2RankId = cardsranksignature.RankId;
+
+					cards.Add(commoncards.First());
+					cards.Add(commoncards.Next());
+					cards.Add(commoncards.Next());
+					cardsranksignature = rank5.GetSignature(cards);
+					handentity.Card5RankId = cardsranksignature.RankId;
+
+					cards.Add(commoncards.Next());
+					cardsranksignature = rank5.GetSignature(cards);
+					handentity.Card6RankId = cardsranksignature.RankId;
+
+					handentity.HandRankId = seat.Player.Cards.Signature.RankId;
+					handentity.HandRankName = seat.Player.Cards.Signature.Name;
+
+					if (handentity.WinRound) {
+						roundentity.WinRankId = handentity.HandRankId;
 					}
+					roundentity.PlayerHands.Add(handentity);
 				}
 			}
+			statistics.StatsAddRound(roundentity);
 		}
 
 		readonly TexasStatisticsEntity StatsHand;

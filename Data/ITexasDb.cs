@@ -4,17 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm
+namespace Games.Card.TexasHoldEm.Data
 {
 	public interface ITexasDb
 	{
 
-		public bool AddHand(TexasStatisticsEntity hand);
+		bool AddHand(TexasStatisticsEntity hand);
 
-		public Task<TexasStatisticsEntity> GetHandAsync(int id);
+		bool AddPlayRound(TexasPlayRoundEntity playround);
 
-		public Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand);
-		public Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand, byte card1, byte card2);
+		Task<TexasStatisticsEntity> GetHandAsync(int id);
+
+		Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand);
+		Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand, byte card1, byte card2);
+
 		int SaveChanges();
 
 		void MigrateDb();

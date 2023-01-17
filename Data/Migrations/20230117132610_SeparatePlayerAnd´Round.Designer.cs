@@ -3,14 +3,16 @@ using Games.Card.TexasHoldEm.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Data.Migrations
 {
     [DbContext(typeof(TexasDbContext))]
-    partial class TexasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230117132610_SeparatePlayerAnd´Round")]
+    partial class SeparatePlayerAndRound
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,12 +53,6 @@ namespace Data.Migrations
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<byte>("Card5Signature")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("Players")
-                        .HasColumnType("tinyint");
-
-                    b.Property<byte>("WinRankId")
                         .HasColumnType("tinyint");
 
                     b.HasKey("Id");

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm
+namespace Games.Card.TexasHoldEm.Data
 {
 	public class TexasDb : ITexasDb
 	{
@@ -41,6 +41,13 @@ namespace Games.Card.TexasHoldEm
 				(card2 == hand.PrivateCard2 && card1 == hand.PrivateCard1))).ToListAsync();
 		}
 
+
+		public bool AddPlayRound(TexasPlayRoundEntity playround)
+		{
+			if (playround == null) return false;
+			db.PlayRounds.Add(playround);
+			return true;
+		}
 
 
 		public int SaveChanges()

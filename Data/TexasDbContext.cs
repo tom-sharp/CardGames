@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm
+namespace Games.Card.TexasHoldEm.Data
 {
 
 	public class TexasDbContext : DbContext
@@ -20,6 +20,8 @@ namespace Games.Card.TexasHoldEm
 
 
 		public DbSet<TexasStatisticsEntity> TexasHands { get; set; }
+		public DbSet<TexasPlayRoundEntity> PlayRounds { get; set; }
+		public DbSet<TexasPlayerHandEntity> PlayRoundHands { get; set; }
 
 
 	}

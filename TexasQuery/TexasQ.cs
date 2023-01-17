@@ -1,5 +1,6 @@
 ﻿using CardGames;
 using Games.Card.TexasHoldEm;
+using Games.Card.TexasHoldEm.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
