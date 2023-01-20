@@ -2,14 +2,16 @@
 using Syslib.Games.Card;
 using Syslib.Games;
 using System.Threading;
+using Syslib.Games.Card.TexasHoldEm;
 
 namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmPlayerAi : CardPlayerAi, ITexasHoldEmPlayer
 	{
 
-		public TexasHoldEmPlayerAi(ICardPlayerConfig config) : base(config)
+		public TexasHoldEmPlayerAi(ICardPlayerConfig config, ITexasHoldEmAi ai) : base(config)
 		{
+			this.AI = ai;
 		}
 
 		public override void PlaceBet(int tokens, ICardTable table)
@@ -32,27 +34,9 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.maxbetraises = table.MaxBetRaises;
 
-			var mycardsrank = this.Cards.GetCards();
-			IPlayCards dealercards = null;
-			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
-			var hand = this.Cards.GetCards().Add(dealercards);
-			int roundprogress = hand.Count;
-
-			var myrank = new TexasRankOn5Cards();
-			var dealerrank = new TexasRankOn5Cards();
-			var totalrank = new TexasRankOn5Cards();
+//			this.AI.Learn(rounds: 50, numberofplayers: table.PlayerCount);
 
 
-			// SOME DECISION MAKING HERE
-			// weight: progress 2, 5, 6, 7 cards ?
-			// weight: rank of two private cards
-			// weight: rank of private and public cards (to normal distribution)
-			// weight: rank of dealer cards (posibilites for opponents)
-			// weight: playerprofile
-			// weight: random weight in decision ?
-
-
-			
 			if (CRandom.Random.RandomBool(this.Profile.Randomness))
 			{
 				RandomDecision(tokens);
@@ -60,10 +44,27 @@ namespace Games.Card.TexasHoldEm
 			}
 
 
-			// for now accept all requests
-			if (tokens > 0) this.CallBet(tokens);
-			else CheckBet();
 
+			var mycards = this.Cards.GetCards();
+			IPlayCards dealercards = null;
+			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
+
+
+			// Ask AI how to do
+			var AiSay = this.AI.AskRate(table.PlayerCount, mycards, dealercards);
+			AiSay += this.Profile.Weight;
+
+			if (AiSay < 6) { if (tokens > 0) FoldBet(); else CheckBet(); }
+			else if (AiSay < 15) { if (tokens > 0) CallBet(tokens); else CheckBet(); }
+			else if (AiSay < 30) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 1); }
+			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 3); }
+			else RaiseBet(tokens, 5);
+
+			var AiEntity = this.AI.GetEntity(table.PlayerCount, mycards, dealercards);
+			if (AiEntity == null) this.Status = "**NEVER**";
+			else this.Status = $"{AiEntity.PCount,4}:{AiSay}%";
+
+			return;
 		}
 
 
@@ -120,7 +121,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		int maxbetraises;
-
+		ITexasHoldEmAi AI;
 
 	}
 }

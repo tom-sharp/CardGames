@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm.Data
+namespace Games.Card.TexasHoldEm.Models
 {
 	public interface ITexasDb
 	{
+
+		ITexasAiDb AiDb { get; }
 
 		bool AddHand(TexasStatisticsEntity hand);
 

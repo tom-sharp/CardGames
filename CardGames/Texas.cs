@@ -1,19 +1,27 @@
 ﻿using Games.Card.TexasHoldEm;
-using Games.Card.TexasHoldEm.Data;
+using Games.Card.TexasHoldEm.Models;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 
 namespace CardGames
 {
 	public class Texas
 	{
-		public Texas(ITexasHoldEmIO UI, TexasDbContext dbcontext)
+		public Texas(ITexasHoldEmIO ui, TexasDbContext dbcontext)
 		{
 			this.DB = new TexasDb(dbcontext);
-			this.UI = UI;
+			this.UI = ui;
+			this.AI = null;
 			this.game = null;
 			this.RoundsToPlay = -1;
+		}
+
+		public Texas Setup(ITexasHoldEmAi AI)
+		{
+			this.AI = AI;
+			return this;
 		}
 
 		public Texas Setup(string[] arguments = null, ITexasHoldEmSettings usesettings = null) {
@@ -28,32 +36,33 @@ namespace CardGames
 			}
 
 			// Set up game based on  configuration
-			this.game = new TexasHoldEmFactory(this.UI, this.DB).TexasTable(settings);
+			this.game = new TexasHoldEmFactory(this.UI, this.DB, this.AI).TexasTable(settings);
 
 			this.RoundsToPlay = settings.RoundsToPlay;
+
+			this.AI.Learn(8000, this.game.PlayerCount, new TexasRankOn5Cards());
 
 			return this;
 		}
 
 
+
 		public void Run()
 		{
-
-			if (this.RoundsToPlay < 0) return;
+			int RoundsPlayed = 0;
 
 			// Run Game
 			while (true)
 			{
-
-				if (this.RoundsToPlay > 0 && game.GetStatistics().GamesPlayed >= this.RoundsToPlay) break;
+				if (RoundsPlayed >= this.RoundsToPlay) break;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
 
-				if (game.PlayerCount < 2) break;
+				if (game.PlayerCount < 2) continue; 
 
 				game.PlayGame();
-
+				RoundsPlayed++;
 			}
 
 			ShowStatistics(game);
@@ -95,6 +104,7 @@ namespace CardGames
 		}
 
 		int RoundsToPlay;
+		ITexasHoldEmAi AI;
 		ITexasHoldEmIO UI;
 		TexasHoldEmTable game;
 		readonly TexasDb DB;

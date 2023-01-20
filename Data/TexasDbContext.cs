@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Syslib.Games.Card.TexasHoldEm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm.Data
+namespace Games.Card.TexasHoldEm.Models
 {
 
 	public class TexasDbContext : DbContext
@@ -22,6 +23,8 @@ namespace Games.Card.TexasHoldEm.Data
 		public DbSet<TexasStatisticsEntity> TexasHands { get; set; }
 		public DbSet<TexasPlayRoundEntity> PlayRounds { get; set; }
 		public DbSet<TexasPlayerHandEntity> PlayRoundHands { get; set; }
+
+		public DbSet<TexasHoldEmAiEntity> TexasAI { get; set; }
 
 
 	}

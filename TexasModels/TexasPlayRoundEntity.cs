@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm.Data
+namespace Games.Card.TexasHoldEm.Models
 {
 	public class TexasPlayRoundEntity
 	{

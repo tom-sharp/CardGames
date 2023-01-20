@@ -210,7 +210,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_PlayGameNoPlayer_False()
 		{
-			var ui = new TexasHoldEmConIO();
+			var ui = new TexasHoldEmConUI();
 			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
 
 			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));
@@ -222,7 +222,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_PlayGame1Player_False()
 		{
-			var ui = new TexasHoldEmConIO();
+			var ui = new TexasHoldEmConUI();
 			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
 
 			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));
@@ -237,7 +237,7 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_PlayGame2Player_True()
 		{
-			var ui = new TexasHoldEmConIO();
+			var ui = new TexasHoldEmConUI();
 			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
 
 			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));

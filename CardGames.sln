@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CardGameTest", "CardGameTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", "{4A76D784-15F0-4400-BDE4-D6CBC8F505CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexasQuery", "TexasQuery\TexasQuery.csproj", "{6AC7C2AC-F9E9-41DA-AA56-8DB3E02C9B33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexasQuery", "TexasQuery\TexasQuery.csproj", "{6AC7C2AC-F9E9-41DA-AA56-8DB3E02C9B33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TexasModels", "TexasModels\TexasModels.csproj", "{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6AC7C2AC-F9E9-41DA-AA56-8DB3E02C9B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6AC7C2AC-F9E9-41DA-AA56-8DB3E02C9B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6AC7C2AC-F9E9-41DA-AA56-8DB3E02C9B33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

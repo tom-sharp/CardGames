@@ -2,7 +2,7 @@
   "profiles": {
     "CardGames": {
       "commandName": "Project",
-      "commandLineArgs": "r1 -s -db"
+      "commandLineArgs": " r50 -q -s"
     }
   }
 }

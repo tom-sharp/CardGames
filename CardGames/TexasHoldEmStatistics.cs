@@ -1,14 +1,17 @@
 ﻿using Syslib;
 using Syslib.Games;
-using Games.Card.TexasHoldEm.Data;
+using Games.Card.TexasHoldEm.Models;
+using Syslib.Games.Card.TexasHoldEm;
 
 namespace Games.Card.TexasHoldEm
 {
 	public class TexasHoldEmStatistics : GameStatistics
 	{
-		public TexasHoldEmStatistics(ITexasDb db)
+		public TexasHoldEmStatistics(ITexasDb db, ITexasHoldEmAi ai)
 		{
 			this.db = db;
+			this.ai = ai;
+
 			playrounds = new CList<TexasPlayRoundEntity>();
 		}
 
@@ -44,11 +47,10 @@ namespace Games.Card.TexasHoldEm
 
 		public CList<TexasPlayRoundEntity> PlayRounds { get { return this.playrounds; } }
 
-//		public CList<TexasStatisticsEntity> AllHands { get { return this.allhands; } }
-//		readonly CList<TexasStatisticsEntity> allhands;
 
 		readonly CList<TexasPlayRoundEntity> playrounds;
 		readonly ITexasDb db;
+		readonly ITexasHoldEmAi ai;
 		int QueToDb = 0;
 
 	}

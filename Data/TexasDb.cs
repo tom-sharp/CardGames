@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm.Data
+namespace Games.Card.TexasHoldEm.Models
 {
 	public class TexasDb : ITexasDb
 	{
@@ -13,7 +13,11 @@ namespace Games.Card.TexasHoldEm.Data
 		public TexasDb(TexasDbContext ctx)
 		{
 			this.db = ctx;
+			this.aidb = new TexasAiDb(ctx);
 		}
+
+		public ITexasAiDb AiDb => this.aidb;
+
 
 		public bool AddHand(TexasStatisticsEntity texashand)
 		{
@@ -76,7 +80,8 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
-		readonly TexasDbContext db = null;
+		ITexasAiDb aidb;
+		readonly TexasDbContext db;
 
 	}
 }

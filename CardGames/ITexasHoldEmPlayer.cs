@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Syslib.Games;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Games.Card.TexasHoldEm
 {
-	interface ITexasHoldEmPlayer 
+	interface ITexasHoldEmPlayer : IGamePlayer
 	{
 		public int BetRaiseCounter { get; }
 	}

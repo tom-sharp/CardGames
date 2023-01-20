@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Games.Card.TexasHoldEm.Data;
+using Games.Card.TexasHoldEm.Models;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
@@ -260,7 +260,6 @@ namespace Games.Card.TexasHoldEm
 					}
 				}
 			}
-
 			foreach (var seat in this.gametable.TableSeats)	{
 				if (!seat.IsFree && seat.IsActive) {
 					if (seat.Player.Cards.Signature.Rank >= winnerrank) { WinnersSeats.Add(seat); }
@@ -292,7 +291,7 @@ namespace Games.Card.TexasHoldEm
 
 			var statistics = this.gametable.GetStatistics() as TexasHoldEmStatistics;
 			if (statistics == null) return;
-			if (commoncards == null || commoncards.Count != 5) return;
+			if (commoncards == null || commoncards.Count() != 5) return;
 
 			TexasPlayRoundEntity roundentity;
 			TexasPlayerHandEntity handentity;
@@ -336,7 +335,7 @@ namespace Games.Card.TexasHoldEm
 					cards.Clear();
 					cards.Add(seat.Player.Cards.GetCards());
 
-					if (cards.Count != 2) continue;
+					if (cards.Count() != 2) continue;
 
 					handentity.WinRound = seat.Player.Cards.WinHand;
 					handentity.Card1Signature = PlayCard.Signature(cards.First());

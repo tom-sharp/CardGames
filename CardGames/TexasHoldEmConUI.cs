@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Games.Card.TexasHoldEm
 {
-	public class TexasHoldEmConIO : ITexasHoldEmIO
+	public class TexasHoldEmConUI : ITexasHoldEmIO
 	{
-		public TexasHoldEmConIO()
+		public TexasHoldEmConUI()
 		{
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;

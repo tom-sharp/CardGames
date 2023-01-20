@@ -45,7 +45,7 @@ namespace Games.Card.TexasHoldEm
 			var hand = this.Cards.GetCards().Add(dealercards);
 
 			// find out: 2 cards, 2+3, 2+4, 2+5 (flop, turn,river, showdown)
-			switch (hand.Count) {
+			switch (hand.Count()) {
 				case 2: flop(tokens, mycards, table.ActiveSeatCount); return;
 				case 5: turn(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;
 				case 6: river(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;

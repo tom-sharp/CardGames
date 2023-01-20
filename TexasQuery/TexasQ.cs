@@ -1,6 +1,6 @@
 ﻿using CardGames;
 using Games.Card.TexasHoldEm;
-using Games.Card.TexasHoldEm.Data;
+using Games.Card.TexasHoldEm.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace TexasQuery
 	public class TexasQ
 	{
 		public void Run(string[] args) {
-			new Texas(UI: new TexasHoldEmConIO(), new TexasDbContext())
+			new Texas(ui: new TexasHoldEmConUI(), new TexasDbContext())
 				.Setup(arguments: args)
 				.Run();
 		}
