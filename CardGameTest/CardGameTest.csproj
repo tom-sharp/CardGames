@@ -13,16 +13,11 @@
     <PackageReference Include="MSTest.TestFramework" Version="2.2.3" />
     <PackageReference Include="coverlet.collector" Version="3.0.2" />
     <PackageReference Include="Syslib.Core" Version="1.0.3" />
+    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\CardGames\CardGames.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Syslib.Games.Net5">
-      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Games.Net5.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

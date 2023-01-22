@@ -1,13 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Syslib.Games.Net5">
-      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Games.Net5.dll</HintPath>
-    </Reference>
+    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa1" />
   </ItemGroup>
 
 </Project>

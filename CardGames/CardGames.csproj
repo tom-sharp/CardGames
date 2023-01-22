@@ -11,20 +11,13 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Syslib.ConUI" Version="1.0.0-alfa1" />
     <PackageReference Include="Syslib.Core" Version="1.0.3" />
+    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Syslib.ConUI">
-      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.ConUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Syslib.Games.Net5">
-      <HintPath>..\..\..\_csLibs\_SysLib\Release\net5.0\Syslib.Games.Net5.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
