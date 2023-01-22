@@ -30,8 +30,8 @@ namespace CardGames
 				return this;
 			}
 
-			this.SetupFactory(settings);
 			this.SetupAI(settings);
+			this.SetupFactory(settings);
 			this.SetupGame(settings);
 
 			return this;
@@ -55,9 +55,11 @@ namespace CardGames
 				game.PlayGame();
 				RoundsPlayed++;
 			}
-			this.AI.Save();
-			this.ShowStatistics();
-			this.UI.Finish();
+			if (this.RoundsToPlay >= 0) {
+				this.AI.Save();
+				this.ShowStatistics();
+				this.UI.Finish();
+			}
 		}
 
 
@@ -113,7 +115,7 @@ namespace CardGames
 		void SetupGame(ITexasHoldEmSettings settings)
 		{
 
-			this.game = Factory.TexasTable(settings);
+			this.game = Factory.TexasTable();
 			this.RoundsToPlay = settings.RoundsToPlay;
 
 		}

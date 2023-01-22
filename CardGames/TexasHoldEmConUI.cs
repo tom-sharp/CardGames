@@ -49,11 +49,7 @@ namespace Games.Card.TexasHoldEm
 
 		public void ShowProgressMessage(string msg) {
 			if (SupressOutput) return;
-			var str = new CStr(msg);
-			while (str.Length() < this.MsgLog.Width) str.Append(' ');
-			str.Set(MsgLog.Width, 0);
-			MsgLog.Add(str);
-			UpdateMessageLog();
+			UpdateMessageLog(msg);
 		}
 
 		public void Finish() {
@@ -76,7 +72,7 @@ namespace Games.Card.TexasHoldEm
 
 			SetUpTable(table);
 			UpdatePlayers(showcards: false);
-			UpdateMessageLog();
+			UpdateMessageLog("");
 		}
 
 
@@ -371,11 +367,16 @@ namespace Games.Card.TexasHoldEm
 			ui.PopColor();
 		}
 
-		void UpdateMessageLog() {
+		void UpdateMessageLog(string msg) {
 			int y = 0;
 			SetStdColor();
+			var str = new CStr(msg);
+			while (str.Length() < this.MsgLog.Width) str.Append(' ');
+			str.Set(MsgLog.Width, 0);
+			MsgLog.First();
+			MsgLog.Insert(str);
 
-			while (this.MsgLog.Count() > this.MsgLog.Height) { this.MsgLog.First(); this.MsgLog.Remove(); }
+			while (this.MsgLog.Count() > this.MsgLog.Height) { this.MsgLog.Last(); this.MsgLog.Remove(); }
 
 			foreach (var message in this.MsgLog)
 			{
