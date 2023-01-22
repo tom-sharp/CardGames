@@ -10,8 +10,6 @@ using System.Threading.Tasks;
 namespace CardGames
 {
 
-	public static class Factory { 
-	}
 
 	public static class TestRank
 	{

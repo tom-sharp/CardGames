@@ -12,7 +12,7 @@ namespace Games.Card.TexasHoldEm
 		{
 		}
 
-		public override void PlaceBet(int tokens, ICardTable table)
+		public void PlaceBet(int tokens, ICardTable table)
 		{
 			this.TableSeat.PlaceBet(tokens);
 		}
@@ -29,7 +29,7 @@ namespace Games.Card.TexasHoldEm
 
 		// return true if accept or raise bet or false if fold
 		// need to know here is common cards, active players
-		public override void AskBet(int tokens, ICardTable table)
+		public void AskBet(int tokens, ICardTable table)
 		{
 			this.maxbetraises = table.MaxBetRaises;
 

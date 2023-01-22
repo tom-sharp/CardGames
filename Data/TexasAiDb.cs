@@ -8,53 +8,34 @@ using System.Text;
 using System.Threading.Tasks;
 using Syslib.Games.Card;
 using Microsoft.EntityFrameworkCore;
+using Syslib.Games;
 
 namespace Games.Card.TexasHoldEm.Models
 {
-	class TexasAiDb : ITexasAiDb
+	public class TexasAiDb : ITexasAiDb, IAiEntryDb
 	{
+
 		public TexasAiDb(TexasDbContext ctx)
 		{
 			this.db = ctx;
 		}
 
 
-		public TexasHoldEmAiEntity GetEntry(int id)
+		public IAiEntry GetEntry(int id)
 		{
-			TexasHoldEmAiEntity result = db.TexasAI.AsNoTracking().FirstOrDefault(o => o.Id == id);
-			return result;
+			return this.GetEntryAsync(id).Result;
 		}
 
 
-		// Will Update or Add entity if not exist
-		public bool UpdateEntry(TexasHoldEmAiEntity aiEntry)
+		// Will Update or Add entity if not exist and return the updated Entry
+		public IAiEntry UpdateEntry(IAiEntry aiEntry)
 		{
-			if (aiEntry == null) return false;
-			var exist = db.TexasAI.FirstOrDefault(o => o.Id == aiEntry.Id);
-			if (exist != null)
-			{
-				if (aiEntry.PCount < exist.PCount)
-				{
-					// merge data -  expect aiEntry to be new data
-					exist.PCount += aiEntry.PCount;
-					exist.WCount += aiEntry.WCount;
-				}
-				else {
-					// add diff . expect aiEntry has been read before and accumulated data
-					exist.PCount += aiEntry.PCount - exist.PCount;
-					exist.WCount += aiEntry.WCount - exist.WCount;
-				}
-			}
-			else
-			{
-				this.db.TexasAI.Add(aiEntry);
-			}
-			
-			return true;
+			if (aiEntry == null) return null;
+			return this.UpdateEntryAsync(aiEntry).Result;
 		}
 
 
-		public void UpdateAndSave(CList<TexasHoldEmAiEntity> aiEntries) {
+		public void UpdateAndSave(ICollection<IAiEntry> aiEntries) {
 			if (aiEntries == null) return;
 			foreach (var entity in aiEntries) { 
 				this.UpdateEntry(entity); 
@@ -63,46 +44,55 @@ namespace Games.Card.TexasHoldEm.Models
 		}
 
 
-		public async Task<TexasHoldEmAiEntity> GetEntryAsync(int id)
+		public int SaveChanges()
 		{
-			var result = await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
-			return result;
+			return this.SaveChangesAsync().Result;
 		}
 
 
-		// Will Update or Add entity if not exist
-		public async Task<bool> UpdateEntryAsync(TexasHoldEmAiEntity aiEntry)
+		public async Task UpdateAndSaveAsync(ICollection<IAiEntry> aiEntries)
 		{
-			if (aiEntry == null) return false;
+			if (aiEntries == null) return;
+			foreach (var entity in aiEntries)
+			{
+				await this.UpdateEntryAsync(entity);
+			}
+			await this.SaveChangesAsync();
+		}
+
+
+
+
+
+		public async Task<IAiEntry> GetEntryAsync(int id)
+		{
+			return await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
+		}
+
+
+		public async Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry)
+		{
+			if (aiEntry == null) return null;
 			var exist = await db.TexasAI.FirstOrDefaultAsync(o => o.Id == aiEntry.Id);
 			if (exist != null)
 			{
-				if (aiEntry.PCount < exist.PCount)
-				{
-					// merge data -  expect aiEntry to be new data
-					exist.PCount += aiEntry.PCount;
-					exist.WCount += aiEntry.WCount;
-				}
-				else
-				{
-					// add diff . expect aiEntry has been read before and accumulated data
-					exist.PCount += aiEntry.PCount - exist.PCount;
-					exist.WCount += aiEntry.WCount - exist.WCount;
-				}
+				exist.PCount += aiEntry.PCount;
+				exist.WCount += aiEntry.WCount;
+				aiEntry.PCount = exist.PCount;
+				aiEntry.WCount = exist.WCount;
 			}
 			else
 			{
-				await this.db.TexasAI.AddAsync(aiEntry);
+				aiEntry = new TexasHoldEmAiEntity() { Id = aiEntry.Id, PCount = aiEntry.PCount, WCount = aiEntry.WCount };
+				await this.db.TexasAI.AddAsync((TexasHoldEmAiEntity)aiEntry);
 			}
-			return true;
+			return aiEntry;
 		}
 
 
-		// Will Update or Add entity if not exist
-		public int SaveChanges()
+		public async Task<int> SaveChangesAsync()
 		{
-			int result = this.db.SaveChanges();
-			return result;
+			return await this.db.SaveChangesAsync();
 		}
 
 

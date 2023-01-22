@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(TexasDbContext))]
-    [Migration("20230120171306_AddAiDb")]
-    partial class AddAiDb
+    [Migration("20230121210758_AddAiDb2")]
+    partial class AddAiDb2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -19,6 +19,22 @@ namespace Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+            modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasHoldEmAiEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TexasAI");
+                });
 
             modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasPlayRoundEntity", b =>
                 {
@@ -166,24 +182,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TexasHands");
-                });
-
-            modelBuilder.Entity("Syslib.Games.Card.TexasHoldEm.TexasHoldEmAiEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WCount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TexasAI");
                 });
 
             modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasPlayerHandEntity", b =>

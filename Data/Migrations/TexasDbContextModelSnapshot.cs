@@ -18,6 +18,22 @@ namespace Data.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasHoldEmAiEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TexasAI");
+                });
+
             modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasPlayRoundEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -164,24 +180,6 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TexasHands");
-                });
-
-            modelBuilder.Entity("Syslib.Games.Card.TexasHoldEm.TexasHoldEmAiEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("PCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WCount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TexasAI");
                 });
 
             modelBuilder.Entity("Games.Card.TexasHoldEm.Models.TexasPlayerHandEntity", b =>

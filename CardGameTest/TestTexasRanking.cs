@@ -532,6 +532,28 @@ namespace CardGameTest
 
 		}
 
+		[TestMethod]
+		public void Ranking_StraightWithAce_Success()
+		{
+			var rank = new TexasRankOn5Cards();
+			var playerhand = new PlayCards();
+			ulong expectedNotvalue = 0;
+
+			playerhand.Clear();
+			playerhand.Add(new PlayCardDiamond(13));
+			playerhand.Add(new PlayCardDiamond(5));
+			playerhand.Add(new PlayCardSpade(2));
+			playerhand.Add(new PlayCardSpade(3));
+			playerhand.Add(new PlayCardClub(14));
+			playerhand.Add(new PlayCardClub(4));
+			playerhand.Add(new PlayCardSpade(4));
+			var hand1 = rank.GetSignature(playerhand);
+			var rankid = PlayCards.RankId(hand1.Signature);
+
+			Assert.AreEqual((byte)PokerHand.Straight, rankid);
+			Assert.AreNotEqual(expectedNotvalue, hand1.Signature);
+
+		}
 
 
 

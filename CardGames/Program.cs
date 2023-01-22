@@ -11,7 +11,6 @@ namespace CardGames
 		{
 			CSyslib.MinVersion(1,0,3);
 			new Texas(ui: new TexasHoldEmConUI(), new TexasDbContext())
-				.Setup(AI: new TexasHoldEmAi())
 				.Setup(arguments: args)
 				.Run();
 		}

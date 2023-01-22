@@ -14,7 +14,7 @@ namespace Games.Card.TexasHoldEm
 			this.AI = ai;
 		}
 
-		public override void PlaceBet(int tokens, ICardTable table)
+		public void PlaceBet(int tokens, ICardTable table)
 		{
 			this.TableSeat.PlaceBet(tokens);
 		}
@@ -30,7 +30,7 @@ namespace Games.Card.TexasHoldEm
 
 
 		// return true if accept or raise bet or false if fold
-		public override void AskBet(int tokens, ICardTable table)
+		public void AskBet(int tokens, ICardTable table)
 		{
 			this.maxbetraises = table.MaxBetRaises;
 
@@ -60,9 +60,9 @@ namespace Games.Card.TexasHoldEm
 			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 3); }
 			else RaiseBet(tokens, 5);
 
-			var AiEntity = this.AI.GetEntity(table.PlayerCount, mycards, dealercards);
-			if (AiEntity == null) this.Status = "**NEVER**";
-			else this.Status = $"{AiEntity.PCount,4}:{AiSay}%";
+			var played = this.AI.AskPlayed(table.PlayerCount, mycards, dealercards);
+			if (played == 0) this.Status = "**NEVER**";
+			else this.Status = $"{played,4}:{AiSay}%";
 
 			return;
 		}

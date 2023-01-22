@@ -2,7 +2,7 @@
 
 namespace Data.Migrations
 {
-    public partial class AddAiDb : Migration
+    public partial class AddAiDb2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -10,8 +10,7 @@ namespace Data.Migrations
                 name: "TexasAI",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     PCount = table.Column<int>(type: "int", nullable: false),
                     WCount = table.Column<int>(type: "int", nullable: false)
                 },

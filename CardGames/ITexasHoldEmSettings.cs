@@ -1,4 +1,4 @@
-﻿namespace CardGames
+﻿namespace Games.Card.TexasHoldEm
 {
 	public interface ITexasHoldEmSettings
 	{
@@ -80,6 +80,14 @@
 		/// 
 		/// </summary>
 		bool QuietNotStatistics { get; set; }
+
+
+		/// <summary>
+		/// 
+		/// Learn Ai
+		/// 
+		/// </summary>
+		public bool LearnAi { get; set; }
 
 
 		/// <summary>

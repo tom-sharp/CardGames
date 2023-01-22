@@ -45,7 +45,7 @@ namespace Games.Card.TexasHoldEm
 	*/
 
 
-	public class TexasHoldEmPlayerDealer : CardPlayerDefault, ITexasHoldEmPlayer
+	public class TexasHoldEmPlayerDealer : CardPlayerDefault
 	{
 
 		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
@@ -66,19 +66,6 @@ namespace Games.Card.TexasHoldEm
 			return true;
 		}
 
-
-		public override void PlaceBet(int tokens, ICardTable table)
-		{
-			this.TableSeat.PlaceBet(tokens);
-		}
-
-		public override void AskBet(int tokens, ICardTable table) {
-
-				// for now accept all requests (Should not be used ?)
-
-				this.TableSeat.PlaceBet(tokens);
-
-		}
 
 		public override bool PlayGame(IGameTable table)
 		{
@@ -149,9 +136,9 @@ namespace Games.Card.TexasHoldEm
 
 			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
 
-			this.firstCardSeat.Player.PlaceBet(tokens: this.requiredbet, this.gametable);
+			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(tokens: this.requiredbet, this.gametable);
 			this.requiredbet *= 2;
-			this.lastBetRaiseSeat.Player.PlaceBet(tokens: this.requiredbet, this.gametable);
+			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(tokens: this.requiredbet, this.gametable);
 			
 			return true;
 		}
@@ -169,7 +156,7 @@ namespace Games.Card.TexasHoldEm
 				if (seat.IsActive) {
 					this.IO.ShowPlayerActiveSeat(seat);
 					Wait();
-					seat.Player.AskBet(this.requiredbet - seat.Bets, this.gametable);
+					((ITexasHoldEmPlayer)seat.Player).AskBet(this.requiredbet - seat.Bets, this.gametable);
 					if (this.requiredbet < seat.Bets) {
 						this.requiredbet = seat.Bets;
 						this.lastBetRaiseSeat = seat;

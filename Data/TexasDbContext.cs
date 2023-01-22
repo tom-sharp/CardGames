@@ -16,9 +16,19 @@ namespace Games.Card.TexasHoldEm.Models
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
 			optionsBuilder.UseSqlServer("Data Source = (localdb)\\MSSQLLocalDb; Initial Catalog=TexasHoldEm",
-			options => options.MaxBatchSize(1000));
+			options => options.MaxBatchSize(1000)
+			);
+			
 		}
 
+
+		//protected override void OnModelCreating(ModelBuilder builder)
+		//{
+		//	base.OnModelCreating(builder);
+		//	builder.Entity<TexasHoldEmAiEntity>()
+		//		.Property(e => e.Id)
+		//		.ValueGeneratedNever();
+		//}
 
 		public DbSet<TexasStatisticsEntity> TexasHands { get; set; }
 		public DbSet<TexasPlayRoundEntity> PlayRounds { get; set; }
