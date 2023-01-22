@@ -142,7 +142,7 @@ namespace Games.Card.TexasHoldEm
 					
 					if (entity.WinRankId > (int)PokerHand.RoyalStraightFlush) BugCheck.Critical(this, "ShowGameStatistics - Unexpected Rank Id");
 					TotalWin++;
-					TotalRank[entity.WinRankId]++;
+					WinningRank[entity.WinRankId]++;
 					foreach (var h in entity.PlayerHands) { 
 						TotalRank[h.HandRankId]++;
 						TotalHands++;
