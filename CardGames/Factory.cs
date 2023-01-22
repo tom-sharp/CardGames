@@ -26,48 +26,8 @@ namespace CardGames
 		public static TexasHoldEmTable TexasTable()
 		{
 			TexasHoldEmTable texastable;
-			UI.ShowMsg($"Playing {Settings.RoundsToPlay} rounds with {Settings.Players} players having {Settings.Tokens} tokens each at table with {Settings.TableSeats} seats ");
-			UI.SupressOutput = Settings.Quiet;
-			UI.SupressOverrideRoundSummary = Settings.QuietNotSummary;
-			UI.SupressOverrideStatistics = Settings.QuietNotStatistics;
-
-
 			texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = Settings.TableSeats, MaxBetLimit = Settings.MaxBetLimit, MaxBetRaises = Settings.MaxBetRaises });
-
-			if (Settings.EnableStatistics) {
-				if (Settings.UseDb)
-				{
-					texastable.Statistics(new TexasHoldEmStatistics(DB , AI));
-				}
-				else { 
-					texastable.Statistics(new TexasHoldEmStatistics(null, AI));
-				}
-			}
-
-			if (Settings.Quiet) texastable.SleepTime = -1;
-			else texastable.SleepTime = Settings.SleepTime;
-
-
 			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = Settings.Tokens }, UI));
-
-
-			int count = 0;
-			while (++count <= Settings.Players)
-			{
-
-				if (count == 5) texastable.Join(TexasHumanPlayer(name: "Human", Settings));
-				else if (count == 1) texastable.Join(TexasCallRobotPlayer(name: $"CallRobot", Settings));
-				else if (count == 2) texastable.Join(TexasRaiseRobotPlayer(name: $"RaiseRobot", Settings));
-				else if (count == 3) texastable.Join(TexasRandomRobotPlayer(name: $"RndRobot", Settings));
-				else if (count == 4) texastable.Join(TexasBalancedRobotPlayer(name: $"Robot {count}", Settings));
-				else texastable.Join(TexasAIPlayer(name: $"Ai {count}", Settings));
-
-
-
-			}
-
-
-
 			return texastable;
 		}
 

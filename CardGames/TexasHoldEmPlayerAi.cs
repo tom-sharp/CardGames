@@ -60,10 +60,6 @@ namespace Games.Card.TexasHoldEm
 			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 3); }
 			else RaiseBet(tokens, 5);
 
-			var played = this.AI.AskPlayed(table.PlayerCount, mycards, dealercards);
-			if (played == 0) this.Status = "**NEVER**";
-			else this.Status = $"{played,4}:{AiSay}%";
-
 			return;
 		}
 

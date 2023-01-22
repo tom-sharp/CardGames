@@ -34,15 +34,19 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg("Arguments:");
 			ShowMsg(" r = rounds to play     s = number of table seats    p = number of players");
 			ShowMsg(" t = player tokens      ? = help");
-			ShowMsg(" -s  = silent game output except for statistics");
+			ShowMsg(" -q  = silent game output");
+			ShowMsg(" -qs = silent game output, override for statistics");
 			ShowMsg(" -qr = silent game output, override for round summary");
 			ShowMsg(" -s  = show statistics");
-			ShowMsg(" -db = save statistics to database");
+			ShowMsg(" -db = Ai use database & save statistics to database (if enabled)");
+			ShowMsg(" -l  = learn Ai by training, saving to db");
 			ShowMsg(" ex:  r10 p4");
+			ShowMsg(" ex:  r10 p6 -db");
 			ShowMsg(" ex:  r10 p6 s10 t500 -s");
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -q");
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -qr");
 			ShowMsg(" ex:  r100 p6 s6 t1500 -s -qr -db");
+			ShowMsg(" ex:  r2000 p6 -l");
 			ui.PopColor();
 		}
 
@@ -371,7 +375,6 @@ namespace Games.Card.TexasHoldEm
 			int y = 0;
 			SetStdColor();
 			var str = new CStr(msg);
-			while (str.Length() < this.MsgLog.Width) str.Append(' ');
 			str.Set(MsgLog.Width, 0);
 			MsgLog.First();
 			MsgLog.Insert(str);
@@ -380,35 +383,27 @@ namespace Games.Card.TexasHoldEm
 
 			foreach (var message in this.MsgLog)
 			{
-				ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"{message}");
+				ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"{message.ToString().PadRight(MsgLog.Width)}");
 				y++;
 			}
 
 		}
 
-		/// <summary>
-		/// Setup screen for players
-		/// est 20 char width / player and 7 rows height
-		/// P P P P P D
-		/// P P P P P
-		/// log
-		/// log
-		/// log
-		/// </summary>
-		/// <param name="table"></param>
 		void SetUpTable(ICardTable table) {
 			int topleftX = 2, topleftY = 2, dealerX = 92, dealerY = 2;
-
 			this.table = table;
 			foreach (var seat in table.TableSeats) {
-				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default) {
+				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default)
+				{
 					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = dealerX, Y = dealerY, Cards = "" });
 				}
-				else {
+				else
+				{
 					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = topleftX, Y = topleftY, Cards = "" });
-					topleftX += 18;
+					if (topleftY == 2) topleftX += 18;
+					else topleftX -=18;
 				}
-				if (topleftX >= 90) { topleftX = 2; topleftY += 10; }
+				if (topleftX >= 90) { topleftX = 56; topleftY += 10; }
 			}
 			this.MsgLog.X = 70;
 			this.MsgLog.Y = 18;

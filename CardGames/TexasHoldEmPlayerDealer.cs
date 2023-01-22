@@ -50,7 +50,7 @@ namespace Games.Card.TexasHoldEm
 
 		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
 			this.cardStack = new PlayCardStack(decks: 1);
-			PlayCard.SetSymbolUTF8Suit(this.cardStack);
+			PlayCard.SetSymbolUTF16Suit(this.cardStack);
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 			this.IO = UI;
@@ -175,8 +175,9 @@ namespace Games.Card.TexasHoldEm
 
 
 		private void CollectPlayerBets() {
-
+			int bet = 0;
 			foreach (var seat in this.gametable.TableSeats) {
+				if (seat.IsActive) { if (bet == 0) bet = seat.Bets; if (seat.Bets != bet) BugCheck.Critical(this, "Collect Player bets - Not all same"); }
 				if (seat != null) this.gametable.TablePot.CashIn(seat.CollectBet());
 			}
 

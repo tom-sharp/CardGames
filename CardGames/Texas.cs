@@ -33,6 +33,9 @@ namespace CardGames
 			this.SetupAI(settings);
 			this.SetupFactory(settings);
 			this.SetupGame(settings);
+			this.SetupPlayers(settings);
+			this.SetupStatistics(settings);
+			this.SetupUI(settings);
 
 			return this;
 		}
@@ -117,6 +120,55 @@ namespace CardGames
 
 			this.game = Factory.TexasTable();
 			this.RoundsToPlay = settings.RoundsToPlay;
+
+			if (settings.Quiet) this.game.SleepTime = -1;
+			else this.game.SleepTime = settings.SleepTime;
+
+		}
+
+		void SetupStatistics(ITexasHoldEmSettings settings) {
+
+			if (settings.EnableStatistics)
+			{
+				if (settings.UseDb)
+				{
+					this.game.Statistics(new TexasHoldEmStatistics(DB, AI));
+				}
+				else
+				{
+					this.game.Statistics(new TexasHoldEmStatistics(null, AI));
+				}
+			}
+
+		}
+
+
+		void SetupPlayers(ITexasHoldEmSettings settings) {
+
+			int count = 0;
+			while (++count < settings.Players)
+			{
+
+				if (count == 5) this.game.Join(Factory.TexasHumanPlayer(name: "Human", settings));
+				else if (count == 6) this.game.Join(Factory.TexasCallRobotPlayer(name: $"CallRobot", settings));
+				else if (count == 7) this.game.Join(Factory.TexasRaiseRobotPlayer(name: $"RaiseRobot", settings));
+				else if (count == 8) this.game.Join(Factory.TexasRandomRobotPlayer(name: $"RndRobot", settings));
+				else if (count == 9) this.game.Join(Factory.TexasBalancedRobotPlayer(name: $"Robot {count}", settings));
+				else this.game.Join(Factory.TexasAIPlayer(name: $"Ai {count}", settings));
+
+			}
+
+			if (count <=5) this.game.Join(Factory.TexasHumanPlayer(name: "Human", settings));
+			else this.game.Join(Factory.TexasAIPlayer(name: $"Ai {count}", settings));
+		}
+
+
+		void SetupUI(ITexasHoldEmSettings settings) {
+
+			UI.ShowMsg($"Playing {settings.RoundsToPlay} rounds with {settings.Players} players having {settings.Tokens} tokens each at table with {settings.TableSeats} seats ");
+			UI.SupressOutput = settings.Quiet;
+			UI.SupressOverrideRoundSummary = settings.QuietNotSummary;
+			UI.SupressOverrideStatistics = settings.QuietNotStatistics;
 
 		}
 
