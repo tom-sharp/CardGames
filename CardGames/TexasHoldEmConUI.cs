@@ -14,6 +14,19 @@ namespace Games.Card.TexasHoldEm
 	{
 		public TexasHoldEmConUI()
 		{
+			try {
+				ConWindowWidthRestore = Console.WindowWidth;
+				ConWindowHeightRestore = Console.WindowHeight;
+				ConBufferWidthRestore = Console.BufferWidth;
+				ConBufferHeightRestore = Console.BufferHeight;
+			}
+			catch {
+				ConWindowWidthRestore = 0;
+				ConWindowHeightRestore = 0;
+				ConBufferWidthRestore = 0;
+				ConBufferHeightRestore = 0;
+			}
+
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;
 			this.msg = new CStr();
@@ -25,7 +38,34 @@ namespace Games.Card.TexasHoldEm
 		public bool SupressOverrideStatistics { get; set; }
 
 		public void Clear() {
-			Console.Clear();
+			ui.Clear();
+		}
+
+		public bool Welcome() {
+
+			ui.Clear();
+			
+			int minX = 120;
+			int minY = 30;
+
+			try
+			{
+				if (Console.BufferWidth < minX) Console.BufferWidth = minX;
+				if (Console.BufferHeight < minY) Console.BufferHeight = minY;
+				if (Console.WindowWidth < minX) Console.WindowWidth = minX;
+				if (Console.WindowHeight < minY) Console.WindowHeight = minY;
+			}
+			catch
+			{
+				Console.WriteLine($"Error: unable to set console window size. Min {minX} x {minY}");
+				return false;
+			}
+
+			ui.DrawBorder(0, 0, minX, 3);
+			ui.ShowXY(20,1,"Texas Hold'Em");
+			ui.ShowXY(0,3,"Setup...");
+
+			return true;
 		}
 
 		public void ShowHelp() {
@@ -60,6 +100,18 @@ namespace Games.Card.TexasHoldEm
 			if (SupressOutput) return;
 			ui.RestoreColor();
 			ui.HideCursor(false);
+
+			if (ConWindowWidthRestore == 0) return;
+
+			try {
+				if (Console.WindowWidth != ConWindowWidthRestore) Console.WindowWidth = ConWindowWidthRestore;
+				if (Console.WindowHeight != ConWindowHeightRestore) Console.WindowHeight = ConWindowHeightRestore;
+				if (Console.BufferWidth != ConBufferWidthRestore) Console.BufferWidth = ConBufferWidthRestore;
+				if (Console.BufferHeight != ConBufferHeightRestore) Console.BufferHeight = ConBufferHeightRestore;
+			}
+			catch (Exception ex) {
+				Console.WriteLine($"Error: unable to restore console window:\n {ex.Message}");
+			}
 		}
 
 		public void ShowNewRound(ICardTable table) {
@@ -72,11 +124,9 @@ namespace Games.Card.TexasHoldEm
 			playerseats.Clear();
 			MsgLog.Clear();
 
-			ui.ShowXY(0, 0, "------------------ NEW ROUND | Texas Hold'em  ----------------");
-
 			SetUpTable(table);
 			UpdatePlayers(showcards: false);
-			UpdateMessageLog("");
+			UpdateMessageLog("------ NEW ROUND | Texas Hold'em  ------");
 		}
 
 
@@ -390,7 +440,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		void SetUpTable(ICardTable table) {
-			int topleftX = 2, topleftY = 2, dealerX = 92, dealerY = 2;
+			int topleftX = 2, topleftY = 1, dealerX = 92, dealerY = 2, topleftYfirst = topleftY;
 			this.table = table;
 			foreach (var seat in table.TableSeats) {
 				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default)
@@ -400,13 +450,13 @@ namespace Games.Card.TexasHoldEm
 				else
 				{
 					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = topleftX, Y = topleftY, Cards = "" });
-					if (topleftY == 2) topleftX += 18;
+					if (topleftY == topleftYfirst) topleftX += 18;
 					else topleftX -=18;
 				}
 				if (topleftX >= 90) { topleftX = 56; topleftY += 10; }
 			}
-			this.MsgLog.X = 70;
-			this.MsgLog.Y = 18;
+			this.MsgLog.X = 68;
+			this.MsgLog.Y = 12;
 			this.menu.X = 74;
 			this.menu.Y = 10;
 
@@ -425,7 +475,7 @@ namespace Games.Card.TexasHoldEm
 			public int X { get; set; }
 			public int Y { get; set; }
 			public int Width => 43;
-			public int Height => 5;
+			public int Height => 10;
 
 		}
 
@@ -556,6 +606,11 @@ namespace Games.Card.TexasHoldEm
 			ui.MoveCursor(columns: 5, rows: 0);
 		}
 
+
+		int ConWindowWidthRestore;
+		int ConWindowHeightRestore;
+		int ConBufferWidthRestore;
+		int ConBufferHeightRestore;
 
 		ConIO ui = ConIO.PInstance;
 		CList<PlayerSeat> playerseats;

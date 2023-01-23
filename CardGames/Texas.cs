@@ -23,6 +23,8 @@ namespace CardGames
 			ITexasHoldEmSettings settings = usesettings;
 			if (settings == null) settings = new TexasHoldEmSettings();
 
+			if (!this.UI.Welcome()) { RoundsToPlay = -1; return this; }
+
 			string result = ProcessArguments(arguments, settings);
 			if (result != null) {
 				if (result == "?") this.UI.ShowHelp();

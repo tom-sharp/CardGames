@@ -7,6 +7,7 @@ namespace Games.Card.TexasHoldEm
 {
 	public interface ITexasHoldEmIO
 	{
+		bool Welcome();
 		void ShowHelp();
 		void ShowMsg(string msg);
 		void ShowNewRound(ICardTable table);
