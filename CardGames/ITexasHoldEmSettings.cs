@@ -102,10 +102,25 @@
 
 		/// <summary>
 		/// 
-		/// Save statistics to Db
+		/// Save AI entries and statistics to Db
 		/// 
 		/// </summary>
 		bool UseDb { get; set; }
+
+		/// <summary>
+		/// 
+		/// Create or upgrade db to latest migration
+		/// 
+		/// </summary>
+		bool CreateDb { get; set; }
+
+		/// <summary>
+		/// 
+		/// Delete Db
+		/// 
+		/// </summary>
+		bool DropDb { get; set; }
+
 
 	}
 }

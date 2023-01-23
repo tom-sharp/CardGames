@@ -16,28 +16,30 @@ namespace CardGames
 			this.AI = null;
 			this.game = null;
 			this.RoundsToPlay = -1;
+			this.settings = null;
 		}
 
 
 		public Texas Setup(string[] arguments = null, ITexasHoldEmSettings usesettings = null) {
-			ITexasHoldEmSettings settings = usesettings;
+			settings = usesettings;
 			if (settings == null) settings = new TexasHoldEmSettings();
 
 			if (!this.UI.Welcome()) { RoundsToPlay = -1; return this; }
 
-			string result = ProcessArguments(arguments, settings);
+			string result = ProcessArguments(arguments);
 			if (result != null) {
 				if (result == "?") this.UI.ShowHelp();
 				else this.UI.ShowMsg($"Invalid argument {result}");
 				return this;
 			}
 
-			this.SetupAI(settings);
-			this.SetupFactory(settings);
-			this.SetupGame(settings);
-			this.SetupPlayers(settings);
-			this.SetupStatistics(settings);
-			this.SetupUI(settings);
+			this.SetupDB();
+			this.SetupAI();
+			this.SetupFactory();
+			this.SetupGame();
+			this.SetupPlayers();
+			this.SetupStatistics();
+			this.SetupUI();
 
 			return this;
 		}
@@ -60,17 +62,13 @@ namespace CardGames
 				game.PlayGame();
 				RoundsPlayed++;
 			}
-			if (this.RoundsToPlay >= 0) {
-				this.AI.Save();
-				this.ShowStatistics();
-				this.UI.Finish();
-			}
+
+			this.FinishUp();
 		}
 
 
 
-
-		string ProcessArguments(string[] args, ITexasHoldEmSettings settings)
+		string ProcessArguments(string[] args)
 		{
 			if ((args != null) && (args.Length > 0))
 			{
@@ -80,11 +78,13 @@ namespace CardGames
 				{
 					str.Str(arg).ToLower();
 					if (str.BeginWith("?")) { return "?"; }
-					else if (str.BeginWith("-s")) { settings.EnableStatistics = true; settings.QuietNotStatistics = true; }
-					else if (str.BeginWith("-db")) settings.UseDb = true;
-					else if (str.BeginWith("-qr")) { settings.Quiet = true; settings.QuietNotSummary = true; }
-					else if (str.BeginWith("-q")) settings.Quiet = true;
-					else if (str.BeginWith("-l")) { settings.LearnAi = true; settings.UseDb = true; }
+					else if (str.IsEqual("-s")) { settings.EnableStatistics = true; settings.QuietNotStatistics = true; }
+					else if (str.IsEqual("-db")) settings.UseDb = true;
+					else if (str.IsEqual("-createdb")) settings.CreateDb = true;
+					else if (str.IsEqual("-dropdb")) settings.DropDb = true;
+					else if (str.IsEqual("-qr")) { settings.Quiet = true; settings.QuietNotSummary = true; }
+					else if (str.IsEqual("-q")) settings.Quiet = true;
+					else if (str.IsEqual("-l")) { settings.LearnAi = true; settings.UseDb = true; }
 					else if (str.BeginWith("r")) settings.RoundsToPlay = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("s")) settings.TableSeats = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("p")) settings.Players = str.FilterKeep(filter).ToInt32();
@@ -96,17 +96,32 @@ namespace CardGames
 			return null;
 		}
 
-		void SetupFactory(ITexasHoldEmSettings settings) {
+		void SetupFactory() {
 			Factory.Setup(this.UI, this.DB, this.AI, settings);
 		}
 
-		void SetupAI(ITexasHoldEmSettings settings)
+		void SetupDB() {
+			if (this.settings.DropDb) {
+				this.DB.DeleteDb();
+				UI.ShowMsg("Db deleted");
+			}
+			if (this.settings.CreateDb) {
+				this.DB.MigrateDb();
+				UI.ShowMsg("Db migrated");
+			}
+			if (this.settings.UseDb) {
+				if (!this.DB.ConnectDb()) UI.ShowErrMsg("Warning: Can't connect to db");
+			}
+		}
+
+		void SetupAI()
 		{
 			if (settings.UseDb && this.DB != null) this.AI = new TexasHoldEmAi(this.DB.AiDb);
 			else this.AI = new TexasHoldEmAi();
 
 			if (settings.LearnAi)
 			{
+				UI.ShowMsg("Train Ai {settings.RoundsToPlay} rounds with {settings.Players} players");
 				this.AI.Learn(settings.RoundsToPlay, settings.Players, new TexasRankOn5Cards());
 				settings.RoundsToPlay = 0;
 			}
@@ -117,7 +132,7 @@ namespace CardGames
 
 		}
 
-		void SetupGame(ITexasHoldEmSettings settings)
+		void SetupGame()
 		{
 
 			this.game = Factory.TexasTable();
@@ -128,7 +143,7 @@ namespace CardGames
 
 		}
 
-		void SetupStatistics(ITexasHoldEmSettings settings) {
+		void SetupStatistics() {
 
 			if (settings.EnableStatistics)
 			{
@@ -145,7 +160,7 @@ namespace CardGames
 		}
 
 
-		void SetupPlayers(ITexasHoldEmSettings settings) {
+		void SetupPlayers() {
 
 			int count = 0;
 			while (++count < settings.Players)
@@ -165,13 +180,29 @@ namespace CardGames
 		}
 
 
-		void SetupUI(ITexasHoldEmSettings settings) {
+		void SetupUI() {
 
 			UI.ShowMsg($"Playing {settings.RoundsToPlay} rounds with {settings.Players} players having {settings.Tokens} tokens each at table with {settings.TableSeats} seats ");
 			UI.SupressOutput = settings.Quiet;
 			UI.SupressOverrideRoundSummary = settings.QuietNotSummary;
 			UI.SupressOverrideStatistics = settings.QuietNotStatistics;
 
+		}
+
+		void FinishUp()
+		{
+			if (this.RoundsToPlay >= 0)
+			{
+				if (settings.UseDb && (this.AI.Save() < 0))
+				{
+					UI.ShowErrMsg($"Warning: Failed to save AI entries to db");
+				}
+				if (settings.EnableStatistics) 
+				{
+					this.ShowStatistics();
+				}
+				this.UI.Finish();
+			}
 		}
 
 
@@ -186,6 +217,7 @@ namespace CardGames
 		ITexasHoldEmIO UI;
 		TexasHoldEmTable game;
 		readonly ITexasDb DB;
+		ITexasHoldEmSettings settings;
 
 	}
 }

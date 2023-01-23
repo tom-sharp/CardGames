@@ -21,7 +21,9 @@ namespace Games.Card.TexasHoldEm.Models
 		Task<IEnumerable<TexasStatisticsEntity>> GetHandsAsync(bool winhand, byte card1, byte card2);
 
 		int SaveChanges();
-
 		void MigrateDb();
+		void DeleteDb();
+		bool ConnectDb();
+
 	}
 }

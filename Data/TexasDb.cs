@@ -79,6 +79,15 @@ namespace Games.Card.TexasHoldEm.Models
 			this.db.Database.Migrate();
 		}
 
+		public void DeleteDb()
+		{
+			this.db.Database.EnsureDeleted();
+		}
+
+		public bool ConnectDb()
+		{
+			return this.db.Database.CanConnect();
+		}
 
 		ITexasAiDb aidb;
 		readonly TexasDbContext db;

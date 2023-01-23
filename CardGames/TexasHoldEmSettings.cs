@@ -20,6 +20,10 @@ namespace Games.Card.TexasHoldEm
 		public int Tokens { get; set; }
 		public bool EnableStatistics { get; set; }
 		public bool UseDb { get; set; }
+		public bool CreateDb { get; set; }
+		public bool DropDb { get; set; }
+
+
 		public bool Quiet { get; set; }
 		public bool QuietNotSummary { get; set; }
 		public bool QuietNotStatistics { get; set; }
@@ -47,6 +51,8 @@ namespace Games.Card.TexasHoldEm
 			Tokens = 1000;
 			EnableStatistics = false;
 			UseDb = false;
+			CreateDb = false;
+			DropDb = false;
 			Quiet = false;
 			QuietNotStatistics = false;
 			QuietNotSummary = false;

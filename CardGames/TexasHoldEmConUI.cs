@@ -50,10 +50,12 @@ namespace Games.Card.TexasHoldEm
 
 			try
 			{
+#pragma warning disable CA1416 // Validate platform compatibility
 				if (Console.BufferWidth < minX) Console.BufferWidth = minX;
 				if (Console.BufferHeight < minY) Console.BufferHeight = minY;
 				if (Console.WindowWidth < minX) Console.WindowWidth = minX;
 				if (Console.WindowHeight < minY) Console.WindowHeight = minY;
+#pragma warning restore CA1416 // Validate platform compatibility
 			}
 			catch
 			{
@@ -79,6 +81,8 @@ namespace Games.Card.TexasHoldEm
 			ShowMsg(" -qr = silent game output, override for round summary");
 			ShowMsg(" -s  = show statistics");
 			ShowMsg(" -db = Ai use database & save statistics to database (if enabled)");
+			ShowMsg(" -createdb = create or upgrade db to latest version");
+			ShowMsg(" -dropdb = delete db");
 			ShowMsg(" -l  = learn Ai by training, saving to db");
 			ShowMsg(" ex:  r10 p4");
 			ShowMsg(" ex:  r10 p6 -db");
@@ -103,11 +107,14 @@ namespace Games.Card.TexasHoldEm
 
 			if (ConWindowWidthRestore == 0) return;
 
-			try {
+			try
+			{
+#pragma warning disable CA1416 // Validate platform compatibility
 				if (Console.WindowWidth != ConWindowWidthRestore) Console.WindowWidth = ConWindowWidthRestore;
 				if (Console.WindowHeight != ConWindowHeightRestore) Console.WindowHeight = ConWindowHeightRestore;
 				if (Console.BufferWidth != ConBufferWidthRestore) Console.BufferWidth = ConBufferWidthRestore;
 				if (Console.BufferHeight != ConBufferHeightRestore) Console.BufferHeight = ConBufferHeightRestore;
+#pragma warning restore CA1416 // Validate platform compatibility
 			}
 			catch (Exception ex) {
 				Console.WriteLine($"Error: unable to restore console window:\n {ex.Message}");
@@ -310,6 +317,16 @@ namespace Games.Card.TexasHoldEm
 			if (msg == null) Console.WriteLine("");
 			else Console.WriteLine(msg);
 		}
+
+		public void ShowErrMsg(string msg)
+		{
+			ui.PushColor();
+			SetErrorColor();
+			if (msg == null) Console.WriteLine("");
+			else Console.WriteLine(msg);
+			ui.PopColor();
+		}
+
 
 		void UpdatePlayers(bool showcards)
 		{
@@ -538,6 +555,10 @@ namespace Games.Card.TexasHoldEm
 
 		void SetStdColor() { 
 			ui.SetColor(ConsoleColor.Green, ConsoleColor.Black);
+		}
+
+		void SetErrorColor() {
+			ui.SetColor(ConsoleColor.White, ConsoleColor.Red);
 		}
 
 		void SetInactiveColor()

@@ -10,6 +10,7 @@ namespace Games.Card.TexasHoldEm
 		bool Welcome();
 		void ShowHelp();
 		void ShowMsg(string msg);
+		void ShowErrMsg(string msg);
 		void ShowNewRound(ICardTable table);
 
 		void ReDrawGameTable();
