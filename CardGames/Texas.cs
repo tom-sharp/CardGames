@@ -130,7 +130,7 @@ namespace CardGames
 			else
 			{
 				if (settings.TableSeats < players) players = settings.TableSeats;
-				this.AI.Learn(8000, players, new TexasRankOn5Cards());
+				this.AI.Learn(settings.LearnAiGamePlay, players, new TexasRankOn5Cards());
 			}
 
 		}

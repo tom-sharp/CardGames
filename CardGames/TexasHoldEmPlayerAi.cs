@@ -3,6 +3,7 @@ using Syslib.Games.Card;
 using Syslib.Games;
 using System.Threading;
 using Syslib.Games.Card.TexasHoldEm;
+using Games.Card.TexasHoldEm.Models;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -53,15 +54,17 @@ namespace Games.Card.TexasHoldEm
 			// Ask AI how to do
 			var AiSay = this.AI.AskRate(table.PlayerCount, mycards, dealercards);
 			AiSay += this.Profile.Weight;
+			AiSay += this.Profile.Bluffer;
 
 			if (AiSay < 6) { if (tokens > 0) FoldBet(); else CheckBet(); }
 			else if (AiSay < 15) { if (tokens > 0) CallBet(tokens); else CheckBet(); }
-			else if (AiSay < 30) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 1); }
-			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, 3); }
-			else RaiseBet(tokens, 5);
+			else if (AiSay < 30) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, tokens + 1); }
+			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, tokens + 3); }
+			else RaiseBet(tokens, tokens + 5);
 
 			return;
 		}
+
 
 
 
@@ -109,8 +112,13 @@ namespace Games.Card.TexasHoldEm
 
 		void RaiseBet(int tokensrequested, int tokensplaced)
 		{
-			if (this.maxbetraises > 0 && maxbetraises <= BetRaiseCounter++) { if (tokensrequested > 0) CallBet(tokensrequested); else CheckBet(); return; }
+			if (this.maxbetraises > 0 && maxbetraises <= BetRaiseCounter++) { 
+				if (tokensrequested > 0) CallBet(tokensrequested); 
+				else CheckBet(); 
+				return; 
+			}
 			this.TableSeat.PlaceBet(tokensplaced);
+
 			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
 			this.Status = "Raise";

@@ -14,19 +14,6 @@ namespace Games.Card.TexasHoldEm
 	{
 		public TexasHoldEmConUI()
 		{
-			try {
-				ConWindowWidthRestore = Console.WindowWidth;
-				ConWindowHeightRestore = Console.WindowHeight;
-				ConBufferWidthRestore = Console.BufferWidth;
-				ConBufferHeightRestore = Console.BufferHeight;
-			}
-			catch {
-				ConWindowWidthRestore = 0;
-				ConWindowHeightRestore = 0;
-				ConBufferWidthRestore = 0;
-				ConBufferHeightRestore = 0;
-			}
-
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;
 			this.msg = new CStr();
@@ -44,26 +31,16 @@ namespace Games.Card.TexasHoldEm
 		public bool Welcome() {
 
 			ui.Clear();
-			
-			int minX = 120;
-			int minY = 30;
 
-			try
-			{
-#pragma warning disable CA1416 // Validate platform compatibility
-				if (Console.BufferWidth < minX) Console.BufferWidth = minX;
-				if (Console.BufferHeight < minY) Console.BufferHeight = minY;
-				if (Console.WindowWidth < minX) Console.WindowWidth = minX;
-				if (Console.WindowHeight < minY) Console.WindowHeight = minY;
-#pragma warning restore CA1416 // Validate platform compatibility
-			}
-			catch
-			{
-				Console.WriteLine($"Error: unable to set console window size. Min {minX} x {minY}");
+			int minWidth = 120;
+			int minHeight = 30;
+
+			if (!ui.SetConsoleMinSize(minWidth, minHeight)) {
+				Console.WriteLine($"Error: unable to set console window size. Min {minWidth} x {minHeight}");
 				return false;
 			}
 
-			ui.DrawBorder(0, 0, minX, 3);
+			ui.DrawBorder(0, 0, minWidth, 3);
 			ui.ShowXY(20,1,"Texas Hold'Em");
 			ui.ShowXY(0,3,"Setup...");
 
@@ -105,19 +82,9 @@ namespace Games.Card.TexasHoldEm
 			ui.RestoreColor();
 			ui.HideCursor(false);
 
-			if (ConWindowWidthRestore == 0) return;
-
-			try
+			if (!ui.RestoreConsoleSize()) 
 			{
-#pragma warning disable CA1416 // Validate platform compatibility
-				if (Console.WindowWidth != ConWindowWidthRestore) Console.WindowWidth = ConWindowWidthRestore;
-				if (Console.WindowHeight != ConWindowHeightRestore) Console.WindowHeight = ConWindowHeightRestore;
-				if (Console.BufferWidth != ConBufferWidthRestore) Console.BufferWidth = ConBufferWidthRestore;
-				if (Console.BufferHeight != ConBufferHeightRestore) Console.BufferHeight = ConBufferHeightRestore;
-#pragma warning restore CA1416 // Validate platform compatibility
-			}
-			catch (Exception ex) {
-				Console.WriteLine($"Error: unable to restore console window:\n {ex.Message}");
+				ui.Show($"Error: unable to restore console window");
 			}
 		}
 
@@ -347,7 +314,7 @@ namespace Games.Card.TexasHoldEm
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
 			seat.Cards = Hand.FilterRemoveTrail(" ").ToString();
 			SetStdColor();
-			ui.ShowXY(seat.X, seat.Y, "Dealer");
+			ui.ShowXY(seat.X, seat.Y, seat.Seat.Player.Name);
 			ui.ShowXY(seat.X, seat.Y + 2, $"Pot{this.table.TablePot.Tokens,7}");
 			ui.ShowXY(seat.X, seat.Y + 4, $"");
 			foreach (var c in Cards) { WritePlayCardLarge(c); }
@@ -600,11 +567,6 @@ namespace Games.Card.TexasHoldEm
 			ui.MoveCursor(columns: 5, rows: 0);
 		}
 
-
-		int ConWindowWidthRestore;
-		int ConWindowHeightRestore;
-		int ConBufferWidthRestore;
-		int ConBufferHeightRestore;
 
 		ConIO ui = ConIO.PInstance;
 		CList<PlayerSeat> playerseats;

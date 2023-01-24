@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TexasModels
+namespace Games.Card.TexasHoldEm.Models
 {
 	public class TexasTableRoundInfo
 	{

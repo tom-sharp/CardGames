@@ -89,6 +89,12 @@
 		/// </summary>
 		public bool LearnAi { get; set; }
 
+		/// <summary>
+		/// 
+		/// How many rounds Ai should play for learning before game play
+		/// 
+		/// </summary>
+		public int LearnAiGamePlay { get; set; }
 
 		/// <summary>
 		/// 

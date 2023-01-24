@@ -11,9 +11,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Syslib.ConUI" Version="1.0.0-alfa1" />
-    <PackageReference Include="Syslib.Core" Version="1.0.3" />
-    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa1" />
+    <PackageReference Include="Syslib.ConUI" Version="1.0.0-alfa2" />
+    <PackageReference Include="Syslib.Core" Version="1.0.4" />
+    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa2" />
   </ItemGroup>
 
   <ItemGroup>

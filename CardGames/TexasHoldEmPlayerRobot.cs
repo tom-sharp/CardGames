@@ -44,7 +44,7 @@ namespace Games.Card.TexasHoldEm
 			foreach (var seat in table.TableSeats) { if (seat.IsActive && (seat.Player.Type == GamePlayerType.Default)) dealercards = seat.Player.Cards.GetCards(); break; }
 			var hand = this.Cards.GetCards().Add(dealercards);
 
-			// find out: 2 cards, 2+3, 2+4, 2+5 (flop, turn,river, showdown)
+			// find out: 2 cards, 2+3, 2+4, 2+5 (flop, turn, river, showdown)
 			switch (hand.Count()) {
 				case 2: flop(tokens, mycards, table.ActiveSeatCount); return;
 				case 5: turn(tokens, mycards, dealercards, hand, table.ActiveSeatCount); break;

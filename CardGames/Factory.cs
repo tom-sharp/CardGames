@@ -27,7 +27,7 @@ namespace CardGames
 		{
 			TexasHoldEmTable texastable;
 			texastable = new TexasHoldEmTable(new CardTableConfig() { Seats = Settings.TableSeats, MaxBetLimit = Settings.MaxBetLimit, MaxBetRaises = Settings.MaxBetRaises });
-			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() { Tokens = Settings.Tokens }, UI));
+			texastable.Join(new TexasHoldEmPlayerDealer(new CardPlayerConfig() {Name = "Common cards", Tokens = Settings.Tokens }, UI));
 			return texastable;
 		}
 

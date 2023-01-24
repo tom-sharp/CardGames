@@ -1,7 +1,6 @@
 ﻿using Syslib;
 using Syslib.Games.Card;
 using Syslib.Games;
-using TexasModels;
 
 namespace Games.Card.TexasHoldEm
 {

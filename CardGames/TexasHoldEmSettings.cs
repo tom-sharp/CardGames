@@ -28,6 +28,7 @@ namespace Games.Card.TexasHoldEm
 		public bool QuietNotSummary { get; set; }
 		public bool QuietNotStatistics { get; set; }
 		public bool LearnAi { get; set; }
+		public int LearnAiGamePlay { get; set; }
 		public int SleepTime { get; set; }
 		public int MaxBetRaises { get; set; }
 		public int MaxBetLimit { get; set; }
@@ -57,6 +58,7 @@ namespace Games.Card.TexasHoldEm
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
 			LearnAi = false;
+			LearnAiGamePlay = 2000;
 			SleepTime = 250;
 			MaxBetRaises = 4;
 			MaxBetLimit = 0;

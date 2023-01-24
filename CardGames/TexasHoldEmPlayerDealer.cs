@@ -180,7 +180,6 @@ namespace Games.Card.TexasHoldEm
 				if (seat.IsActive) { if (bet == 0) bet = seat.Bets; if (seat.Bets != bet) BugCheck.Critical(this, "Collect Player bets - Not all same"); }
 				if (seat != null) this.gametable.TablePot.CashIn(seat.CollectBet());
 			}
-
 		}
 
 		// roll back bets made, as for some reson round was not completed
@@ -256,16 +255,16 @@ namespace Games.Card.TexasHoldEm
 
 
 			int potshare = this.gametable.TablePot.Tokens; 
-			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowProgressMessage($"Pot is split with {WinnersSeats.Count()} each winning {potshare} tokens"); }
+			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowProgressMessage($"Pot split with {WinnersSeats.Count()} players, each win {potshare} tokens"); }
 			foreach (var seat in WinnersSeats) {
 				seat.Player.Cards.WinHand = true;
 				seat.CashIn(this.gametable.TablePot.CashOut(potshare));
-				seat.Comment = $" - Winner {seat.Player.Name} wins  {potshare} tokens and now have {seat.Player.Tokens}";
+				seat.Comment = $" - Winner {seat.Player.Name} win {potshare} tokens";
 
 				this.IO.ShowProgressMessage(seat.Comment);
 				if ((this.gametable.TablePot.Tokens < potshare) && (this.gametable.TablePot.Tokens > 0)) {
 					seat.CashIn(this.gametable.TablePot.Clear());
-					seat.Comment = $" Uneven potshare given to {seat.Player.Name} and now have {seat.Player.Tokens}";
+					seat.Comment = $" Uneven potshare given to {seat.Player.Name}";
 					this.IO.ShowProgressMessage(seat.Comment);
 				}
 			}
