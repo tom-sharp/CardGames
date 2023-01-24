@@ -305,7 +305,7 @@ namespace Games.Card.TexasHoldEm
 		void Cleanup(int x, int y, int width, int height) {
 			var str = new CStr(width, 32);
 			int count = 0;
-			while (count < height) { WriteXY(x, y + count, str.ToString()); count++; }
+			while (count < height) { ui.ShowXY(x, y + count, str.ToString()); count++; }
 			ui.HideCursor();
 		}
 
@@ -551,42 +551,15 @@ namespace Games.Card.TexasHoldEm
 
 		}
 
-		void WriteXY(int x, int y, string msg) { Console.CursorLeft = x; Console.CursorTop = y; Console.Write(msg); }
 
-		void SetStdColor() { 
-			ui.SetColor(ConsoleColor.Green, ConsoleColor.Black);
-		}
-
-		void SetErrorColor() {
-			ui.SetColor(ConsoleColor.White, ConsoleColor.Red);
-		}
-
-		void SetInactiveColor()
-		{
-			ui.SetColor(ConsoleColor.DarkGreen, ConsoleColor.Black);
-		}
-
-		void SetActiveColor()
-		{
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
-		}
-
-		void SetHighLightColor()
-		{
-			ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
-		}
-		void SetPlayCardColorBlack()
-		{
-			ui.SetColor(ConsoleColor.Black, ConsoleColor.White);
-		}
-		void SetPlayCardColorRed()
-		{
-			ui.SetColor(ConsoleColor.Red, ConsoleColor.White);
-		}
-
-		void SetPlayCardColorBackside() { 
-			ui.SetColor(ConsoleColor.Gray, ConsoleColor.White);
-		}
+		void SetStdColor() => ui.SetColor(ConsoleColor.Green, ConsoleColor.Black); 
+		void SetErrorColor() => ui.SetColor(ConsoleColor.White, ConsoleColor.Red);
+		void SetInactiveColor() => ui.SetColor(ConsoleColor.DarkGreen, ConsoleColor.Black);
+		void SetActiveColor() => ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
+		void SetHighLightColor() => ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+		void SetPlayCardColorBlack() => ui.SetColor(ConsoleColor.Black, ConsoleColor.White);
+		void SetPlayCardColorRed() => ui.SetColor(ConsoleColor.Red, ConsoleColor.White);
+		void SetPlayCardColorBackside() => ui.SetColor(ConsoleColor.Gray, ConsoleColor.White);
 
 		void WritePlayCard(IPlayCard card) {
 			var backside = new CStr(2, 21).ToString();

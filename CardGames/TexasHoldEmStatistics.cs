@@ -31,13 +31,6 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		//public int SaveToDb(TexasStatisticsEntity hand) {
-		//	if ((hand == null) || (this.db == null)) return 0;
-		//	if (QueToDb > 10) {	SaveDb(); QueToDb = 0; }
-		//	this.db.AddHand(hand);
-		//	return ++QueToDb;
-		//}
-
 		public int SaveDb()
 		{
 			if (this.db == null) return 0;

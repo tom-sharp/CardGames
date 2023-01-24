@@ -116,18 +116,21 @@ namespace CardGames
 
 		void SetupAI()
 		{
+			int players = settings.Players;
+
 			if (settings.UseDb && this.DB != null) this.AI = new TexasHoldEmAi(this.DB.AiDb);
 			else this.AI = new TexasHoldEmAi();
 
 			if (settings.LearnAi)
 			{
-				UI.ShowMsg("Train Ai {settings.RoundsToPlay} rounds with {settings.Players} players");
-				this.AI.Learn(settings.RoundsToPlay, settings.Players, new TexasRankOn5Cards());
+				UI.ShowMsg($"Train Ai {settings.RoundsToPlay} rounds with {players} players");
+				this.AI.Learn(settings.RoundsToPlay, players, new TexasRankOn5Cards());
 				settings.RoundsToPlay = 0;
 			}
 			else
 			{
-				this.AI.Learn(8000, settings.Players, new TexasRankOn5Cards());
+				if (settings.TableSeats < players) players = settings.TableSeats;
+				this.AI.Learn(8000, players, new TexasRankOn5Cards());
 			}
 
 		}
