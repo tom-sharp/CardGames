@@ -17,7 +17,7 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(tokens);
 		}
 
-		public int BetRaiseCounter { get; private set; }
+		public int BetRaiseCounter { get; set; }
 		public override bool GetReady()
 		{
 			this.Cards.ClearHand();
@@ -32,6 +32,7 @@ namespace Games.Card.TexasHoldEm
 		public void AskBet(int tokens, ICardTable table)
 		{
 			this.maxbetraises = table.MaxBetRaises;
+			int betsize = 2;
 
 			if (CRandom.Random.RandomBool(this.Profile.Randomness))
 			{

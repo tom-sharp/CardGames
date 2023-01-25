@@ -17,7 +17,7 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(requiredtokens);
 		}
 
-		public int BetRaiseCounter { get; private set; }
+		public int BetRaiseCounter { get; set; }
 		public override bool GetReady()
 		{
 			this.Cards.ClearHand();

@@ -23,6 +23,6 @@ namespace Games.Card.TexasHoldEm
 		/// </summary>
 		void AskBet(int requestedtokens, ICardTable table);
 
-		public int BetRaiseCounter { get; }
+		public int BetRaiseCounter { get; set; }
 	}
 }

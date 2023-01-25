@@ -147,7 +147,11 @@ namespace Games.Card.TexasHoldEm
 		private void PlaceBets() {
 
 			// If run immediately after init bets: first seat to be asked is next active after last raise 
-			// If run in normal bet roundfirst to ask is fistcard seat (may have folded and not active)
+			// If run in normal bet round first to ask is first card seat (may have folded and not active)
+
+			foreach (var playerseat in this.gametable.TableSeats) {
+				if (playerseat.IsActive && playerseat.Player.Type != GamePlayerType.Default) ((ITexasHoldEmPlayer)playerseat.Player).BetRaiseCounter = 0;
+			}
 
 			var seat = this.gametable.NextActiveSeat(this.lastBetRaiseSeat);
 			if (this.lastBetRaiseSeat == null) seat = this.firstCardSeat;
