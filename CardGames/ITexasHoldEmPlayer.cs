@@ -1,5 +1,6 @@
 ﻿using Syslib.Games;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +16,13 @@ namespace Games.Card.TexasHoldEm
 		/// <summary>
 		/// Required Tokens to bet
 		/// </summary>
-		void PlaceBet(int requiredtokens, ICardTable table);
+		void PlaceBet(ITexasHoldEmPlayerTurnInfo info);
 
 
 		/// <summary>
 		/// Requested minimum tokens to bet
 		/// </summary>
-		void AskBet(int requestedtokens, ICardTable table);
+		void AskBet(ITexasHoldEmPlayerTurnInfo info);
 
 		public int BetRaiseCounter { get; set; }
 	}

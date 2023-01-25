@@ -5,6 +5,7 @@ using Games.Card.TexasHoldEm.Models;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 
 
 namespace Games.Card.TexasHoldEm
@@ -53,18 +54,12 @@ namespace Games.Card.TexasHoldEm
 			PlayCard.SetSymbolUTF16Suit(this.cardStack);
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
+			this.playerturninfo = new TexasHoldEmPlayerTurnInfo();
 			this.IO = UI;
 			this.StatsHand = new TexasStatisticsEntity();
 		}
 
 		public int BetRaiseCounter { get; private set; }
-		public override bool GetReady()
-		{
-			this.Cards.ClearHand();
-			this.Status = "Ready";
-			BetRaiseCounter = 0;
-			return true;
-		}
 
 
 		public override bool PlayGame(IGameTable table)
@@ -88,7 +83,9 @@ namespace Games.Card.TexasHoldEm
 			this.gametable = (ICardTable)table;
 
 
+			this.betsize = 0;
 			this.requiredbet = 1;
+
 			this.gametable.TablePot.Clear();
 
 			foreach (var seat in this.gametable.TableSeats)
@@ -136,9 +133,13 @@ namespace Games.Card.TexasHoldEm
 
 			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
 
-			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(requiredtokens: this.requiredbet, this.gametable);
+			playerturninfo.TokensRequired = this.requiredbet;
+			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(playerturninfo);
+
 			this.requiredbet *= 2;
-			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(requiredtokens: this.requiredbet, this.gametable);
+			this.betsize = this.requiredbet;
+			playerturninfo.TokensRequired = requiredbet;
+			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(playerturninfo);
 			
 			return true;
 		}
@@ -160,8 +161,17 @@ namespace Games.Card.TexasHoldEm
 				if (seat.IsActive) {
 					this.IO.ShowPlayerActiveSeat(seat);
 					Wait();
-					((ITexasHoldEmPlayer)seat.Player).AskBet(this.requiredbet - seat.Bets, this.gametable);
-					if (seat.Bets < this.requiredbet) { if (seat.IsActive) BugCheck.Critical(this, "PlaceBets : Player do not meet required bet, still active"); }
+					this.playerturninfo.TokensRequired = 0;
+					this.playerturninfo.BetRaiseCountLimit = this.gametable.MaxBetRaises;
+					this.playerturninfo.TokensBetLimit = this.gametable.MaxBetLimit;
+					this.playerturninfo.TokensBetSize = this.betsize;
+					this.playerturninfo.TokensRequest = this.requiredbet - seat.Bets;
+					this.playerturninfo.ActivePlayers = this.gametable.ActiveSeatCount;
+					this.playerturninfo.NumberOfPlayers = this.gametable.PlayerCount;
+					this.playerturninfo.CommonCards = this.Cards.GetCards();
+					((ITexasHoldEmPlayer)seat.Player).AskBet(this.playerturninfo);
+					if (seat.Bets < this.requiredbet) { if (seat.IsActive) { BugCheck.Critical(this, "PlaceBets : Player do not meet required bet, still active"); } }
+					if (seat.Bets > this.requiredbet) { if ((seat.Bets - this.requiredbet) % this.betsize != 0) BugCheck.Critical(this, "PlaceBets : Bet rasie was not of betsize"); }
 					if (seat.Bets > this.requiredbet) { this.requiredbet = seat.Bets; this.lastBetRaiseSeat = seat; }
 					this.IO.ShowProgressMessage(seat.Comment);
 					this.IO.ShowPlayerSeat(seat);
@@ -358,6 +368,8 @@ namespace Games.Card.TexasHoldEm
 		readonly ITexasHoldEmIO IO;
 		IPlayCardStack cardStack;
 		int requiredbet;
+		int betsize;
+		TexasHoldEmPlayerTurnInfo playerturninfo;
 		ICardTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
 		ICardTableSeat lastBetRaiseSeat;        // player that placed the last bet and raised, requiring other to place bets
 		ICardTable gametable;

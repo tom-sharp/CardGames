@@ -1,6 +1,7 @@
 ﻿using Syslib;
 using Syslib.Games.Card;
 using Syslib.Games;
+using Syslib.Games.Card.TexasHoldEm;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -12,37 +13,37 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void PlaceBet(int requiredtokens, ICardTable table)
+		public void PlaceBet(ITexasHoldEmPlayerTurnInfo info)
 		{
-			this.TableSeat.PlaceBet(requiredtokens);
+			this.TableSeat.PlaceBet(info.TokensRequired);
 		}
 
 		public int BetRaiseCounter { get; set; }
-		public override bool GetReady()
+
+
+
+		public void AskBet(ITexasHoldEmPlayerTurnInfo info)
 		{
-			this.Cards.ClearHand();
-			this.Status = "Ready";
-			BetRaiseCounter = 0;
-			return true;
-		}
+			int returnbet;
 
+			if (CanRaise(info)) returnbet = this.IO.AskForBet(info.TokensRequest, info.TokensBetSize);
+			else returnbet = this.IO.AskForBet(info.TokensRequest, -1);
 
-		public void AskBet(int requestedtokens, ICardTable table)
-		{
-			int betsize = 2;
-			if (this.BetRaiseCounter >= table.MaxBetRaises) betsize = -1;
-
-			int returnbet = this.IO.AskForBet(requestedtokens, betsize);
 			if (returnbet < 0) FoldBet();
 			else if (returnbet == 0)
 			{
-				if (requestedtokens == 0) CheckBet();
-				else CallBet(requestedtokens);
+				if (info.TokensRequest == 0) CheckBet();
+				else CallBet(info);
 			}
-			else RaiseBet(requestedtokens, returnbet + requestedtokens);
+			else RaiseBet(returnbet + info.TokensRequest, info);
 		}
 
 
+
+		bool CanRaise(ITexasHoldEmPlayerTurnInfo info) {
+			if (info.BetRaiseCountLimit > 0 && this.BetRaiseCounter >= info.BetRaiseCountLimit) return false;
+			return true;
+		}
 
 
 		void FoldBet()
@@ -58,18 +59,19 @@ namespace Games.Card.TexasHoldEm
 			this.Status = "Check";
 		}
 
-		void CallBet(int tokens)
+		void CallBet(ITexasHoldEmPlayerTurnInfo info)
 		{
-			this.TableSeat.PlaceBet(tokens);
-			this.TableSeat.Comment = $" - {this.Name} call {tokens} tokens";
+			this.TableSeat.PlaceBet(info.TokensRequest);
+			this.TableSeat.Comment = $" - {this.Name} call {info.TokensRequest} tokens";
 			this.Status = "Call";
 		}
 
-		void RaiseBet(int tokensrequested, int tokensplaced)
+		void RaiseBet(int tokensplaced, ITexasHoldEmPlayerTurnInfo info)
 		{
 			BetRaiseCounter++;
+			if (info.TokensBetLimit > 0 && (tokensplaced - info.TokensRequest > info.TokensBetLimit)) tokensplaced = info.TokensRequest + info.TokensBetLimit;
 			this.TableSeat.PlaceBet(tokensplaced);
-			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
+			if (info.TokensRequest > 0) this.TableSeat.Comment = $" - {this.Name} call {info.TokensRequest} and raise {tokensplaced - info.TokensRequest} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
 			this.Status = "Raise";
 		}
