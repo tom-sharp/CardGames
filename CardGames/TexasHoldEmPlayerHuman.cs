@@ -12,9 +12,9 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void PlaceBet(int tokens, ICardTable table)
+		public void PlaceBet(int requiredtokens, ICardTable table)
 		{
-			this.TableSeat.PlaceBet(tokens);
+			this.TableSeat.PlaceBet(requiredtokens);
 		}
 
 		public int BetRaiseCounter { get; private set; }
@@ -27,18 +27,19 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void AskBet(int tokens, ICardTable table)
+		public void AskBet(int requestedtokens, ICardTable table)
 		{
-			this.maxbetraises = table.MaxBetRaises;
+			int betsize = 2;
+			if (this.BetRaiseCounter >= table.MaxBetRaises) betsize = -1;
 
-			int returnbet = this.IO.AskForBet(tokens);
+			int returnbet = this.IO.AskForBet(requestedtokens, betsize);
 			if (returnbet < 0) FoldBet();
 			else if (returnbet == 0)
 			{
-				if (tokens == 0) CheckBet();
-				else CallBet(tokens);
+				if (requestedtokens == 0) CheckBet();
+				else CallBet(requestedtokens);
 			}
-			else RaiseBet(tokens, returnbet + tokens);
+			else RaiseBet(requestedtokens, returnbet + requestedtokens);
 		}
 
 
@@ -66,14 +67,13 @@ namespace Games.Card.TexasHoldEm
 
 		void RaiseBet(int tokensrequested, int tokensplaced)
 		{
-			if (this.maxbetraises > 0 && maxbetraises <= BetRaiseCounter++) { if (tokensrequested > 0) CallBet(tokensrequested); else CheckBet(); return; }
+			BetRaiseCounter++;
 			this.TableSeat.PlaceBet(tokensplaced);
 			if (tokensrequested > 0) this.TableSeat.Comment = $" - {this.Name} call {tokensrequested} and raise {tokensplaced - tokensrequested} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
-			this.Status = "Raised";
+			this.Status = "Raise";
 		}
 
-		int maxbetraises;
 
 		ITexasHoldEmIO IO;
 

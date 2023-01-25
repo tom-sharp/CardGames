@@ -15,13 +15,13 @@ namespace Games.Card.TexasHoldEm
 		/// <summary>
 		/// Required Tokens to bet
 		/// </summary>
-		void PlaceBet(int tokens, ICardTable table);
+		void PlaceBet(int requiredtokens, ICardTable table);
 
 
 		/// <summary>
 		/// Requested minimum tokens to bet
 		/// </summary>
-		void AskBet(int tokens, ICardTable table);
+		void AskBet(int requestedtokens, ICardTable table);
 
 		public int BetRaiseCounter { get; }
 	}

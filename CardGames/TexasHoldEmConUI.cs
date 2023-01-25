@@ -18,6 +18,11 @@ namespace Games.Card.TexasHoldEm
 			this.SupressOverrideRoundSummary = false;
 			this.msg = new CStr();
 			this.playerseats = new CList<PlayerSeat>();
+
+			this.ui = ConIO.PInstance;
+			this.MsgLog = new ProgressLog();
+			this.menu = new Menu(this);
+
 		}
 
 		public bool SupressOutput { get; set; }
@@ -74,7 +79,8 @@ namespace Games.Card.TexasHoldEm
 
 		public void ShowProgressMessage(string msg) {
 			if (SupressOutput) return;
-			UpdateMessageLog(msg);
+			if (msg == null) ShowMessageLog();
+			else UpdateMessageLog(msg);
 		}
 
 		public void Finish() {
@@ -261,10 +267,10 @@ namespace Games.Card.TexasHoldEm
 
 		// respond to request fold/check/call/raise
 		// -1 Fold, 0 call or check, >0 raise that amount
-		public int AskForBet(int tokens)
+		public int AskForBet(int requestedtokens, int canraisetokens)
 		{
 			if (SupressOutput) return 0;
-			int result = this.menu.Ask(tokens);
+			int result = this.menu.Ask(requestedtokens, canraisetokens);
 			Cleanup(this.menu.X, this.menu.Y, 21, 10);
 			return result;
 		}
@@ -406,20 +412,25 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		void UpdateMessageLog(string msg) {
-			int y = 0;
-			SetStdColor();
 			var str = new CStr(msg);
 			str.Set(MsgLog.Width, 0);
 			MsgLog.First();
 			MsgLog.Insert(str);
-
 			while (this.MsgLog.Count() > this.MsgLog.Height) { this.MsgLog.Last(); this.MsgLog.Remove(); }
+			ShowMessageLog();
+		}
+
+		void ShowMessageLog()
+		{
+			int y = 0;
+			SetStdColor();
 
 			foreach (var message in this.MsgLog)
 			{
 				ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"{message.ToString().PadRight(MsgLog.Width)}");
 				y++;
 			}
+			while (y < MsgLog.Height) { ui.ShowXY(MsgLog.X, MsgLog.Y + y, $"".PadRight(MsgLog.Width)); y++; }
 
 		}
 
@@ -464,57 +475,100 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		class Menu {
+			public Menu(ITexasHoldEmIO ui)
+			{
+				this.ui = ui;
+			}
 			public int X { get; set; }
 			public int Y { get; set; }
-			int mnuret;
-			public int Ask(int tokens) {
+
+			// tokens is requested, canraisetokens is limited amount
+			public int Ask(int requestedtokens, int canraisetokens) {
 				var mnu = new Syslib.ConUI.ConMenu(X, Y, 15, true, false);
-				mnuret = 0;
-				if (tokens > 0)
-				{
-					mnu.AddItem("Fold");
-					mnu.AddItem($"Call {tokens} tokens");
-					mnu.AddItem($"Raise", RespondRaise);
-					switch (mnu.Select())
+				menureturn = 0;
+				betsize = canraisetokens;
+
+				while (true) {
+					if (requestedtokens > 0 && canraisetokens >= 0)
 					{
-						case 1: return -1;  // fold
-						case 2: return 0;  // call
-						case 3: return mnuret;  // raise
+						// allowed to raise, call, fold
+						mnu.Clear();
+						mnu.AddItem($"Call {requestedtokens} tokens");
+						mnu.AddItem($"Fold");
+						mnu.AddItem($"Raise", RespondRaise);
+						switch (mnu.Select())
+						{
+							case 1: return 0;  // call or check
+							case 2: return -1;  // fold
+							case 3: if (menureturn > 0) return menureturn; break; // raise
+							default: if (requestedtokens > 0) return -1; return 0;
+						}
 					}
-				}
-				else
-				{
-					mnu.AddItem("Check");
-					mnu.AddItem("Raise", RespondRaise);
-					switch (mnu.Select())
+					else if (requestedtokens > 0 && canraisetokens == -1)
 					{
-						case 1: return 0;  // check
-						case 2: return mnuret;  // raise
+						// allowed to call, fold
+						mnu.AddItem($"Call {requestedtokens} tokens");
+						mnu.AddItem($"Fold");
+						switch (mnu.Select())
+						{
+							case 1: return 0;  // call or check
+							case 2: return -1;  // fold
+							default: if (requestedtokens > 0) return -1; return 0;
+						}
 					}
+					else if (requestedtokens == 0 && canraisetokens >= 0)
+					{
+						// allowed to raise, check, (fold)
+						mnu.AddItem($"Check");
+						mnu.AddItem($"Fold");
+						mnu.AddItem($"Raise", RespondRaise);
+						switch (mnu.Select())
+						{
+							case 1: return 0;  // call or check
+							case 2: return -1;  // fold
+							case 3: if (menureturn > 0) return menureturn; break; // raise
+							default: if (requestedtokens > 0) return -1; return 0;
+						}
+					}
+					else
+					{
+						// allowed to check, (fold)
+						mnu.AddItem($"Check");
+						mnu.AddItem($"Fold");
+						switch (mnu.Select())
+						{
+							case 1: return 0;  // call or check
+							case 2: return -1;  // fold
+							default: if (requestedtokens > 0) return -1; return 0;
+						}
+					}
+					this.ui.ShowProgressMessage(null);
 				}
-				if (tokens > 0) return -1;
-				return 0;
+
 			}
 
 			int RespondRaise()
 			{
-				var mnu = new Syslib.ConUI.ConMenu(X+1, Y+1, 18, true, false);
-				mnu.AddItem($"Raise 1 token");
-				mnu.AddItem($"Raise 2 tokens");
-				mnu.AddItem($"Raise 3 tokens");
-				mnu.AddItem($"Raise 4 tokens");
-				mnu.AddItem($"Raise 5 tokens");
+				var mnu = new Syslib.ConUI.ConMenu(X+2, Y+2, 18, true, false);
+				mnu.AddItem($"Raise {1 * betsize} token");
+				mnu.AddItem($"Raise {2 * betsize} tokens");
+				mnu.AddItem($"Raise {3 * betsize} tokens");
+				mnu.AddItem($"Raise {4 * betsize} tokens");
+				mnu.AddItem($"Raise {5 * betsize} tokens");
 				switch (mnu.Select())
 				{
-					case 1: mnuret = 1; return 0;
-					case 2: mnuret = 2; return 0;
-					case 3: mnuret = 3; return 0;
-					case 4: mnuret = 4; return 0;
-					case 5: mnuret = 5; return 0;
+					case 1: menureturn = 1 * betsize; return 0;
+					case 2: menureturn = 2 * betsize; return 0;
+					case 3: menureturn = 3 * betsize; return 0;
+					case 4: menureturn = 4 * betsize; return 0;
+					case 5: menureturn = 5 * betsize; return 0;
 				}
-				mnuret = 0;
+				menureturn = 0;
 				return 0;
 			}
+
+			int menureturn, betsize;
+			ITexasHoldEmIO ui;
 
 		}
 
@@ -568,10 +622,10 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		ConIO ui = ConIO.PInstance;
+		ConIO ui;
 		CList<PlayerSeat> playerseats;
-		ProgressLog MsgLog = new();
-		Menu menu = new();
+		ProgressLog MsgLog;
+		Menu menu;
 		ICardTable table;
 		CStr msg;
 		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }

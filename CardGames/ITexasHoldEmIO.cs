@@ -29,7 +29,7 @@ namespace Games.Card.TexasHoldEm
 		void ShowPlayerCards(ICardTableSeat playerseat, ICardTableSeat dealerset);
 
 
-		int AskForBet(int tokens);
+		int AskForBet(int tokens, int canraisetokens);
 
 		bool SupressOutput { get; set; }
 		bool SupressOverrideRoundSummary { get; set; }

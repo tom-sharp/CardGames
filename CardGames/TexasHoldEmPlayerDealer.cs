@@ -136,9 +136,9 @@ namespace Games.Card.TexasHoldEm
 
 			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
 
-			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(tokens: this.requiredbet, this.gametable);
+			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(requiredtokens: this.requiredbet, this.gametable);
 			this.requiredbet *= 2;
-			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(tokens: this.requiredbet, this.gametable);
+			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(requiredtokens: this.requiredbet, this.gametable);
 			
 			return true;
 		}
@@ -157,10 +157,8 @@ namespace Games.Card.TexasHoldEm
 					this.IO.ShowPlayerActiveSeat(seat);
 					Wait();
 					((ITexasHoldEmPlayer)seat.Player).AskBet(this.requiredbet - seat.Bets, this.gametable);
-					if (this.requiredbet < seat.Bets) {
-						this.requiredbet = seat.Bets;
-						this.lastBetRaiseSeat = seat;
-					}
+					if (seat.Bets < this.requiredbet) { if (seat.IsActive) BugCheck.Critical(this, "PlaceBets : Player do not meet required bet, still active"); }
+					if (seat.Bets > this.requiredbet) { this.requiredbet = seat.Bets; this.lastBetRaiseSeat = seat; }
 					this.IO.ShowProgressMessage(seat.Comment);
 					this.IO.ShowPlayerSeat(seat);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
@@ -177,7 +175,7 @@ namespace Games.Card.TexasHoldEm
 		private void CollectPlayerBets() {
 			int bet = 0;
 			foreach (var seat in this.gametable.TableSeats) {
-				if (seat.IsActive) { if (bet == 0) bet = seat.Bets; if (seat.Bets != bet) BugCheck.Critical(this, "Collect Player bets - Not all same"); }
+				if (seat.IsActive) { if (bet == 0) bet = seat.Bets; if (seat.Bets != bet) BugCheck.Critical(this, "CollectPlayerBets : Not all same"); }
 				if (seat != null) this.gametable.TablePot.CashIn(seat.CollectBet());
 			}
 		}
@@ -312,7 +310,6 @@ namespace Games.Card.TexasHoldEm
 			roundentity.WinRankId = 0;
 			roundentity.Players = (byte)this.gametable.PlayerCount;
 			roundentity.PlayerHands = new List<TexasPlayerHandEntity>();
-
 
 			foreach (var seat in this.gametable.TableSeats)
 			{

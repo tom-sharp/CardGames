@@ -31,7 +31,7 @@ namespace Games.Card.TexasHoldEm
 
 
 		// return true if accept or raise bet or false if fold
-		public void AskBet(int tokens, ICardTable table)
+		public void AskBet(int requestedtokens, ICardTable table)
 		{
 			this.maxbetraises = table.MaxBetRaises;
 
@@ -40,7 +40,7 @@ namespace Games.Card.TexasHoldEm
 
 			if (CRandom.Random.RandomBool(this.Profile.Randomness))
 			{
-				RandomDecision(tokens);
+				RandomDecision(requestedtokens);
 				return;
 			}
 
@@ -56,11 +56,11 @@ namespace Games.Card.TexasHoldEm
 			AiSay += this.Profile.Weight;
 			AiSay += this.Profile.Bluffer;
 
-			if (AiSay < 6) { if (tokens > 0) FoldBet(); else CheckBet(); }
-			else if (AiSay < 15) { if (tokens > 0) CallBet(tokens); else CheckBet(); }
-			else if (AiSay < 30) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, tokens + 1); }
-			else if (AiSay < 50) { if (tokens > 0) CallBet(tokens); else RaiseBet(tokens, tokens + 3); }
-			else RaiseBet(tokens, tokens + 5);
+			if (AiSay < 6) { if (requestedtokens > 0) FoldBet(); else CheckBet(); }
+			else if (AiSay < 15) { if (requestedtokens > 0) CallBet(requestedtokens); else CheckBet(); }
+			else if (AiSay < 30) { if (requestedtokens > 0) CallBet(requestedtokens); else RaiseBet(requestedtokens, requestedtokens + 1); }
+			else if (AiSay < 50) { if (requestedtokens > 0) CallBet(requestedtokens); else RaiseBet(requestedtokens, requestedtokens + 3); }
+			else RaiseBet(requestedtokens, requestedtokens + 5);
 
 			return;
 		}
