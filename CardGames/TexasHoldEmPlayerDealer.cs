@@ -52,6 +52,7 @@ namespace Games.Card.TexasHoldEm
 		public TexasHoldEmPlayerDealer(ICardPlayerConfig config, ITexasHoldEmIO UI) :base(config) {
 			this.cardStack = new PlayCardStack(decks: 1);
 			PlayCard.SetSymbolUTF16Suit(this.cardStack);
+			this.dealerSeat = null;
 			this.firstCardSeat = null;
 			this.lastBetRaiseSeat = null;
 			this.playerturninfo = new TexasHoldEmPlayerTurnInfo();
@@ -106,6 +107,7 @@ namespace Games.Card.TexasHoldEm
 
 		private void PlayRound() {
 			this.IO.ShowNewRound(this.gametable);
+			this.IO.ShowDealerButton(this.dealerSeat);
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
@@ -128,10 +130,11 @@ namespace Games.Card.TexasHoldEm
 		// expected that at least two active players exist to call this function
 		private bool PlaceInitialBets()
 		{
-			this.firstCardSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
+			this.dealerSeat = this.gametable.NextActiveSeat(this.dealerSeat);
+			this.firstCardSeat = this.gametable.NextActiveSeat(this.dealerSeat);
 			this.lastBetRaiseSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
 
-			if ((this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
+			if ((this.dealerSeat == null) || (this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
 
 			playerturninfo.TokensRequired = this.requiredbet;
 			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(playerturninfo);
@@ -375,7 +378,8 @@ namespace Games.Card.TexasHoldEm
 		int requiredbet;
 		int betsize;
 		TexasHoldEmPlayerTurnInfo playerturninfo;
-		ICardTableSeat firstCardSeat;    // player seat that recieces the first card in a deal around the table
+		ICardTableSeat dealerSeat;
+		ICardTableSeat firstCardSeat;    // player seat that recieves the first card in a deal around the table
 		ICardTableSeat lastBetRaiseSeat;        // player that placed the last bet and raised, requiring other to place bets
 		ICardTable gametable;
 	}

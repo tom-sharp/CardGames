@@ -244,7 +244,7 @@ namespace Games.Card.TexasHoldEm
 			foreach (var s in playerseats)
 			{
 				if (s.Seat.Player != null && s.Seat == seat) { 
-					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDealer(s);
+					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDefault(s);
 					else UpdatePlayer(s, showcards: false); 
 					break; 
 				}
@@ -257,12 +257,36 @@ namespace Games.Card.TexasHoldEm
 			{
 				if (s.Seat.Player != null && s.Seat == seat)
 				{
-					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDealerActive(s);
+					if (s.Seat.Player.Type == GamePlayerType.Default) UpdateDefaultActive(s);
 					else UpdatePlayerActive(s);
 					break;
 				}
 			}
 		}
+
+		public void ShowDealerButton(ICardTableSeat seat = null) {
+			int x, y;
+			if (seat == null)
+			{
+				foreach (var s in playerseats)
+				{
+					x = s.X + 1;
+					if (s.Y < 10) y = s.Y + 9; else y = s.Y - 2;
+					this.ui.ShowXY(x, y, s.Dealer);
+				}
+			}
+			else {
+				foreach (var s in playerseats)
+				{
+					x = s.X + 1;
+					if (s.Y < 10) y = s.Y + 9; else y = s.Y - 2;
+					if (s.Seat == seat) s.Dealer = "Dealer";
+					else s.Dealer = "      ";
+					this.ui.ShowXY(x, y, s.Dealer);
+				}
+			}
+		}
+
 
 
 		// respond to request fold/check/call/raise
@@ -272,6 +296,7 @@ namespace Games.Card.TexasHoldEm
 			if (SupressOutput) return 0;
 			int result = this.menu.Ask(requestedtokens, canraisetokens);
 			Cleanup(this.menu.X, this.menu.Y, 21, 10);
+			ShowDealerButton();
 			return result;
 		}
 
@@ -308,13 +333,13 @@ namespace Games.Card.TexasHoldEm
 				if (seat.Seat.IsFree)
 					ui.ShowXY(seat.X, seat.Y, "Empty");
 				else if (seat.Seat.Player.Type == GamePlayerType.Default)
-					UpdateDealer(seat);
+					UpdateDefault(seat);
 				else
 					UpdatePlayer(seat, showcards: showcards);
 			}
 		}
 
-		void UpdateDealer(PlayerSeat seat) {
+		void UpdateDefault(PlayerSeat seat) {
 			var Cards = seat.Seat.Player.Cards.GetCards();
 			var Hand = new CStr();
 			foreach (var c in Cards) { Hand.Append($"{c.Symbol}  "); }
@@ -326,7 +351,7 @@ namespace Games.Card.TexasHoldEm
 			foreach (var c in Cards) { WritePlayCardLarge(c); }
 		}
 
-		void UpdateDealerActive(PlayerSeat seat)
+		void UpdateDefaultActive(PlayerSeat seat)
 		{
 			var Cards = seat.Seat.Player.Cards.GetCards();
 			var Hand = new CStr();
@@ -440,11 +465,11 @@ namespace Games.Card.TexasHoldEm
 			foreach (var seat in table.TableSeats) {
 				if (seat.Player != null && seat.Player.Type == GamePlayerType.Default)
 				{
-					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = dealerX, Y = dealerY, Cards = "" });
+					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = dealerX, Y = dealerY, Cards = "", Dealer = "" });
 				}
 				else
 				{
-					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = topleftX, Y = topleftY, Cards = "" });
+					this.playerseats.Add(new PlayerSeat() { Seat = seat, X = topleftX, Y = topleftY, Cards = "", Dealer = "" });
 					if (topleftY == topleftYfirst) topleftX += 18;
 					else topleftX -=18;
 				}
@@ -463,6 +488,7 @@ namespace Games.Card.TexasHoldEm
 			public int Y { get; set; }
 			public string Hand { get; set; } = "";
 			public string Cards { get; set; } = "";
+			public string Dealer { get; set; } = "";
 		}
 
 

@@ -19,6 +19,8 @@ namespace Games.Card.TexasHoldEm
 		void ShowPlayerSeat(ICardTableSeat seat);
 		void ShowPlayerActiveSeat(ICardTableSeat seat);
 
+		void ShowDealerButton(ICardTableSeat seat);
+
 		void Finish();
 
 		void ShowRoundSummary(ICardTable table, bool samepage);
