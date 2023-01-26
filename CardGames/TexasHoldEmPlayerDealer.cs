@@ -140,23 +140,27 @@ namespace Games.Card.TexasHoldEm
 			this.betsize = this.requiredbet;
 			playerturninfo.TokensRequired = requiredbet;
 			((ITexasHoldEmPlayer)this.lastBetRaiseSeat.Player).PlaceBet(playerturninfo);
-			
+
+			this.lastBetRaiseSeat = this.gametable.NextActiveSeat(this.lastBetRaiseSeat);
+
 			return true;
 		}
 
 		// ask for bets around the table until all active player has placed bets and there is still at least two player
 		private void PlaceBets() {
 
-			// If run immediately after init bets: first seat to be asked is next active after last raise 
-			// If run in normal bet round first to ask is first card seat (may have folded and not active)
 
 			foreach (var playerseat in this.gametable.TableSeats) {
 				if (playerseat.IsActive && playerseat.Player.Type != GamePlayerType.Default) ((ITexasHoldEmPlayer)playerseat.Player).BetRaiseCounter = 0;
 			}
 
-			var seat = this.gametable.NextActiveSeat(this.lastBetRaiseSeat);
-			if (this.lastBetRaiseSeat == null) seat = this.firstCardSeat;
-			while (seat != this.lastBetRaiseSeat) {
+			// If run immediately after init bets: first seat to be asked is next active after last raise 
+			// If run in normal bet round first to ask is first card seat (may have folded and not active)
+
+			var seat = this.lastBetRaiseSeat;
+			if (seat == null) seat = this.firstCardSeat;
+
+			do {
 				if (this.gametable.ActiveSeatCount < 2) break;
 				if (seat.IsActive) {
 					this.IO.ShowPlayerActiveSeat(seat);
@@ -178,7 +182,8 @@ namespace Games.Card.TexasHoldEm
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
 				seat = this.gametable.NextActiveSeat(seat);
-			}
+			} while (seat != this.lastBetRaiseSeat);
+
 			this.CollectPlayerBets();
 			this.lastBetRaiseSeat = null;
 			this.requiredbet = 0;

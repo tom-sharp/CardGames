@@ -448,7 +448,7 @@ namespace Games.Card.TexasHoldEm
 					if (topleftY == topleftYfirst) topleftX += 18;
 					else topleftX -=18;
 				}
-				if (topleftX >= 90) { topleftX = 56; topleftY += 10; }
+				if (topleftX >= 90) { topleftX = 56; topleftY += 14; }
 			}
 			this.MsgLog.X = 68;
 			this.MsgLog.Y = 12;
