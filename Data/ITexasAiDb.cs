@@ -14,8 +14,10 @@ namespace Games.Card.TexasHoldEm.Data
 		void UpdateAndSave(ICollection<IAiEntry> aiEntries);
 
 
-
 		Task<IAiEntry> GetEntryAsync(int id);
+
+		Task<IEnumerable<IAiEntry>> GetAllAsync();
+
 
 		Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry);
 

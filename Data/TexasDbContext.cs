@@ -13,6 +13,12 @@ namespace Games.Card.TexasHoldEm.Data
 
 	public class TexasDbContext : DbContext
 	{
+		public TexasDbContext()
+		{
+		}
+		public TexasDbContext(DbContextOptions<TexasDbContext> ctxoption) : base(ctxoption)
+		{	
+		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{

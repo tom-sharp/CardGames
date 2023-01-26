@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Games.Card.TexasHoldEm.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Syslib.Games.Card;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,10 +14,12 @@ namespace TexasQuery.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
+		private readonly ITexasDb db;
 
-		public HomeController(ILogger<HomeController> logger)
+		public HomeController(ILogger<HomeController> logger, ITexasDb db)
 		{
 			_logger = logger;
+			this.db = db;
 		}
 
 		public IActionResult Index()

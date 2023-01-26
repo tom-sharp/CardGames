@@ -27,6 +27,7 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
+
 		// Will Update or Add entity if not exist and return the updated Entry
 		public IAiEntry UpdateEntry(IAiEntry aiEntry)
 		{
@@ -67,6 +68,11 @@ namespace Games.Card.TexasHoldEm.Data
 		public async Task<IAiEntry> GetEntryAsync(int id)
 		{
 			return await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
+		}
+
+		public async Task<IEnumerable<IAiEntry>> GetAllAsync()
+		{
+			return await db.TexasAI.AsNoTracking().ToListAsync();
 		}
 
 
