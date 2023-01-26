@@ -2,8 +2,10 @@
 using Syslib.Games.Card.TexasHoldEm;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Games.Card.TexasHoldEm.Models;
 
-namespace Games.Card.TexasHoldEm.Models
+
+namespace Games.Card.TexasHoldEm.Data
 {
 	public interface ITexasAiDb : IAiEntryDb
 	{

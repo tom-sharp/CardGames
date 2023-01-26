@@ -1,5 +1,5 @@
 ﻿using Games.Card.TexasHoldEm;
-using Games.Card.TexasHoldEm.Models;
+using Games.Card.TexasHoldEm.Data;
 using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Games.Card.TexasHoldEm.Models;
 
-namespace Games.Card.TexasHoldEm.Models
+
+namespace Games.Card.TexasHoldEm.Data
 {
 	public interface ITexasDb
 	{

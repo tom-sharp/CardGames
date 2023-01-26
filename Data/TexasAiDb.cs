@@ -10,7 +10,7 @@ using Syslib.Games.Card;
 using Microsoft.EntityFrameworkCore;
 using Syslib.Games;
 
-namespace Games.Card.TexasHoldEm.Models
+namespace Games.Card.TexasHoldEm.Data
 {
 	public class TexasAiDb : ITexasAiDb, IAiEntryDb
 	{

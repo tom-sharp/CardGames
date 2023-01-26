@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Games.Card.TexasHoldEm.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Syslib.Games.Card.TexasHoldEm;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Games.Card.TexasHoldEm.Models
+namespace Games.Card.TexasHoldEm.Data
 {
 
 	public class TexasDbContext : DbContext

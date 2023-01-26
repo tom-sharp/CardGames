@@ -2,6 +2,7 @@
 using Syslib.Games;
 using Games.Card.TexasHoldEm.Models;
 using Syslib.Games.Card.TexasHoldEm;
+using Games.Card.TexasHoldEm.Data;
 
 namespace Games.Card.TexasHoldEm
 {
