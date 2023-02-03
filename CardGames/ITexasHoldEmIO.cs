@@ -17,10 +17,6 @@ namespace Games.Card.TexasHoldEm
 		void ShowProgressMessage(string msg);
 
 		void ShowPlayerSeat(ICardTableSeat seat);
-		void ShowPlayerActiveSeat(ICardTableSeat seat);
-
-		void ShowDealerButton(ICardTableSeat seat);
-
 		void Finish();
 
 		void ShowRoundSummary(ICardTable table, bool samepage);
@@ -28,10 +24,9 @@ namespace Games.Card.TexasHoldEm
 		void ShowGameStatistics(TexasHoldEmStatistics statistics);
 		void ShowGamePlayerStatistics(ICardTable table);
 
-		void ShowPlayerCards(ICardTableSeat playerseat, ICardTableSeat dealerset);
-
 
 		int AskForBet(int tokens, int canraisetokens);
+		bool AskPlayAnotherRound();
 
 		bool SupressOutput { get; set; }
 		bool SupressOverrideRoundSummary { get; set; }

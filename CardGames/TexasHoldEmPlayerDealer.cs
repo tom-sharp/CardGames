@@ -107,10 +107,10 @@ namespace Games.Card.TexasHoldEm
 
 		private void PlayRound() {
 			this.IO.ShowNewRound(this.gametable);
-			this.IO.ShowDealerButton(this.dealerSeat);
 			this.cardStack.ShuffleCards();                  // shuffle deck
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
 			DealPlayerCards(cards: 1);                      // deal 1 card to each active player
+			ShowHumanCards();
 			this.IO.ReDrawGameTable();
 			PlaceBets();
 			DealPublicCards(cards: 3);                      // deal 3 public cards (dealer hand)
@@ -130,11 +130,14 @@ namespace Games.Card.TexasHoldEm
 		// expected that at least two active players exist to call this function
 		private bool PlaceInitialBets()
 		{
+			if (this.dealerSeat != null) this.dealerSeat.IsDealer = false;
 			this.dealerSeat = this.gametable.NextActiveSeat(this.dealerSeat);
 			this.firstCardSeat = this.gametable.NextActiveSeat(this.dealerSeat);
 			this.lastBetRaiseSeat = this.gametable.NextActiveSeat(this.firstCardSeat);
 
 			if ((this.dealerSeat == null) || (this.firstCardSeat == null) || (this.lastBetRaiseSeat == null)) return false;
+
+			this.dealerSeat.IsDealer = true;
 
 			playerturninfo.TokensRequired = this.requiredbet;
 			((ITexasHoldEmPlayer)this.firstCardSeat.Player).PlaceBet(playerturninfo);
@@ -166,8 +169,8 @@ namespace Games.Card.TexasHoldEm
 			do {
 				if (this.gametable.ActiveSeatCount < 2) break;
 				if (seat.IsActive) {
-					this.IO.ShowPlayerActiveSeat(seat);
-					Wait();
+					seat.IsInTurn = true;
+					this.IO.ShowPlayerSeat(seat);
 					this.playerturninfo.TokensRequired = 0;
 					this.playerturninfo.BetRaiseCountLimit = this.gametable.MaxBetRaises;
 					this.playerturninfo.TokensBetLimit = this.gametable.MaxBetLimit;
@@ -181,6 +184,8 @@ namespace Games.Card.TexasHoldEm
 					if (seat.Bets > this.requiredbet) { if ((seat.Bets - this.requiredbet) % this.betsize != 0) BugCheck.Critical(this, "PlaceBets : Bet rasie was not of betsize"); }
 					if (seat.Bets > this.requiredbet) { this.requiredbet = seat.Bets; this.lastBetRaiseSeat = seat; }
 					this.IO.ShowProgressMessage(seat.Comment);
+					Wait();
+					seat.IsInTurn = false;
 					this.IO.ShowPlayerSeat(seat);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
@@ -241,11 +246,21 @@ namespace Games.Card.TexasHoldEm
 			if (this.cardStack.CardsLeft < cards + 1) this.cardStack.ShuffleCards();
 			while (card++ < cards) { 
 				this.Cards.TakeCard(this.cardStack.NextCard());
-				IO.ShowPlayerActiveSeat(this.TableSeat);
+				IO.ShowPlayerSeat(this.TableSeat);
 				Wait();
 			}
 			return true;
 		}
+
+		private void ShowHumanCards() {
+			foreach (var seat in this.gametable.TableSeats) {
+				if (seat.IsActive && seat.Player.Type == GamePlayerType.Human) {
+					seat.IsShowCards = true;
+					this.IO.ShowPlayerSeat(seat);
+				}
+			}
+		}
+
 
 		private void FindWinner() {
 			ulong winnerrank = 0;
@@ -259,8 +274,10 @@ namespace Games.Card.TexasHoldEm
 					seat.Player.Cards.RankCards(texasrank); // rank all player cards individually (for statistics)
 					if (seat.Player != this)
 					{
+						(seat.Player as ITexasHoldEmPlayer).Action = PlayerAction.NotSet;
 						seat.Player.Cards.Signature = texasrank.GetSignature(seat.Player.Cards.GetCards().Add(this.Cards.GetCards()));
 						if (seat.IsActive) {
+							seat.IsShowCards = true;
 							seat.Player.Status = seat.Player.Cards.Signature.Name;
 							if (winnerrank < seat.Player.Cards.Signature.Rank) winnerrank = seat.Player.Cards.Signature.Rank;
 						}
@@ -277,6 +294,7 @@ namespace Games.Card.TexasHoldEm
 			int potshare = this.gametable.TablePot.Tokens; 
 			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowProgressMessage($"Pot split with {WinnersSeats.Count()} players, each win {potshare} tokens"); }
 			foreach (var seat in WinnersSeats) {
+				(seat.Player as ITexasHoldEmPlayer).Action = PlayerAction.Win;
 				seat.Player.Cards.WinHand = true;
 				seat.CashIn(this.gametable.TablePot.CashOut(potshare));
 				seat.Comment = $" - Winner {seat.Player.Name} win {potshare} tokens";

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -15,11 +16,13 @@ namespace TexasQuery.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly ITexasDb db;
+		private readonly ITexasHoldEmAi ai;
 
 		public HomeController(ILogger<HomeController> logger, ITexasDb db)
 		{
 			_logger = logger;
 			this.db = db;
+			this.ai = new TexasHoldEmAi(db.AiDb);
 		}
 
 		public IActionResult Index()

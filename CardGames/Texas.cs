@@ -50,17 +50,24 @@ namespace CardGames
 		{
 			int RoundsPlayed = 0;
 
-			while (true)
+			while (this.RoundsToPlay >= 0)
 			{
-				if (RoundsPlayed >= this.RoundsToPlay) break;
+
+				if (this.RoundsToPlay > 0 && RoundsPlayed >= this.RoundsToPlay) break;
 
 				// Allow here to  opt in or out new players after each round
 				// Run method always return true unless there is a problem to continue
 
-				if (game.PlayerCount < 2) continue; 
+				if (game.PlayerCount < 2) continue;
 
-				game.PlayGame();
+				if (!game.PlayGame()) break;
 				RoundsPlayed++;
+
+				if (this.RoundsToPlay > 0 && RoundsPlayed >= this.RoundsToPlay) {
+					if (!this.UI.AskPlayAnotherRound()) break;
+					this.RoundsToPlay = RoundsPlayed + 1;
+				}
+				else if (!this.UI.AskPlayAnotherRound()) break;
 			}
 
 			this.FinishUp();
@@ -166,20 +173,17 @@ namespace CardGames
 		void SetupPlayers() {
 
 			int count = 0;
-			while (++count < settings.Players)
+			while (count++ < settings.Players)
 			{
 
-				if (count == 5) this.game.Join(Factory.TexasHumanPlayer(name: "Human", settings));
-				else if (count == 6) this.game.Join(Factory.TexasCallRobotPlayer(name: $"CallRobot", settings));
-				else if (count == 7) this.game.Join(Factory.TexasRaiseRobotPlayer(name: $"RaiseRobot", settings));
-				else if (count == 8) this.game.Join(Factory.TexasRandomRobotPlayer(name: $"RndRobot", settings));
+				if (count == 1) this.game.Join(Factory.TexasHumanPlayer(name: "Human", settings));
+				else if (count == 7) this.game.Join(Factory.TexasBalancedRobotPlayer(name: $"Robot {count}", settings));
+				else if (count == 8) this.game.Join(Factory.TexasBalancedRobotPlayer(name: $"Robot {count}", settings));
 				else if (count == 9) this.game.Join(Factory.TexasBalancedRobotPlayer(name: $"Robot {count}", settings));
+				else if (count == 10) this.game.Join(Factory.TexasBalancedRobotPlayer(name: $"Robot {count}", settings));
 				else this.game.Join(Factory.TexasAIPlayer(name: $"Ai {count}", settings));
 
 			}
-
-			if (count <=5) this.game.Join(Factory.TexasHumanPlayer(name: "Human", settings));
-			else this.game.Join(Factory.TexasAIPlayer(name: $"Ai {count}", settings));
 		}
 
 

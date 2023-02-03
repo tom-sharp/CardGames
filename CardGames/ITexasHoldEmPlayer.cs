@@ -1,11 +1,6 @@
 ﻿using Syslib.Games;
 using Syslib.Games.Card;
 using Syslib.Games.Card.TexasHoldEm;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Games.Card.TexasHoldEm
 {
@@ -24,6 +19,8 @@ namespace Games.Card.TexasHoldEm
 		/// </summary>
 		void AskBet(ITexasHoldEmPlayerTurnInfo info);
 
-		public int BetRaiseCounter { get; set; }
+		int BetRaiseCounter { get; set; }
+
+		PlayerAction Action { get; set; }
 	}
 }

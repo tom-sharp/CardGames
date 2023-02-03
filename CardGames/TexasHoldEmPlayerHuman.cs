@@ -12,6 +12,12 @@ namespace Games.Card.TexasHoldEm
 			this.IO = inout;
 		}
 
+		public PlayerAction Action { get; set; }
+		public override bool GetReady()
+		{
+			this.Action = PlayerAction.NotSet;
+			return base.GetReady();
+		}
 
 		public void PlaceBet(ITexasHoldEmPlayerTurnInfo info)
 		{
@@ -19,7 +25,6 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public int BetRaiseCounter { get; set; }
-
 
 
 		public void AskBet(ITexasHoldEmPlayerTurnInfo info)
@@ -51,12 +56,14 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.IsActive = false;
 			this.TableSeat.Comment = $" - {this.Name} fold";
 			this.Status = "Fold";
+			this.Action = PlayerAction.Fold;
 		}
 
 		void CheckBet()
 		{
 			this.TableSeat.Comment = $" - {this.Name} check";
 			this.Status = "Check";
+			this.Action = PlayerAction.Check;
 		}
 
 		void CallBet(ITexasHoldEmPlayerTurnInfo info)
@@ -64,6 +71,8 @@ namespace Games.Card.TexasHoldEm
 			this.TableSeat.PlaceBet(info.TokensRequest);
 			this.TableSeat.Comment = $" - {this.Name} call {info.TokensRequest} tokens";
 			this.Status = "Call";
+			this.Action = PlayerAction.Call;
+
 		}
 
 		void RaiseBet(int tokensplaced, ITexasHoldEmPlayerTurnInfo info)
@@ -74,6 +83,7 @@ namespace Games.Card.TexasHoldEm
 			if (info.TokensRequest > 0) this.TableSeat.Comment = $" - {this.Name} call {info.TokensRequest} and raise {tokensplaced - info.TokensRequest} tokens";
 			else this.TableSeat.Comment = $" - {this.Name}  raise {tokensplaced} tokens";
 			this.Status = "Raise";
+			this.Action = PlayerAction.Raise;
 		}
 
 
