@@ -80,6 +80,7 @@ namespace Games.Card.TexasHoldEm
 
 		public void ReDrawGameTable()
 		{
+			if (this.table != null) this.consoletable.CommonSeat.TablePot = this.table.TablePot.Tokens;
 			foreach (var seat in this.consoletable) seat.Update();
 			this.consoletable.CommonSeat.Update();
 		}
