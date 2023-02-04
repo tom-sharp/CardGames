@@ -92,7 +92,7 @@ namespace CardGames
 					else if (str.IsEqual("-dropdb")) settings.DropDb = true;
 					else if (str.IsEqual("-qr")) { settings.Quiet = true; settings.QuietNotSummary = true; }
 					else if (str.IsEqual("-q")) settings.Quiet = true;
-					else if (str.IsEqual("-l")) { settings.LearnAi = true; settings.UseDb = true; }
+					else if (str.IsEqual("-l")) { settings.LearnAi = true; settings.UseDb = true; settings.Quiet = true; }
 					else if (str.BeginWith("r")) settings.RoundsToPlay = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("s")) settings.TableSeats = str.FilterKeep(filter).ToInt32();
 					else if (str.BeginWith("p")) settings.Players = str.FilterKeep(filter).ToInt32();
