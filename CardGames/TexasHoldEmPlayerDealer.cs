@@ -168,6 +168,7 @@ namespace Games.Card.TexasHoldEm
 
 			do {
 				if (this.gametable.ActiveSeatCount < 2) break;
+				if (this.lastBetRaiseSeat != null && !this.lastBetRaiseSeat.IsActive) this.lastBetRaiseSeat = seat; 
 				if (seat.IsActive)
 				{
 					seat.IsInTurn = true;
@@ -190,7 +191,6 @@ namespace Games.Card.TexasHoldEm
 					this.IO.ShowPlayerSeat(seat);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
-				else { if (seat == this.lastBetRaiseSeat) break; }
 				seat = this.gametable.NextActiveSeat(seat);
 			} while (seat != this.lastBetRaiseSeat);
 
