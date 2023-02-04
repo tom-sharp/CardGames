@@ -52,7 +52,6 @@ namespace CardGames
 
 			while (this.RoundsToPlay >= 0)
 			{
-
 				if (this.RoundsToPlay > 0 && RoundsPlayed >= this.RoundsToPlay) break;
 
 				// Allow here to  opt in or out new players after each round
@@ -63,9 +62,11 @@ namespace CardGames
 				if (!game.PlayGame()) break;
 				RoundsPlayed++;
 
-				if (this.RoundsToPlay > 0 && RoundsPlayed >= this.RoundsToPlay) {
-					if (!this.UI.AskPlayAnotherRound()) break;
-					this.RoundsToPlay = RoundsPlayed + 1;
+				if (this.RoundsToPlay > 0) {
+					if (RoundsPlayed >= this.RoundsToPlay) {
+						if (!this.UI.AskPlayAnotherRound()) break;
+						this.RoundsToPlay = RoundsPlayed + 1;
+					}
 				}
 				else if (!this.UI.AskPlayAnotherRound()) break;
 			}
