@@ -287,7 +287,7 @@ namespace Games.Card.TexasHoldEm
 				}
 			}
 			foreach (var seat in this.gametable.TableSeats)	{
-				if (!seat.IsFree && seat.IsActive) {
+				if (!seat.IsFree && seat.IsActive && seat.Player.Type != GamePlayerType.Default) {
 					if (seat.Player.Cards.Signature.Rank >= winnerrank) { WinnersSeats.Add(seat); }
 				}
 			}
@@ -296,7 +296,9 @@ namespace Games.Card.TexasHoldEm
 			int potshare = this.gametable.TablePot.Tokens; 
 			if (WinnersSeats.Count() > 1) { potshare /= WinnersSeats.Count(); this.IO.ShowProgressMessage($"Pot split with {WinnersSeats.Count()} players, each win {potshare} tokens"); }
 			foreach (var seat in WinnersSeats) {
+				
 				(seat.Player as ITexasHoldEmPlayer).Action = PlayerAction.Win;
+
 				seat.Player.Cards.WinHand = true;
 				seat.CashIn(this.gametable.TablePot.CashOut(potshare));
 				seat.Comment = $" - Winner {seat.Player.Name} win {potshare} tokens";
