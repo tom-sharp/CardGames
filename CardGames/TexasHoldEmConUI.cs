@@ -106,7 +106,6 @@ namespace Games.Card.TexasHoldEm
 			SetStdColor();
 			ui.HideCursor();
 			ui.Clear();
-//			MsgLog.Clear();
 			this.consoletable.Log.Clear();
 			SetUpTable(table);
 			ReDrawGameTable();
@@ -121,8 +120,6 @@ namespace Games.Card.TexasHoldEm
 			int counter = 0;
 			IPlayCards playerhand;
 
-			//if (!SupressOutput) Console.Clear();
-			//SetStdColor();
 
 			if (samepage && !SupressOutput)
 			{
@@ -225,6 +222,8 @@ namespace Games.Card.TexasHoldEm
 
 		public void ShowPlayerSeat(ICardTableSeat seat) {
 
+			if (SupressOutput) return;
+
 			if (seat != null && seat.Player != null) {
 				if (seat.Player.Type == GamePlayerType.Default) {
 					this.consoletable.CommonSeat.TablePot = this.table.TablePot.Tokens;
@@ -236,7 +235,7 @@ namespace Games.Card.TexasHoldEm
 
 		public bool AskPlayAnotherRound()
 		{
-			if (SupressOutput) return true;
+			if (SupressOutput) return false;
 
 			this.playroundmenu.Clear();
 			this.playroundmenu.AddItem(new SelectItem() { Id = 1, Text = "Play another round" });
