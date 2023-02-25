@@ -51,8 +51,16 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 			{
 				this.name.Color(this.InactiveColor);
 				this.SeatComment.Color(this.InactiveColor);
+				this.bet.Color(this.InactiveColor);
+				this.tokens.Color(this.InactiveColor);
+				this.status.Color(this.InactiveColor);
 				this.name.Text = "Empty";
 				this.SeatComment.Text = "Empty";
+				this.bet.Text = "";
+				this.tokens.Text = "";
+				this.status.Text = "";
+				this.Cards.First().Update(null);
+				this.Cards.Next().Update(null);
 				return this;
 			}
 

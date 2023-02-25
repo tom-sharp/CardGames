@@ -41,8 +41,8 @@ namespace CardGames
 		public static IGamePlayerProfile PlayerProfileRandom() => new GamePlayerProfile("Random", defensive: 10, offensive:10, randomness: 100, bluffer: 0);
 		public static IGamePlayerProfile PlayerProfileAlwaysCall() => new GamePlayerProfile("AlwaysCall", defensive: 0, offensive: 0, randomness: 100, bluffer: 0);
 		public static IGamePlayerProfile PlayerProfileAlwaysRaise() => new GamePlayerProfile("AlwaysRaise", defensive: 0, offensive: 100, randomness: 100, bluffer: 0);
-		public static IGamePlayerProfile PlayerProfileOffensive() => new GamePlayerProfile("AlwaysCall", defensive: 0, offensive: 5, randomness: 0, bluffer: 0);
-		public static IGamePlayerProfile PlayerProfileDefensive() => new GamePlayerProfile("AlwaysRaise", defensive: 5, offensive: 0, randomness: 0, bluffer: 0);
+		public static IGamePlayerProfile PlayerProfileOffensive() => new GamePlayerProfile("Offensive", defensive: 0, offensive: 5, randomness: 0, bluffer: 0);
+		public static IGamePlayerProfile PlayerProfileDefensive() => new GamePlayerProfile("Defensive", defensive: 5, offensive: 0, randomness: 0, bluffer: 0);
 
 
 
