@@ -1,5 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 
 namespace CardGameTest
 {
@@ -54,23 +55,52 @@ namespace CardGameTest
 		[TestMethod]
 		public void PlayCardJoker_ChangeProps_ChangeProps()
 		{
-			IPlayCard joker = new PlayCardJoker();
+			var joker = new PlayCardJoker();
 
-			(joker as IPlayCardJoker).Suit = PlayCardSuit.Heart;
-			(joker as IPlayCardJoker).Rank = 14;
+			joker.Suit = PlayCardSuit.Heart;
+			joker.Rank = 14;
 			joker.Symbol = "Joker";
 
 			Assert.AreEqual(14, joker.Rank);
 			Assert.AreEqual(PlayCardSuit.Heart, joker.Suit);
 			Assert.AreEqual("Joker", joker.Symbol);
 
-			(joker as IPlayCardJoker).Clear();
+			joker.Clear();
 
 			Assert.AreEqual(0, joker.Rank);
 			Assert.AreEqual(PlayCardSuit.Joker, joker.Suit);
 			Assert.AreEqual("Joker", joker.Symbol);
 
 		}
+
+		[TestMethod]
+		public void PlayCardJoker_InCollection_ChangeProps()
+		{
+			var playcards = new PlayCards();
+			
+			playcards.Add(new PlayCardClub(3));
+			playcards.Add(new PlayCardHeart(12));
+			playcards.Add(new PlayCardJoker());
+			playcards.Add(new PlayCardHeart(8));
+
+			var expectedrankid = 2;
+
+
+			playcards.ForEach(c=> { 
+				if (c.Suit == PlayCardSuit.Joker) { 
+					(c as PlayCardJoker).Suit = PlayCardSuit.Heart; 
+					(c as PlayCardJoker).Rank = 3; 
+				}
+			});
+
+			playcards.RankCards(new TexasHoldEmRankOn5Cards());
+			var acualrankid = playcards.RankSignature.RankId;
+
+
+			Assert.AreEqual(expectedrankid, acualrankid);
+
+		}
+
 
 
 	}

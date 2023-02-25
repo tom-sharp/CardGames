@@ -3,6 +3,7 @@ using Games.Card.TexasHoldEm;
 using Syslib;
 using Syslib.Games.Card.TexasHoldEm;
 using Games.Card.TexasHoldEm.Data;
+using System.Threading.Tasks;
 
 namespace CardGames
 {
@@ -10,10 +11,7 @@ namespace CardGames
 	{
 		static void Main(string[] args)
 		{
-			CSyslib.MinVersion(1,0,3);
-			new Texas(ui: new TexasHoldEmConUI(), new TexasDbContext())
-				.Setup(arguments: args)
-				.Run();
+			new Menu(ui: new TexasHoldEmConUI()).Run();
 		}
 	}
 }

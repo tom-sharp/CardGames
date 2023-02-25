@@ -10,6 +10,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Syslib.Core" Version="1.0.5" />
+    <PackageReference Include="Syslib.Games" Version="1.0.0-beta1" />
   </ItemGroup>
 
   <ItemGroup>

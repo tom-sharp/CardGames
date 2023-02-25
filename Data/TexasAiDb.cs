@@ -12,7 +12,7 @@ using Syslib.Games;
 
 namespace Games.Card.TexasHoldEm.Data
 {
-	public class TexasAiDb : ITexasAiDb, IAiEntryDb
+	public class TexasAiDb : ITexasAiDb
 	{
 
 		public TexasAiDb(TexasDbContext ctx)
@@ -23,7 +23,16 @@ namespace Games.Card.TexasHoldEm.Data
 
 		public IAiEntry GetEntry(int id)
 		{
-			return this.GetEntryAsync(id).Result;
+			IAiEntry result = null;
+			try
+			{
+				result = this.GetEntryAsync(id).Result;
+			}
+			catch (AggregateException) 
+			{
+				return result;
+			}
+			return result;
 		}
 
 
@@ -32,22 +41,39 @@ namespace Games.Card.TexasHoldEm.Data
 		public IAiEntry UpdateEntry(IAiEntry aiEntry)
 		{
 			if (aiEntry == null) return null;
-			return this.UpdateEntryAsync(aiEntry).Result;
+			IAiEntry result = null;
+			try {
+				result = this.UpdateEntryAsync(aiEntry).Result;
+			}
+			catch (AggregateException) {
+				return result;
+			}
+			return result;
 		}
 
 
-		public void UpdateAndSave(ICollection<IAiEntry> aiEntries) {
-			if (aiEntries == null) return;
+		public bool UpdateAndSave(ICollection<IAiEntry> aiEntries) {
+			if (aiEntries == null) return true;
 			foreach (var entity in aiEntries) { 
-				this.UpdateEntry(entity); 
+				if (this.UpdateEntry(entity) == null) return false; 
 			}
-			this.SaveChanges();
+			if (this.SaveChanges() < 0) return false;
+			return true;
 		}
 
 
 		public int SaveChanges()
 		{
-			return this.SaveChangesAsync().Result;
+			int result;
+			try
+			{
+				result = this.SaveChangesAsync().Result;
+			}
+			catch (AggregateException) 
+			{
+				return -1;
+			}
+			return result;
 		}
 
 
@@ -62,6 +88,22 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
+		public bool CanConnect() 
+		{
+			return this.CanConnectAsync().Result;
+		}
+
+		public async Task<bool> CanConnectAsync()
+		{
+			IAiEntry result;
+			try 
+			{
+				result = await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id != 0);
+			}
+			catch { return false; }
+			if (result == null) return false;
+			return true;
+		}
 
 
 
@@ -69,6 +111,9 @@ namespace Games.Card.TexasHoldEm.Data
 		{
 			return await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
 		}
+
+
+
 
 		public async Task<IEnumerable<IAiEntry>> GetAllAsync()
 		{
@@ -98,8 +143,18 @@ namespace Games.Card.TexasHoldEm.Data
 
 		public async Task<int> SaveChangesAsync()
 		{
-			return await this.db.SaveChangesAsync();
+			int result = 0;
+			try
+			{
+				result = await this.db.SaveChangesAsync();
+			}
+			catch 
+			{
+				return -1;
+			}
+			return result;
 		}
+
 
 
 		readonly TexasDbContext db;

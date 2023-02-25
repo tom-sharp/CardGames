@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Syslib.Games" Version="1.0.0-alfa3" />
+    <PackageReference Include="Syslib.Core" Version="1.0.5" />
+    <PackageReference Include="Syslib.Games" Version="1.0.0-beta1" />
   </ItemGroup>
 
 </Project>

@@ -1,13 +1,16 @@
 ﻿using Syslib;
 using Syslib.Games;
 using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 using Syslib.ConUI;
 using System;
 using Games.Card.TexasHoldEm.ConsoleUI;
+using System.Threading;
+using System.Collections.Generic;
 
 namespace Games.Card.TexasHoldEm
 {
-	public class TexasHoldEmConUI : ITexasHoldEmIO
+	public class TexasHoldEmConUI : ITexasHoldEmUI
 	{
 		public TexasHoldEmConUI()
 		{
@@ -15,28 +18,37 @@ namespace Games.Card.TexasHoldEm
 			this.SupressOverrideRoundSummary = false;
 
 			this.consoletable = new TexasConsoleTable();
-			this.msg = new CStr();
-			this.SetUpColors();
 
 			this.ui = ConIO.PInstance;
 
-			this.betmenu = new ConMenu(45,10,20,consoletable);
-			this.betraisemenu = new ConMenu(2, 2, betmenu);
-			this.playroundmenu = new ConMenu(betmenu);
-
-
+			this.mainmenu = new ConMenu(45,10,22,consoletable);
+			this.submenu1 = new ConMenu(2, 2, mainmenu);
+			this.progressbar = new ConProgress(10, 5, 80, 3, this.consoletable);
+			this.progressbar.CompleteCharacter = ConGraphics.BlockSolid;
+			this.progressbar.InCompleteCharacter = ConGraphics.BlockShadeMedium;
+			this.msg = new ConText(consoletable);
+			this.errmsg = new ConText(consoletable);
+			this.msg.Position(0,3);
+			this.errmsg.Position(0, 4);
+			this.SetUpColors();
 		}
 
 		public bool SupressOutput { get; set; }
 		public bool SupressOverrideRoundSummary { get; set; }
 		public bool SupressOverrideStatistics { get; set; }
 
+
+		void Wait(int ms)
+		{
+			if (ms < 0) return;
+			Thread.Sleep(ms);
+		}
+
 		public void Clear() {
 			ui.Clear();
 		}
 
 		public bool Welcome() {
-
 			ui.Clear();
 
 			int minWidth = 120;
@@ -47,9 +59,10 @@ namespace Games.Card.TexasHoldEm
 				return false;
 			}
 
+			ui.HideCursor();
 			ui.DrawBorder(0, 0, minWidth, 3);
-			ui.ShowXY(20, 1, "Texas Hold'Em");
-			ui.ShowXY(0, 3, "Setup...");
+			ui.ShowXY(20, 1, "Card Games");
+			ui.ShowXY(0, 3, "");
 			return true;
 		}
 
@@ -78,6 +91,52 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
+
+		public void DealFlop() 
+		{
+			if (this.SupressOutput) return;
+			this.ReDrawGameTable();
+			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Flop"; this.Wait(1000);
+			this.consoletable.DealPlayerCards(250);
+			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
+		}
+
+		public void DealTurn()
+		{
+			if (this.SupressOutput) return;
+			this.ReDrawGameTable();
+			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Turn"; this.Wait(1000);
+			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
+		}
+
+		public void DealRiver()
+		{
+			if (this.SupressOutput) return;
+			this.ReDrawGameTable();
+			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing River"; this.Wait(1000);
+			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
+		}
+
+
+		public void DealShowDown()
+		{
+			if (this.SupressOutput) return;
+			this.ReDrawGameTable();
+			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Showdown"; this.Wait(1000);
+			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
+			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
+		}
+
 		public void ReDrawGameTable()
 		{
 			if (this.table != null) this.consoletable.CommonSeat.TablePot = this.table.TablePot.Tokens;
@@ -85,13 +144,10 @@ namespace Games.Card.TexasHoldEm
 			this.consoletable.CommonSeat.Update();
 		}
 
-		public void ShowProgressMessage(string msg) {
-			if (SupressOutput) return;
-			UpdateMessageLog(msg);
-		}
 
 		public void Finish() {
-			if (SupressOutput) return;
+			if (!SupressOutput) ShowPlayerSummary();
+			this.ui.ShowXY(0, this.consoletable.Y + this.consoletable.Height, "");
 			ui.RestoreColor();
 			ui.HideCursor(false);
 
@@ -101,68 +157,33 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
-		public void ShowNewRound(ICardTable table) {
+		public void ShowNewRound(TexasHoldEmTable table) {
 
 			if (SupressOutput) return;
-			SetStdColor();
+//			SetStdColor();
 			ui.HideCursor();
-			ui.Clear();
-			this.consoletable.Log.Clear();
+			this.consoletable.Update();
+//			ui.Clear();
 			SetUpTable(table);
 			ReDrawGameTable();
-			UpdateMessageLog("------ NEW ROUND | Texas Hold'em  ------");
+		}
+
+		public void ShowPlayerSummary() {
+			if (SupressOutput) return;
+			this.consoletable.CommonSeat.SeatComment.Text = "Summary";
+			foreach (var cseat in this.consoletable) { cseat.UpdateComment(); }
 		}
 
 
-		public void ShowRoundSummary(ICardTable table, bool samepage) {
-
-			if ((SupressOutput) && (!SupressOverrideRoundSummary)) return;
-
-			int counter = 0;
-			IPlayCards playerhand;
-
-
-			if (samepage && !SupressOutput)
-			{
-				ReDrawGameTable();
-			}
-			else {
-				foreach (var seat in table.TableSeats)
-				{
-					if (!seat.IsFree)
-					{
-						msg.Clear();
-						msg.Append($" Seat {counter,2}. {seat.Player.Name,-15}  ");
-						if (seat.Player.Type == GamePlayerType.Default) { msg.Append(new CStr(12, 32)); }
-						else msg.Append($"{seat.Player.Tokens,10}  ");
-						if (seat.IsActive)
-						{
-							if (seat.Player.Type == GamePlayerType.Default) { msg.Append(new CStr(20, 32)); SetActiveColor(); }
-							else msg.Append($"{seat.Player.Cards.Signature.Name,-20 }");
-							if (seat.Player.Cards.WinHand) { msg.Append(" *WIN* "); SetActiveColor(); } else msg.Append(new CStr(7, 32));
-							playerhand = seat.Player.Cards.GetCards().Sort(SortCardsFunc);
-							ui.Show(msg.ToString());
-							foreach (var c in playerhand) { WritePlayCard(c); }
-						}
-						else {
-							ui.Show(msg.ToString());
-						}
-						ui.Show("\n");
-						SetStdColor();
-					}
-					counter++;
-				}
-			}
-
-			ui.Show("\n");
-			if (!SupressOutput) {
-				SetHighLightColor();
-				ui.ShowXY(this.betmenu.X, this.betmenu.Y, "Press Any Key");
-				ui.GetKey();
-				SetStdColor();
-			}
+		public bool ShowRoundSummary(TexasHoldEmTable table) {
+			if (SupressOutput) return true;
+			ReDrawGameTable();
+			return AskPlayNext();
 		}
 
+		public void ShowProgress(double progress, double complete) {
+			this.progressbar.ShowProgressEvent(this, new ProgressEventArgs(progress,complete));
+		}
 
 		public void ShowGameStatistics(TexasHoldEmStatistics statistics)
 		{
@@ -201,7 +222,7 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
-		public void ShowGamePlayerStatistics(ICardTable table)
+		public void ShowGamePlayerStatistics(TexasHoldEmTable table)
 		{
 			if ((SupressOutput) && (!SupressOverrideStatistics)) return;
 
@@ -221,7 +242,9 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void ShowPlayerSeat(ICardTableSeat seat) {
+		public void ShowPlayerAction(ITexasHoldEmSeat seat, int msdelay) { if (SupressOutput) return; ShowPlayerSeat(seat); Wait(msdelay); }
+
+		public void ShowPlayerSeat(ITexasHoldEmSeat seat) {
 
 			if (SupressOutput) return;
 
@@ -234,17 +257,33 @@ namespace Games.Card.TexasHoldEm
 			}
 		}
 
-		public bool AskPlayAnotherRound()
+
+		public int AskMainMenu(IForEach<Syslib.ISelectItem> list)
 		{
-			if (SupressOutput) return false;
+			if (SupressOutput) return 0;
 
-			this.playroundmenu.Clear();
-			this.playroundmenu.AddItem(new SelectItem() { Id = 1, Text = "Play another round" });
-			this.playroundmenu.AddItem(new SelectItem() { Id = 2, Text = "Quit" });
+			this.mainmenu.Clear();
+			list.ForEach(o=> this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = o.Id, Text = o.Text}));
 
-			var answer = this.playroundmenu.Select();
-			this.playroundmenu.Clear();
+			var answer = this.mainmenu.Select();
+			this.mainmenu.ClearArea();
+			if (answer == null) return 0;
+
+			return answer.Id;
+		}
+
+		public bool AskPlayNext()
+		{
+			if (SupressOutput) return true;
+
+			this.submenu1.Clear();
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 1, Text = "Play next" });
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 2, Text = "Back to menu" });
+
+			var answer = this.submenu1.Select();
+			this.submenu1.ClearArea();
 			if (answer == null || answer.Id == 2) return false;
+
 			return true;
 		}
 
@@ -258,50 +297,40 @@ namespace Games.Card.TexasHoldEm
 			int result = 0;
 			this.ui.PushColor();
 			while (true) {
-				var selected = this.betmenu.Select();
+				var selected = this.mainmenu.Select();
 				if (selected == null) { if (requestedtokens > 0) result = -1; else result = 0; break; } // esc pressed
 				if (selected.Id == 1) { result = 0; break; } // check
 				if (selected.Id == 2) { result = 0; break; } // call
 				if (selected.Id == 3) { if (requestedtokens > 0) result = -1; else result = 0; break; } // fold
 				if (selected.Id == 4) {
-					var selectbetraise = this.betraisemenu.Select();
-					if (selectbetraise != null) { result = selectbetraise.Id; break; }
-					this.consoletable.Log.Update();
+					var selectbetraise = this.submenu1.Select();
+					if (selectbetraise != null) { result = selectbetraise.Id; submenu1.ClearArea(); break; }
+					submenu1.ClearArea();
 				}
 
 			}
 			this.ui.PopColor();
-			this.betmenu.ClearArea();
+			this.mainmenu.ClearArea();
 			return result;
 		}
 
 
 		public void ShowMsg(string msg)
 		{
-			if (msg == null) Console.WriteLine("");
-			else Console.WriteLine(msg);
+			this.msg.Text = msg;
 		}
 
 		public void ShowErrMsg(string msg)
 		{
-			ui.PushColor();
-			SetErrorColor();
-			if (msg == null) Console.WriteLine("");
-			else Console.WriteLine(msg);
-			ui.PopColor();
+			this.errmsg.Text = msg;
 		}
 
 
 
+		void SetUpTable(TexasHoldEmTable table) {
 
-		void UpdateMessageLog(string msg) {
-			this.consoletable.Log.Add(msg).Update();
-		}
-
-
-		void SetUpTable(ICardTable table) {
-
-			if (table.SeatCount <= 10) this.consoletable.SetUp(TexasConsoleTable.TableSetUp.Seats10);
+			if (table.SeatCount <= 9) this.consoletable.SetUp(TexasConsoleTable.TableSetUp.Seats8);
+			else if (table.SeatCount <= 11) this.consoletable.SetUp(TexasConsoleTable.TableSetUp.Seats10);
 			else throw new ApplicationException($"Number of seats ({table.SeatCount}) is not supported in Console version");
 
 			int count = 0;
@@ -328,41 +357,42 @@ namespace Games.Card.TexasHoldEm
 
 		void BuildMenus(int requestedtokens, int canraisetokens) {
 
-			this.betmenu.Clear();
+			this.mainmenu.Clear();
 				
 			if (requestedtokens == 0) 
-				this.betmenu.AddItem(new SelectItem() { Id = 1, Text = $"Check" });
+				this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = 1, Text = $"Check" });
 			if (requestedtokens > 0) {
-				this.betmenu.AddItem(new SelectItem() { Id = 2, Text = $"Call {requestedtokens} tokens" });
-				this.betmenu.AddItem(new SelectItem() { Id = 3, Text = $"Fold" });
+				this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = 2, Text = $"Call {requestedtokens} tokens" });
+				this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = 3, Text = $"Fold" });
 			}
 			if (canraisetokens >= 0)
-				this.betmenu.AddItem(new SelectItem() { Id = 4, Text = $"Raise" });
+				this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = 4, Text = $"Raise" });
 
-			this.betraisemenu.Clear();
-			this.betraisemenu.AddItem(new SelectItem() { Id = 1 * canraisetokens, Text = $"Raise {1 * canraisetokens} token" });
-			this.betraisemenu.AddItem(new SelectItem() { Id = 2 * canraisetokens, Text = $"Raise {2 * canraisetokens} token" });
-			this.betraisemenu.AddItem(new SelectItem() { Id = 3 * canraisetokens, Text = $"Raise {3 * canraisetokens} token" });
-			this.betraisemenu.AddItem(new SelectItem() { Id = 4 * canraisetokens, Text = $"Raise {4 * canraisetokens} token" });
-			this.betraisemenu.AddItem(new SelectItem() { Id = 5 * canraisetokens, Text = $"Raise {5 * canraisetokens} token" });
+			this.submenu1.Clear();
+
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 1 * canraisetokens, Text = $"Raise {1 * canraisetokens} token" });
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 2 * canraisetokens, Text = $"Raise {2 * canraisetokens} token" });
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 3 * canraisetokens, Text = $"Raise {3 * canraisetokens} token" });
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 4 * canraisetokens, Text = $"Raise {4 * canraisetokens} token" });
+			this.submenu1.AddItem(new Syslib.ConUI.SelectItem() { Id = 5 * canraisetokens, Text = $"Raise {5 * canraisetokens} token" });
 
 		}
 
 
 		void SetStdColor() => ui.SetColor(ConsoleColor.Green, ConsoleColor.Black); 
-		void SetErrorColor() => ui.SetColor(ConsoleColor.White, ConsoleColor.Red);
-		void SetInactiveColor() => ui.SetColor(ConsoleColor.DarkGreen, ConsoleColor.Black);
-		void SetActiveColor() => ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Black);
-		void SetHighLightColor() => ui.SetColor(ConsoleColor.Yellow, ConsoleColor.Blue);
-		void SetPlayCardColorBlack() => ui.SetColor(ConsoleColor.Black, ConsoleColor.White);
-		void SetPlayCardColorRed() => ui.SetColor(ConsoleColor.Red, ConsoleColor.White);
-		void SetPlayCardColorBackside() => ui.SetColor(ConsoleColor.Gray, ConsoleColor.White);
+
 
 		ConColor StdColor = new ConColor(ConsoleColor.Green, ConsoleColor.Black);
 		ConColor InactiveColor = new ConColor(ConsoleColor.DarkGreen, ConsoleColor.Black);
 		ConColor InTurnColor = new ConColor(ConsoleColor.Yellow, ConsoleColor.Black);
 		ConColor ErrorColor = new ConColor(ConsoleColor.Red, ConsoleColor.Black);
 		ConColor HighLightColor = new ConColor(ConsoleColor.Yellow, ConsoleColor.Blue);
+		ConColor PlayCardBlackColor = new ConColor(ConsoleColor.Black, ConsoleColor.White);
+		ConColor PlayCardRedColor = new ConColor(ConsoleColor.Red, ConsoleColor.White);
+		ConColor PlayCardBacksideColor = new ConColor(ConsoleColor.Gray, ConsoleColor.White);
+		ConColor MenuColor = new ConColor(ConsoleColor.DarkBlue, ConsoleColor.DarkGray);
+		ConColor MenuSelectedColor = new ConColor(ConsoleColor.White, ConsoleColor.DarkBlue);
+
 
 		void SetUpColors() {
 			this.consoletable.Color(StdColor);
@@ -371,36 +401,26 @@ namespace Games.Card.TexasHoldEm
 			this.consoletable.CommonSeat.InactiveColor.Set(InactiveColor);
 			this.consoletable.CommonSeat.InTurnColor.Set(InTurnColor);
 			this.consoletable.CommonSeat.HighLightColor.Set(HighLightColor);
+			this.mainmenu.Color(MenuColor);
+			this.mainmenu.ColorSelected.Set(MenuSelectedColor);
+			this.submenu1.ColorSelected.Set(MenuSelectedColor);
+			this.errmsg.Color(ErrorColor);
 		}
 
-
-		void WritePlayCard(IPlayCard card) {
-			var backside = new CStr(2, 21).ToString();
-			switch (card.Suit) {
-				case PlayCardSuit.Invalid: SetPlayCardColorBackside();break;
-				case PlayCardSuit.Heart: SetPlayCardColorRed(); break;
-				case PlayCardSuit.Diamond: SetPlayCardColorRed(); break;
-				default: SetPlayCardColorBlack(); break;
-			}
-			if (card.Suit == PlayCardSuit.Invalid) ui.Show(backside);
-			else ui.Show(card.Symbol);
-			SetStdColor();
-			ui.MoveCursor(columns: 4, rows: 0);
-		}
 
 
 
 		TexasConsoleTable consoletable;
+		readonly ConIO ui;
 
-		ConIO ui;
+		ConProgress progressbar;
+		ConText msg;
+		ConText errmsg;
 
+		ConMenu mainmenu;
+		ConMenu submenu1;
 
-		ConMenu betmenu;
-		ConMenu betraisemenu;
-		ConMenu playroundmenu;
-		ICardTable table;
-		CStr msg;
-		bool SortCardsFunc(IPlayCard c1, IPlayCard c2) { if (c1.Rank < c2.Rank) return true; return false; }
+		TexasHoldEmTable table;
 
 	}
 

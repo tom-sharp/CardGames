@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Games.Card.TexasHoldEm;
-using Syslib.Games.Card;
+using Syslib.Games.Card.TexasHoldEm;
 using Syslib.Games;
 
 
@@ -15,191 +15,100 @@ namespace CardGameTest
 	public class TestTexasPlayer
 	{
 		[TestMethod]
-		public void TexasPlayer_NullInit_DefaultInit() {
+		public void TexasPlayerAi_NullInit_InTurnResponseFalse() {
 
-			var player = new TexasHoldEmPlayerRobot(null);
+			var texasplayer = new TexasHoldEmPlayerAi(ai: null, player: null);
 
-			string expectedName = "Robot";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = 0;
+			var expectedType = GamePlayerType.Invalid;
+			var expectedTokens = 0;
+			var expectedprofilename = "Default";
+			var expectedname = "Player";
+			var expectedInTurResponse = false;
 
-			string expectedprofilename = "Default";
-			int expectedDefensive = 0;
-			int expectedOffensive = 0;
-			int expectedRandom = 0;
-
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
-
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
-
-		}
-
-		[TestMethod]
-		public void TexasPlayer_DefaultInit_DefaultInit()
-		{
-
-			var config = new CardPlayerConfig();
-			var player = new TexasHoldEmPlayerRobot(config);
-
-			string expectedName = "Robot";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = 0;
-
-			string expectedprofilename = "Default";
-			int expectedDefensive = 0;
-			int expectedOffensive = 0;
-			int expectedRandom = 0;
+			var actualtype = texasplayer.Type;
+			var actualid = texasplayer.Id;
+			var actualname = texasplayer.Name;
+			var actualtokens = texasplayer.Tokens;
+			var actualprofilename = texasplayer.Profile.Name;
+			var actualcards = texasplayer.Cards;
+			var actualInTurResponse = texasplayer.InTurn(new TexasHoldEmTurnInfo() );
 
 
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
+			Assert.AreEqual(expectedType, actualtype);
+			Assert.IsNotNull(actualid);
+			Assert.IsNotNull(actualcards);
 
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
+			Assert.AreEqual(expectedname, actualname);
+			Assert.AreEqual(expectedTokens, actualtokens);
+			Assert.AreEqual(expectedprofilename, actualprofilename);
+			Assert.AreEqual(expectedInTurResponse, actualInTurResponse);
 
 		}
 
 		[TestMethod]
-		public void TexasPlayer_DefaultProfileInit_DefaultProfileInit()
+		public void TexasPlayerAi_PlayerAiInit_InTurnResponseTrue()
 		{
+			var player = new Player() { Type = GamePlayerType.Ai, Name = "AiPlayer", Tokens = 10 };
+			var ai = new TexasHoldEmAi();
+			var texasplayer = new TexasHoldEmPlayerAi(ai: ai, player: player);
 
-			var config = new CardPlayerConfig() {Name = "Player",Tokens = 10 };
-			var player = new TexasHoldEmPlayerRobot(config);
+			var expectedType = GamePlayerType.Ai;
+			var expectedTokens = 10;
+			var expectedprofilename = "Default";
+			var expectedname = "AiPlayer";
+			var expectedInTurnResponse = true;
 
-			string expectedName = "Player";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = 10;
+			var actualtype = texasplayer.Type;
+			var actualid = texasplayer.Id;
+			var actualname = texasplayer.Name;
+			var actualtokens = texasplayer.Tokens;
+			var actualprofilename = texasplayer.Profile.Name;
+			var actualcards = texasplayer.Cards;
+			var actualInTurnResponse = texasplayer.InTurn(new TexasHoldEmTurnInfo());
 
-			string expectedprofilename = "Default";
-			int expectedDefensive = 0;
-			int expectedOffensive = 0;
-			int expectedRandom = 0;
+			Assert.AreEqual(expectedType, actualtype);
+			Assert.IsNotNull(actualid);
+			Assert.IsNotNull(actualcards);
 
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
-
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
-
-		}
-
-		[TestMethod]
-		public void TexasPlayer_NullProfileInit_DefaultProfileInit()
-		{
-
-			var config = new CardPlayerConfig() { Name = "Player", Tokens = 10, PlayerProfile = null };
-			var player = new TexasHoldEmPlayerRobot(config);
-
-			string expectedName = "Player";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = 10;
-
-			string expectedprofilename = "Default";
-			int expectedDefensive = 0;
-			int expectedOffensive = 0;
-			int expectedRandom = 0;
-
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
-
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
+			Assert.AreEqual(expectedname, actualname);
+			Assert.AreEqual(expectedTokens, actualtokens);
+			Assert.AreEqual(expectedprofilename, actualprofilename);
+			Assert.AreEqual(expectedInTurnResponse, actualInTurnResponse);
 
 		}
 
 
 		[TestMethod]
-		public void TexasPlayer_CustomProfileInit_CustomProfileInit()
+		public void TexasPlayerAi_NotAiPlayer_InTurnResponseFalse()
 		{
-			var profile = new GamePlayerProfile() { Defensive = 40, Offensive = 50, Randomness = 60 };
-			var config = new CardPlayerConfig() { Name = "Player", Tokens = 10, PlayerProfile = profile };
-			var player = new TexasHoldEmPlayerRobot(config);
+			var player = new Player() { Type = GamePlayerType.Human, Name = "AiPlayer", Tokens = 10 };
+			var ai = new TexasHoldEmAi();
+			var texasplayer = new TexasHoldEmPlayerAi(ai: ai, player: player);
 
-			string expectedName = "Player";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = 10;
+			var expectedType = GamePlayerType.Human;
+			var expectedTokens = 10;
+			var expectedprofilename = "Default";
+			var expectedname = "AiPlayer";
+			var expectedInTurResponse = false;
 
-			string expectedprofilename = "Custom";
-			int expectedDefensive = 40;
-			int expectedOffensive = 50;
-			int expectedRandom = 60;
+			var actualtype = texasplayer.Type;
+			var actualid = texasplayer.Id;
+			var actualname = texasplayer.Name;
+			var actualtokens = texasplayer.Tokens;
+			var actualprofilename = texasplayer.Profile.Name;
+			var actualcards = texasplayer.Cards;
+			var actualInTurResponse = texasplayer.InTurn(new TexasHoldEmTurnInfo());
 
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
+			Assert.AreEqual(expectedType, actualtype);
+			Assert.IsNotNull(actualid);
+			Assert.IsNotNull(actualcards);
 
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
+			Assert.AreEqual(expectedname, actualname);
+			Assert.AreEqual(expectedTokens, actualtokens);
+			Assert.AreEqual(expectedprofilename, actualprofilename);
+			Assert.AreEqual(expectedInTurResponse, actualInTurResponse);
 
 		}
-
-		[TestMethod]
-		public void TexasPlayer_InvalidInit_DefaultInit()
-		{
-			var profile = new GamePlayerProfile() { Defensive = -4000, Offensive = 5000, Randomness = -6000 };
-			var config = new CardPlayerConfig() { Name = null, Tokens = -10, PlayerProfile = profile };
-			var player = new TexasHoldEmPlayerRobot(config);
-
-			string expectedName = "Robot";
-			GamePlayerType expectedType = GamePlayerType.Robot;
-			int expectedTokens = -10;
-
-			string expectedprofilename = "Custom";
-			int expectedDefensive = 0;
-			int expectedOffensive = 100;
-			int expectedRandom = 0;
-
-			Assert.AreEqual(expectedName, player.Name);
-			Assert.AreEqual(expectedType, player.Type);
-			Assert.IsNotNull(player.Cards);
-			Assert.IsNotNull(player.Profile);
-			Assert.AreEqual(expectedTokens, player.Tokens);
-
-			Assert.AreEqual(expectedprofilename, player.Profile.Name);
-			Assert.AreEqual(expectedDefensive, player.Profile.Defensive);
-			Assert.AreEqual(expectedOffensive, player.Profile.Offensive);
-			Assert.AreEqual(expectedRandom, player.Profile.Randomness);
-
-		}
-
-
-		[TestMethod]
-		public void TexasPlayer_ConfigReferenceSharing_NoSharing()
-		{
-			var profile = new GamePlayerProfile() { Defensive = 40, Offensive = 50, Randomness = 0 };
-			var config = new CardPlayerConfig() { Name = "Robot", Tokens = 10, PlayerProfile = profile };
-
-			var player1 = new TexasHoldEmPlayerRobot(config);
-			var player2 = new TexasHoldEmPlayerRobot(config);
-			Assert.IsFalse(ReferenceEquals(player1.Profile, player2.Profile));
-		}
-
 
 
 	}

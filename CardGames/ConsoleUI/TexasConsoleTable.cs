@@ -4,6 +4,7 @@ using Syslib.Games.Card;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Games.Card.TexasHoldEm.ConsoleUI
 {
@@ -20,16 +21,47 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 		public TexasConsoleTable() : base(null)
 		{
 			this.Position(0, 0);
-			this.Size(width: 120, height: 25);
-			this.Color(fg: ConsoleColor.Green, bg: ConsoleColor.Black);
+			this.Size(width: 120, height: 27);
 			this.Border = new ConBorder(this);
-			this.CommonSeat = new CommonSeatConsole(37, 21, this);
-			this.Log = new ConLog(32, 12, 38, 7, this);
+			this.CommonSeat = new CommonSeatConsole(2, 1, this);
 			this.playerseats = new CList<PlayerSeatConsole>();
 		}
 
 		public ConBorder Border { get; }
 		public CommonSeatConsole CommonSeat { get; }
+
+		public void DealPlayerCards(int milliseconds)
+		{
+			int cardno = 0;
+			this.playerseats.ForEachWhile(o => {
+				if (cardno == 3) return false;
+				if (o == null) return true;
+				if (o.Seat != null && !o.Seat.IsFree)
+				{
+					var cards = o.Seat.Player.Cards.GetCards();
+					if (cardno == 1) { cards.First().Visibility = CardVisibility.ExclusivePlayer; }
+					else if (cardno == 2) { cards.First(); cards.Next().Visibility = CardVisibility.ExclusivePlayer; }
+					if (o.Seat.IsDealer) { cardno++; }
+					if (cardno > 0) Thread.Sleep(milliseconds);
+					o.Update();
+				}
+				return true;
+			});
+		}
+
+		public void DealCommonCards(int milliseconds) 
+		{
+			var cards = this.CommonSeat.Seat.Player.Cards.GetCards();
+			cards.ForEach(card=> {
+				if (card.Visibility == CardVisibility.Hidden) 
+				{
+					card.Visibility = CardVisibility.Public;
+					Thread.Sleep(milliseconds);
+					Thread.Sleep(milliseconds);
+					this.CommonSeat.Update();
+				}
+			});
+		}
 
 		public PlayerSeatConsole PlayerSeat(int number)
 		{
@@ -38,20 +70,50 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 			return null;
 		}
 
+
 		public PlayerSeatConsole PlayerSeat(ICardTableSeat seat)
 		{
 			return this.playerseats.First(o => seat == o.Seat);
 		}
 
-		public ConLog Log { get; }
+		public enum TableSetUp { Seats8, Seats10 }
 
-		public enum TableSetUp { Seats10 }
 		public void SetUp(TableSetUp seats)
 		{
-			this.playerseats.Clear();
-			if (seats == TableSetUp.Seats10)
+			switch (seats) {
+				case TableSetUp.Seats8: this.SetUp8Seats(); break;
+				case TableSetUp.Seats10: this.SetUp10Seats(); break;
+			}
+
+			foreach (var seat in this.playerseats)
 			{
-				this.playerseats
+				seat.HighLightColor.Set(this.CommonSeat.HighLightColor);
+				seat.InTurnColor.Set(this.CommonSeat.InTurnColor);
+				seat.InactiveColor.Set(this.CommonSeat.InactiveColor);
+			}
+		}
+		void SetUp8Seats()
+		{
+			this.CommonSeat.Position(2, 1);
+			this.playerseats.Clear();
+			this.playerseats
+					.Add(new PlayerSeatConsole(38, 1, this))
+					.Add(new PlayerSeatConsole(56, 1, this))
+					.Add(new PlayerSeatConsole(74, 1, this))
+					.Add(new PlayerSeatConsole(92, 1, this))
+					.Add(new PlayerSeatConsole(92, 15, this))
+					.Add(new PlayerSeatConsole(74, 15, this))
+					.Add(new PlayerSeatConsole(56, 15, this))
+					.Add(new PlayerSeatConsole(38, 15, this));
+			int cx = 2, cy = 12, cw = 36, ch = 1;
+			this.CommonSeat.SeatComment.Size(cw , ch).Position(cx, cy++);
+			foreach (var seat in this.playerseats) { seat.SeatComment.Size(cw, ch).Position(cx , cy++); }
+		}
+
+		void SetUp10Seats() {
+			this.CommonSeat.Position(37, 21);
+			this.playerseats.Clear();
+			this.playerseats
 					.Add(new PlayerSeatConsole(2, 1, this))
 					.Add(new PlayerSeatConsole(20, 1, this))
 					.Add(new PlayerSeatConsole(38, 1, this))
@@ -62,13 +124,9 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 					.Add(new PlayerSeatConsole(74, 15, this))
 					.Add(new PlayerSeatConsole(20, 15, this))
 					.Add(new PlayerSeatConsole(2, 15, this));
-				foreach (var seat in this.playerseats)
-				{
-					seat.HighLightColor.Set(this.CommonSeat.HighLightColor);
-					seat.InTurnColor.Set(this.CommonSeat.InTurnColor);
-					seat.InactiveColor.Set(this.CommonSeat.InactiveColor);
-				}
-			}
+			int cx = 32, cy = 12, cw = 36, ch = 1;
+			this.CommonSeat.SeatComment.Size(cw, ch).Position(cx, cy++);
+			foreach (var seat in this.playerseats) { seat.SeatComment.Size(cw, ch).Position(cx, cy++); }
 		}
 
 		public override IConObject Update()
@@ -78,6 +136,10 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 			foreach (var seat in this.playerseats) seat.Update();
 			this.CommonSeat.Update();
 			return this;
+		}
+		public void UpdateComments() {
+			this.CommonSeat.SeatComment.Text = this.CommonSeat.Seat.Comment;
+			foreach (var seat in this.playerseats) if (seat.Seat != null) { seat.SeatComment.Text = seat.Seat.Comment; } else seat.SeatComment.Text = "Empty";
 		}
 
 		public IEnumerator<PlayerSeatConsole> GetEnumerator() { return playerseats.GetEnumerator(); }

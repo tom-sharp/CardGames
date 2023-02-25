@@ -1,137 +1,450 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Games.Card.TexasHoldEm;
-using Syslib.Games.Card;
-
+using Syslib.Games;
+using Syslib.Games.Card.TexasHoldEm;
+using Syslib;
 
 namespace CardGameTest
 {
+
+
+	class MockUI : ITexasHoldEmUI
+	{
+		public bool SupressOutput { get; set; }
+
+		public bool SupressOverrideRoundSummary { get; set; }
+		public bool SupressOverrideStatistics { get; set; }
+
+		public int AskForBet(int tokens, int canraisetokens)
+		{
+			return 0;
+		}
+
+		public int AskMainMenu(IForEach<ISelectItem> list)
+		{
+			return 0;
+		}
+
+		public bool AskPlayNext()
+		{
+			return true;
+		}
+
+		public void DealFlop()
+		{
+			return;
+		}
+
+		public void DealRiver()
+		{
+			return;
+		}
+
+		public void DealShowDown()
+		{
+			return;
+		}
+
+		public void DealTurn()
+		{
+			return;
+		}
+
+		public void Finish()
+		{
+			return;
+		}
+
+		public void ReDrawGameTable()
+		{
+			return;
+		}
+
+		public void ShowErrMsg(string msg)
+		{
+			return;
+		}
+
+		public void ShowGamePlayerStatistics(TexasHoldEmTable table)
+		{
+			return;
+		}
+
+		public void ShowGameStatistics(TexasHoldEmStatistics statistics)
+		{
+			return;
+		}
+
+		public void ShowHelp()
+		{
+			return;
+		}
+
+		public void ShowMsg(string msg)
+		{
+			return;
+		}
+
+		public void ShowNewRound(TexasHoldEmTable table)
+		{
+			return;
+		}
+
+		public void ShowPlayerAction(ITexasHoldEmSeat seat, int msdelay)
+		{
+			return;
+		}
+
+		public void ShowPlayerSeat(ITexasHoldEmSeat seat)
+		{
+			return;
+		}
+
+		public void ShowPlayerSummary()
+		{
+			return;
+		}
+
+		public void ShowProgress(double progress, double complete)
+		{
+			return;
+		}
+
+		public bool ShowRoundSummary(TexasHoldEmTable table)
+		{
+			return true;
+		}
+
+		public bool Welcome()
+		{
+			return true;
+		}
+	}
+
 	[TestClass]
 	public class TestTexasTable
 	{
 		[TestMethod]
-		public void Texastable_nullInit_DefaultInit() {
+		public void Texastable_nullInit_Default1SeatInit() {
 
-			var table = new TexasHoldEmTable(tableConfig: null);
-			int expectedseatcount = 0;
-			int expectedplayercount = 0;
-			int expectedativecount = 0;
+			var table = new TexasHoldEmTable(null);
 
-			Assert.AreEqual(expectedseatcount, table.SeatCount);
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
+			var expectedseatcount = 1;
+			var expectedfreeseatcount = 1;
+			var expectedplayercount = 0;
+			var expectedativecount = 0;
 
-			Assert.IsNull(table.NextActiveSeat(null));
-			Assert.IsNotNull(table.TableSeats);
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
 
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null,null)));
 
-		}
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
 
-		[TestMethod]
-		public void Texastable_Init0Seat_DefaultInit()
-		{
-
-			var table = new TexasHoldEmTable(new CardTableConfig());
-			int expectedseatcount = 0;
-			int expectedplayercount = 0;
-			int expectedativecount = 0;
-
-			Assert.AreEqual(expectedseatcount, table.SeatCount);
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
 
 			Assert.IsNull(table.NextActiveSeat(null));
-			Assert.IsNotNull(table.TableSeats);
-
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
-
-		}
-
-		[TestMethod]
-		public void Texastable_InitNegativSeat_DefaultInit()
-		{
-
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = -1});
-			int expectedseatcount = 0;
-			int expectedplayercount = 0;
-			int expectedativecount = 0;
-
-			Assert.AreEqual(expectedseatcount, table.SeatCount);
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
-
-			Assert.IsNull(table.NextActiveSeat(null));
-			Assert.IsNotNull(table.TableSeats);
-
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
-
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
 		}
 
 
 		[TestMethod]
-		public void Texastable_Init1Seat_Init()
+		public void Texastable_Init0Seats_Default1SeatInit()
 		{
 
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 1 });
-			int expectedseatcount = 1;
-			int expectedplayercount = 0;
-			int expectedativecount = 0;
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 0 });
 
-			Assert.AreEqual(expectedseatcount, table.SeatCount);
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
+			var expectedseatcount = 1;
+			var expectedfreeseatcount = 1;
+			var expectedplayercount = 0;
+			var expectedativecount = 0;
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
 
 			Assert.IsNull(table.NextActiveSeat(null));
-			Assert.IsNotNull(table.TableSeats);
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
-
-			expectedplayercount = 1;
-			expectedativecount = 0;
-
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
-
-
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
 		}
 
 
 		[TestMethod]
-		public void Texastable_Init30Seat_Init()
+		public void Texastable_InitNegativeSeats_Default1SeatInit()
 		{
 
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 30 });
-			int expectedseatcount = 30;
-			int expectedplayercount = 0;
-			int expectedativecount = 0;
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = -1 });
 
-			Assert.AreEqual(expectedseatcount, table.SeatCount);
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
+			var expectedseatcount = 1;
+			var expectedfreeseatcount = 1;
+			var expectedplayercount = 0;
+			var expectedativecount = 0;
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
 
 			Assert.IsNull(table.NextActiveSeat(null));
-			Assert.IsNotNull(table.TableSeats);
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
-
-			expectedplayercount = 1;
-			expectedativecount = 0;
-
-			Assert.AreEqual(expectedplayercount, table.PlayerCount);
-			Assert.AreEqual(expectedativecount, table.ActiveSeatCount);
-
-
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
 		}
+
+		[TestMethod]
+		public void Texastable_Init8Seats_SeatInit()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 9;
+			var expectedplayercount = 0;
+			var expectedativecount = 0;
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNull(table.NextActiveSeat(null));
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+		[TestMethod]
+		public void Texastable_Init30Seats_SeatInit()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 30 });
+
+			var expectedseatcount = 31;
+			var expectedfreeseatcount = 31;
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+		}
+
+
+
+
+		[TestMethod]
+		public void Texastable_InvalidUserJoinTable_Fail()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+			var player = new TexasHoldEmPlayerAi(null, null);
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 9;
+			var expectedplayercount = 0;
+			var expectedativecount = 0;
+			var expectedjoinresult = false;
+
+			var actualjoinresult = table.Join(player);
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedjoinresult, actualjoinresult);
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNull(table.NextActiveSeat(null));
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+		[TestMethod]
+		public void Texastable_InCompatibleUserJoinTable_Success()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+			var player = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Human });
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 8;
+			var expectedplayercount = 1;
+			var expectedativecount = 0;
+			var expectedjoinresult = true;
+
+			var actualjoinresult = table.Join(player);
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedjoinresult, actualjoinresult);
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNull(table.NextActiveSeat(null));
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+		[TestMethod]
+		public void Texastable_ValidUserJoinTable_Success()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+			var player = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 8;
+			var expectedplayercount = 1;
+			var expectedativecount = 0;
+			var expectedjoinresult = true;
+
+			var actualjoinresult = table.Join(player);
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedjoinresult, actualjoinresult);
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNull(table.NextActiveSeat(null));
+			Assert.IsNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+		[TestMethod]
+		public void Texastable_ActivateInvalidUser_Fail()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+			var player1 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+			var player2 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Human });
+			var player3 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+			var player4 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 5;
+			var expectedplayercount = 4;
+			var expectedativecount = 3;
+
+			table.Join(player1);
+			table.Join(player2);
+			table.Join(player3);
+			table.Join(player4);
+
+			table.ForEach(seat=> seat.GetReady());
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNotNull(table.NextActiveSeat(null));
+			Assert.IsNotNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+		[TestMethod]
+		public void Texastable_ActivateUsers_Success()
+		{
+
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 8 });
+			var player1 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+			var player2 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+			var player3 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+			var player4 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai });
+
+			var expectedseatcount = 9;
+			var expectedfreeseatcount = 5;
+			var expectedplayercount = 4;
+			var expectedativecount = 4;
+
+			table.Join(player1);
+			table.Join(player2);
+			table.Join(player3);
+			table.Join(player4);
+
+			table.ForEach(seat => seat.GetReady());
+
+			var actualseatcount = table.SeatCount;
+			var actualfreeseatcount = table.FreeSeatCount;
+			var actualplayercount = table.PlayerCount;
+			var actualativecount = table.ActiveSeatCount;
+
+
+			Assert.AreEqual(expectedseatcount, actualseatcount);
+			Assert.AreEqual(expectedfreeseatcount, actualfreeseatcount);
+			Assert.AreEqual(expectedplayercount, actualplayercount);
+			Assert.AreEqual(expectedativecount, actualativecount);
+
+
+			Assert.IsNotNull(table.NextActiveSeat(null));
+			Assert.IsNotNull(table.NextActivePlayerSeat(null));
+			Assert.IsNotNull(table.NextSeat(null));
+		}
+
+
+
+
+
+
+
+
+
+
+
 
 		[TestMethod]
 		public void Texastable_JoinNull_false()
 		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 5 });
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 5 });
 
 			Assert.IsFalse(table.Join(null));
 
@@ -140,60 +453,51 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_JoinPlayerFreeSeat_Success()
 		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 5 });
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 5 });
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-
-		}
-
-		[TestMethod]
-		public void Texastable_JoinPlayerNoFreeSeat_fail()
-		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerRobot(null)));
-
-		}
-
-
-		[TestMethod]
-		public void Texastable_JoinDealerPlayerNoSeats_Success()
-		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 0 });
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null,null)));
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai})));
 
 		}
 
 		[TestMethod]
-		public void Texastable_JoinDealerNoFreeSeat_Success()
+		public void Texastable_JoinPlayerFreeSeatNoDefaultPlayer_fail()
 		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 3 });
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(null)));
+			var expectedfreeset = 1;
 
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerRobot(null)));
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai })));
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai })));
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai })));
+			Assert.IsFalse(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai })));
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
+			var actualfreeseat = table.FreeSeatCount;
 
-
+			Assert.AreEqual(expectedfreeset, actualfreeseat);
 		}
 
 
 		[TestMethod]
-		public void Texastable_JoinASecondDealer_Fail()
+		public void Texastable_JoinDefaultPlayerNoSeats_Success()
 		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 0 });
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, null)));
+			Assert.IsFalse(table.Join(new TexasHoldEmPlayerAi(null, new Player() { Type = GamePlayerType.Ai })));
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDefault(null, null, null)));
 
-			Assert.IsFalse(table.Join(new TexasHoldEmPlayerDealer(null, null)));
+		}
+
+
+
+
+		[TestMethod]
+		public void Texastable_JoinASecondDefaultPlayer_Fail()
+		{
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 3 });
+
+			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDefault(null, null, null)));
+
+			Assert.IsFalse(table.Join(new TexasHoldEmPlayerDefault(null, null, null)));
 
 		}
 
@@ -201,19 +505,23 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_PlayGameNoDealerNoPlayer_False()
 		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var table = new TexasHoldEmTable(new TexasHoldEmConfig() { Seats = 3 , RoundsToPlay = 1});
 
 			Assert.IsFalse(table.PlayGame());
 
 		}
 
+
+
 		[TestMethod]
 		public void Texastable_PlayGameNoPlayer_False()
 		{
-			var ui = new TexasHoldEmConUI();
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var ui = new MockUI();
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var table = new TexasHoldEmTable(config);
+			var defaultplayer = new TexasHoldEmPlayerDefault(table,config,ui);
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));
+			Assert.IsTrue(table.Join(defaultplayer));
 
 			Assert.IsFalse(table.PlayGame());
 
@@ -222,46 +530,41 @@ namespace CardGameTest
 		[TestMethod]
 		public void Texastable_PlayGame1Player_False()
 		{
-			var ui = new TexasHoldEmConUI();
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var ui = new MockUI();
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var table = new TexasHoldEmTable(config);
+			var defaultplayer = new TexasHoldEmPlayerDefault(table, config, ui);
+			var player1 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai});
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
-
+			Assert.IsTrue(table.Join(defaultplayer));
+			Assert.IsTrue(table.Join(player1));
 
 			Assert.IsFalse(table.PlayGame());
 
 		}
 
 		[TestMethod]
-		public void Texastable_PlayGame2Player_True()
+		public void Texastable_PlayGame3Player_Success()
 		{
-			var ui = new TexasHoldEmConUI();
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
+			var ui = new MockUI();
+			var ai = new TexasHoldEmAi();
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var table = new TexasHoldEmTable(config);
+			var defaultplayer = new TexasHoldEmPlayerDefault(table, config, ui);
+			var player1 = new TexasHoldEmPlayerAi(ai, new Player() { Type = GamePlayerType.Ai });
+			var player2 = new TexasHoldEmPlayerAi(ai, new Player() { Type = GamePlayerType.Ai });
+			var player3 = new TexasHoldEmPlayerAi(ai, new Player() { Type = GamePlayerType.Ai });
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(null, ui)));
+			Assert.IsTrue(table.Join(defaultplayer));
+			Assert.IsTrue(table.Join(player1));
+			Assert.IsTrue(table.Join(player2));
+			Assert.IsTrue(table.Join(player3));
 
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
+			Assert.IsTrue(table.PlayGame());
 
 		}
 
 
-		[TestMethod]
-		public void Texastable_PlayGameNoUI_False()
-		{
-			var table = new TexasHoldEmTable(new CardTableConfig() { Seats = 3 });
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerDealer(config: null, UI: null)));
-
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
-			Assert.IsTrue(table.Join(new TexasHoldEmPlayerRobot(config: null)));
-
-
-			Assert.IsFalse(table.PlayGame());
-
-		}
 
 
 	}

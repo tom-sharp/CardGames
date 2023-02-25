@@ -4,22 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Syslib.Games.Card.TexasHoldEm;
+
 
 namespace Games.Card.TexasHoldEm
 {
-	internal class TexasHoldEmSettings : ITexasHoldEmSettings
+	internal class TexasHoldEmSettings : TexasHoldEmConfig, ITexasHoldEmSettings
 	{
 		public TexasHoldEmSettings()
 		{
 			Default();
 		}
 
-		public int RoundsToPlay { get; set; }
-		public int TableSeats { get; set; }
 		public int Players { get; set; }
 		public int Tokens { get; set; }
 		public bool EnableStatistics { get; set; }
-		public bool UseDb { get; set; }
 		public bool CreateDb { get; set; }
 		public bool DropDb { get; set; }
 
@@ -28,10 +27,7 @@ namespace Games.Card.TexasHoldEm
 		public bool QuietNotSummary { get; set; }
 		public bool QuietNotStatistics { get; set; }
 		public bool LearnAi { get; set; }
-		public int LearnAiGamePlay { get; set; }
-		public int SleepTime { get; set; }
-		public int MaxBetRaises { get; set; }
-		public int MaxBetLimit { get; set; }
+		public int LearnAiFallback { get; set; }
 
 		public ITexasHoldEmPlayer Player1 { get; set; }
 		public ITexasHoldEmPlayer Player2 { get; set; }
@@ -41,27 +37,21 @@ namespace Games.Card.TexasHoldEm
 		public ITexasHoldEmPlayer Player6 { get; set; }
 		public ITexasHoldEmPlayer Player7 { get; set; }
 		public ITexasHoldEmPlayer Player8 { get; set; }
-		public ITexasHoldEmPlayer Player9 { get; set; }
+
 
 
 		void Default()
 		{
-			RoundsToPlay = 5;
-			TableSeats = 9;
-			Players = 9;
+			Players = 8;
 			Tokens = 1000;
 			EnableStatistics = false;
-			UseDb = false;
 			CreateDb = false;
 			DropDb = false;
 			Quiet = false;
 			QuietNotStatistics = false;
 			QuietNotSummary = false;
 			LearnAi = false;
-			LearnAiGamePlay = 2000;
-			SleepTime = 250;
-			MaxBetRaises = 4;
-			MaxBetLimit = 0;
+			LearnAiFallback = 2000;
 			Player1 = null;
 			Player2 = null;
 			Player3 = null;
@@ -70,7 +60,14 @@ namespace Games.Card.TexasHoldEm
 			Player6 = null;
 			Player7 = null;
 			Player8 = null;
-			Player9 = null;
+
+
+			RoundsToPlay = 1;
+			Seats = 8;
+			SleepTime = 250;
+			BetRaiseCountLimit = 4;
+			BetLimit = 0;
+			CardStackDecks = 1;
 		}
 
 

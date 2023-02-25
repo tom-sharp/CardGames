@@ -1,8 +1,7 @@
 {
   "profiles": {
     "CardGames": {
-      "commandName": "Project",
-      "commandLineArgs": "r100 s5 p5 t500 -db -q -s"
+      "commandName": "Project"
     }
   }
 }

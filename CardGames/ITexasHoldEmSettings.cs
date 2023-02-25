@@ -1,22 +1,9 @@
-﻿namespace Games.Card.TexasHoldEm
+﻿using Syslib.Games.Card.TexasHoldEm;
+
+namespace Games.Card.TexasHoldEm
 {
-	public interface ITexasHoldEmSettings
+	public interface ITexasHoldEmSettings : ITexasHoldEmConfig
 	{
-		/// <summary>
-		/// 
-		/// Number of rounds to play before break. 
-		/// Set to 0 for unlimited
-		/// 
-		/// </summary>
-		int RoundsToPlay { get; set; }
-
-		/// <summary>
-		/// 
-		/// Number of table seats card table should be setup for
-		/// 
-		/// </summary>
-		int TableSeats { get; set; }
-
 
 		/// <summary>
 		/// 
@@ -40,22 +27,6 @@
 		/// 
 		/// </summary>
 		bool EnableStatistics { get; set; }
-
-
-		/// <summary>
-		/// 
-		/// Number of raies a player can do in one round, unlimited if 0
-		/// 
-		/// </summary>
-		int MaxBetRaises { get; set; }
-
-
-		/// <summary>
-		/// 
-		/// Max BetRaise Limit, 0 for unlimited
-		/// 
-		/// </summary>
-		int MaxBetLimit { get; set; }
 
 
 		/// <summary>
@@ -92,26 +63,11 @@
 		/// <summary>
 		/// 
 		/// How many rounds Ai should play for learning before game play
+		/// if database fail
 		/// 
 		/// </summary>
-		public int LearnAiGamePlay { get; set; }
+		public int LearnAiFallback { get; set; }
 
-		/// <summary>
-		/// 
-		/// Set game speed for computer player, slowdown in  milliseconds
-		/// This is ignored in Quiet mode
-		/// 
-		/// </summary>
-		int SleepTime { get; set; }
-
-
-
-		/// <summary>
-		/// 
-		/// Save AI entries and statistics to Db
-		/// 
-		/// </summary>
-		bool UseDb { get; set; }
 
 		/// <summary>
 		/// 

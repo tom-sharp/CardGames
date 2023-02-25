@@ -11,19 +11,65 @@ namespace Games.Card.TexasHoldEm.Data
 	{
 
 
-		void UpdateAndSave(ICollection<IAiEntry> aiEntries);
+		/// <summary>
+		/// 
+		///		CanConnect
+		///		Return true if there is at least 1 entity in db
+		///		
+		/// </summary>
+		public bool CanConnect();
 
 
-		Task<IAiEntry> GetEntryAsync(int id);
+		/// <summary>
+		/// 
+		///		UpdateAndSave
+		///		Will update or create entities in Db ánd save it
+		///		return true of all succeded
+		///		
+		/// </summary>
+		public bool UpdateAndSave(ICollection<IAiEntry> aiEntries);
 
-		Task<IEnumerable<IAiEntry>> GetAllAsync();
+
+		/// <summary>
+		/// 
+		///		GetEntryAsync
+		///		Return Entity with provided id or
+		///		null if not found (or there was an error)
+		///		
+		/// </summary>
+		public Task<IAiEntry> GetEntryAsync(int id);
 
 
-		Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry);
+		/// <summary>
+		/// 
+		///		GetAllAsync
+		///		Return all entries in db
+		///		
+		/// </summary>
+		public Task<IEnumerable<IAiEntry>> GetAllAsync();
 
-		Task UpdateAndSaveAsync(ICollection<IAiEntry> aiEntries);
+		/// <summary>
+		/// 
+		///		UpdateEntryAsync
+		///		Update or create entity if not exist
+		///		Return updated or created entity
+		///		if there was an error null is returned
+		///		
+		/// </summary>
+		public Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry);
 
-		Task<int> SaveChangesAsync();
+
+		public Task UpdateAndSaveAsync(ICollection<IAiEntry> aiEntries);
+
+
+		/// <summary>
+		/// 
+		///		SaveChangesAsync
+		///		Save changes to Db and return number of saved items
+		///		if there was an error -1 is returned
+		///		
+		/// </summary>
+		public Task<int> SaveChangesAsync();
 
 	}
 }
