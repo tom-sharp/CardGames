@@ -52,6 +52,10 @@ namespace Games.Card.TexasHoldEm
 		/// </summary>
 		bool QuietNotStatistics { get; set; }
 
+		/// <summary>
+		/// Sleep time to slow down game play
+		/// </summary>
+		public int SleepTime { get; set; }
 
 		/// <summary>
 		/// 

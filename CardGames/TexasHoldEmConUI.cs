@@ -16,7 +16,7 @@ namespace Games.Card.TexasHoldEm
 		{
 			this.SupressOutput = false;
 			this.SupressOverrideRoundSummary = false;
-
+			this.speed = speedfast;
 			this.consoletable = new TexasConsoleTable();
 
 			this.ui = ConIO.PInstance;
@@ -49,7 +49,6 @@ namespace Games.Card.TexasHoldEm
 		}
 
 		public bool Welcome() {
-			ui.Clear();
 
 			int minWidth = 120;
 			int minHeight = 30;
@@ -58,6 +57,8 @@ namespace Games.Card.TexasHoldEm
 				Console.WriteLine($"Error: unable to set console window size. Min {minWidth} x {minHeight}");
 				return false;
 			}
+
+			ui.Clear();
 
 			ui.HideCursor();
 			ui.DrawBorder(0, 0, minWidth, 3);
@@ -97,8 +98,8 @@ namespace Games.Card.TexasHoldEm
 			if (this.SupressOutput) return;
 			this.ReDrawGameTable();
 			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
-			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Flop"; this.Wait(1000);
-			this.consoletable.DealPlayerCards(250);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Flop"; this.Wait(speedfast);
+			this.consoletable.DealPlayerCards(speedfast);
 			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
 			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
 		}
@@ -108,8 +109,8 @@ namespace Games.Card.TexasHoldEm
 			if (this.SupressOutput) return;
 			this.ReDrawGameTable();
 			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
-			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Turn"; this.Wait(1000);
-			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Turn"; this.Wait(speedmedium);
+			this.consoletable.DealCommonCards(speedfast);
 			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
 			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
 		}
@@ -119,8 +120,8 @@ namespace Games.Card.TexasHoldEm
 			if (this.SupressOutput) return;
 			this.ReDrawGameTable();
 			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
-			this.consoletable.CommonSeat.SeatComment.Text = "Dealing River"; this.Wait(1000);
-			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing River"; this.Wait(speedslow);
+			this.consoletable.DealCommonCards(speedfast);
 			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
 			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
 		}
@@ -131,8 +132,8 @@ namespace Games.Card.TexasHoldEm
 			if (this.SupressOutput) return;
 			this.ReDrawGameTable();
 			this.consoletable.CommonSeat.SeatComment.Color(HighLightColor);
-			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Showdown"; this.Wait(1000);
-			this.consoletable.DealCommonCards(250);
+			this.consoletable.CommonSeat.SeatComment.Text = "Dealing Showdown"; this.Wait(speedslow);
+			this.consoletable.DealCommonCards(speedfast);
 			this.consoletable.CommonSeat.SeatComment.Color(StdColor);
 			this.consoletable.CommonSeat.SeatComment.Text = "Place bets";
 		}
@@ -144,6 +145,9 @@ namespace Games.Card.TexasHoldEm
 			this.consoletable.CommonSeat.Update();
 		}
 
+		public void RedrawConsoleTable() {
+			this.consoletable.Update();
+		}
 
 		public void Finish() {
 			if (!SupressOutput) ShowPlayerSummary();
@@ -160,12 +164,10 @@ namespace Games.Card.TexasHoldEm
 		public void ShowNewRound(TexasHoldEmTable table) {
 
 			if (SupressOutput) return;
-//			SetStdColor();
 			ui.HideCursor();
-			this.consoletable.Update();
-//			ui.Clear();
 			SetUpTable(table);
-			ReDrawGameTable();
+			this.consoletable.Update();
+//			ReDrawGameTable();
 		}
 
 		public void ShowPlayerSummary() {
@@ -242,7 +244,7 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public void ShowPlayerAction(ITexasHoldEmSeat seat, int msdelay) { if (SupressOutput) return; ShowPlayerSeat(seat); Wait(msdelay); }
+		public void ShowPlayerAction(ITexasHoldEmSeat seat) { if (SupressOutput) return; ShowPlayerSeat(seat); Wait(speed); }
 
 		public void ShowPlayerSeat(ITexasHoldEmSeat seat) {
 
@@ -409,6 +411,11 @@ namespace Games.Card.TexasHoldEm
 
 
 
+		readonly static int speedslow = 1000;
+		readonly static int speedmedium = 500;
+		readonly static int speedfast = 250;
+
+		int speed = speedslow;
 
 		TexasConsoleTable consoletable;
 		readonly ConIO ui;

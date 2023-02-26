@@ -27,7 +27,6 @@ namespace CardGames
 
 		public Texas Setup(string[] arguments = null, ITexasHoldEmSettings usesettings = null) {
 
-
 			settings = usesettings;
 			if (settings == null) settings = new TexasHoldEmSettings();
 

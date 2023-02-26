@@ -19,6 +19,16 @@ namespace CardGames
 		/// </summary>
 		public bool Welcome();
 
+
+		/// <summary>
+		/// 
+		///		ShowProgress
+		///		Progressindicator
+		///		
+		/// </summary>
+		public void ShowProgress(double progress, double complete);
+
+
 		/// <summary>
 		/// 
 		///		AskMainMenu
@@ -28,8 +38,20 @@ namespace CardGames
 		/// </summary>
 		public int AskMainMenu(IForEach<Syslib.ISelectItem> list);
 
-
+		/// <summary>
+		/// 
+		///		ShowMsg
+		///		Display message
+		///		
+		/// </summary>
 		public void ShowMsg(string msg);
+
+		/// <summary>
+		/// 
+		///		ShowErrMsg
+		///		Display an error mesasge
+		///		
+		/// </summary>
 		public void ShowErrMsg(string msg);
 
 		/// <summary>

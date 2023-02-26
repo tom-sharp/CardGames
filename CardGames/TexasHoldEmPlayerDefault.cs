@@ -161,12 +161,12 @@ namespace Games.Card.TexasHoldEm
 				if (seat.IsActive)
 				{
 					seat.Status = TexasHoldEmPlayerStatus.InTurn;
-					this.IO.ShowPlayerAction(seat, config.SleepTime);
+					this.IO.ShowPlayerAction(seat);
 					seat.InTurn(TurnInfo(seat));
 					if (seat.Bets < this.requiredbet) { if (seat.IsActive) { BugCheck.Critical(this, "PlaceBets : Player do not meet required bet, still active"); } }
 					if (seat.Bets > this.requiredbet) { if ((seat.Bets - this.requiredbet) % this.config.BetSize != 0) BugCheck.Critical(this, "PlaceBets : Bet rasie was not of betsize"); }
 					if (seat.Bets > this.requiredbet) { this.requiredbet = seat.Bets; this.lastBetRaiseSeat = seat; }
-					this.IO.ShowPlayerAction(seat, config.SleepTime);
+					this.IO.ShowPlayerAction(seat);
 					if (this.lastBetRaiseSeat == null) this.lastBetRaiseSeat = seat;
 				}
 				seat = this.table.NextActivePlayerSeat(seat);
@@ -204,20 +204,6 @@ namespace Games.Card.TexasHoldEm
 
 		}
 
-		void SetCardVisibilityPlayer()
-		{
-			foreach (var seat in this.table.TableSeats)
-			{
-				if (seat.IsActive)
-				{
-					var cards = seat.Player.Cards.GetCards();
-					foreach (var card in cards) { 
-						card.Visibility = CardVisibility.ExclusivePlayer;
-						if (seat.Player.Type == GamePlayerType.Human) SetCardVisibilityPublic(seat);
-					}
-				}
-			}
-		}
 
 		void SetCardVisibilityPublic(ITexasHoldEmSeat seat= null)
 		{
@@ -228,6 +214,7 @@ namespace Games.Card.TexasHoldEm
 				this.IO.ShowPlayerSeat(seat);
 				return;
 			}
+
 
 			foreach (var pseat in this.table.TableSeats)
 			{

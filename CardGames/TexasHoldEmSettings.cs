@@ -22,6 +22,7 @@ namespace Games.Card.TexasHoldEm
 		public bool CreateDb { get; set; }
 		public bool DropDb { get; set; }
 
+		public int SleepTime { get; set; }
 
 		public bool Quiet { get; set; }
 		public bool QuietNotSummary { get; set; }

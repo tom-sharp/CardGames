@@ -11,11 +11,11 @@ namespace Games.Card.TexasHoldEm
 	{
 		void ShowHelp();
 		void ShowNewRound(TexasHoldEmTable table);
-		void ShowProgress(double progress, double complete);
+
 		void ReDrawGameTable();
 
 		void ShowPlayerSeat(ITexasHoldEmSeat seat);
-		void ShowPlayerAction(ITexasHoldEmSeat seat, int msdelay);
+		void ShowPlayerAction(ITexasHoldEmSeat seat);
 		void ShowPlayerSummary();
 
 		void DealFlop();

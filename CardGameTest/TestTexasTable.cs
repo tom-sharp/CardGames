@@ -90,7 +90,7 @@ namespace CardGameTest
 			return;
 		}
 
-		public void ShowPlayerAction(ITexasHoldEmSeat seat, int msdelay)
+		public void ShowPlayerAction(ITexasHoldEmSeat seat)
 		{
 			return;
 		}
@@ -517,7 +517,7 @@ namespace CardGameTest
 		public void Texastable_PlayGameNoPlayer_False()
 		{
 			var ui = new MockUI();
-			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1 };
 			var table = new TexasHoldEmTable(config);
 			var defaultplayer = new TexasHoldEmPlayerDefault(table,config,ui);
 
@@ -531,7 +531,7 @@ namespace CardGameTest
 		public void Texastable_PlayGame1Player_False()
 		{
 			var ui = new MockUI();
-			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1 };
 			var table = new TexasHoldEmTable(config);
 			var defaultplayer = new TexasHoldEmPlayerDefault(table, config, ui);
 			var player1 = new TexasHoldEmPlayerAi(new TexasHoldEmAi(), new Player() { Type = GamePlayerType.Ai});
@@ -548,7 +548,7 @@ namespace CardGameTest
 		{
 			var ui = new MockUI();
 			var ai = new TexasHoldEmAi();
-			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1, SleepTime = 0 };
+			var config = new TexasHoldEmConfig() { Seats = 3, RoundsToPlay = 1 };
 			var table = new TexasHoldEmTable(config);
 			var defaultplayer = new TexasHoldEmPlayerDefault(table, config, ui);
 			var player1 = new TexasHoldEmPlayerAi(ai, new Player() { Type = GamePlayerType.Ai });

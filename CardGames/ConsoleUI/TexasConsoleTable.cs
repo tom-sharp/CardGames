@@ -111,20 +111,21 @@ namespace Games.Card.TexasHoldEm.ConsoleUI
 		}
 
 		void SetUp10Seats() {
-			this.CommonSeat.Position(37, 21);
+			this.CommonSeat.Position(2, 1);
 			this.playerseats.Clear();
 			this.playerseats
-					.Add(new PlayerSeatConsole(2, 1, this))
-					.Add(new PlayerSeatConsole(20, 1, this))
 					.Add(new PlayerSeatConsole(38, 1, this))
-					.Add(new PlayerSeatConsole(56, 1, this))
-					.Add(new PlayerSeatConsole(74, 1, this))
-					.Add(new PlayerSeatConsole(92, 1, this))
-					.Add(new PlayerSeatConsole(92, 15, this))
-					.Add(new PlayerSeatConsole(74, 15, this))
-					.Add(new PlayerSeatConsole(20, 15, this))
-					.Add(new PlayerSeatConsole(2, 15, this));
-			int cx = 32, cy = 12, cw = 36, ch = 1;
+					.Add(new PlayerSeatConsole(53, 1, this))
+					.Add(new PlayerSeatConsole(68, 1, this))
+					.Add(new PlayerSeatConsole(83, 1, this))
+					.Add(new PlayerSeatConsole(98, 1, this))
+					.Add(new PlayerSeatConsole(98, 15, this))
+					.Add(new PlayerSeatConsole(83, 15, this))
+					.Add(new PlayerSeatConsole(68, 15, this))
+					.Add(new PlayerSeatConsole(53, 15, this))
+					.Add(new PlayerSeatConsole(38, 15, this));
+
+			int cx = 2, cy = 12, cw = 36, ch = 1;
 			this.CommonSeat.SeatComment.Size(cw, ch).Position(cx, cy++);
 			foreach (var seat in this.playerseats) { seat.SeatComment.Size(cw, ch).Position(cx, cy++); }
 		}

@@ -39,6 +39,7 @@ namespace CardGames
 				var menu = new CList<Syslib.ISelectItem>()
 				.Add(new Syslib.SelectItem() { Id = 1, Text = "Play Texas 6 players" })
 				.Add(new Syslib.SelectItem() { Id = 2, Text = "Play Texas 8 players" })
+				.Add(new Syslib.SelectItem() { Id = 6, Text = "Play Texas 10 players" })
 				.Add(new Syslib.SelectItem() { Id = 3, Text = "Learn Texas Ai" })
 				.Add(new Syslib.SelectItem() { Id = 4, Text = "Delete Db" })
 				.Add(new Syslib.SelectItem() { Id = 5, Text = "Create Db" })
@@ -48,7 +49,8 @@ namespace CardGames
 				{
 					case 0: runmenu = false; break;
 					case 1: MenuPlayTexasHoldEm6Players(); break;
-					case 2:	MenuPlayTexasHoldEm8Players(); break;
+					case 2: MenuPlayTexasHoldEm8Players(); break;
+					case 6:	MenuPlayTexasHoldEm10Players(); break;
 					case 3:	MenuTrainTexasAI(); break;
 					case 4:	MenuDeleteTexasDb(); break;
 					case 5:	MenuCreateTexasDb(); break;
@@ -73,14 +75,36 @@ namespace CardGames
 			configTexas.Tokens = 1000;
 			Factory.TexasTable().PlayGame();
 		}
+		void MenuPlayTexasHoldEm10Players()
+		{
+			configTexas.Players = 10;
+			configTexas.Seats = 10;
+			configTexas.RoundsToPlay = 50;
+			configTexas.Tokens = 1000;
+			Factory.TexasTable().PlayGame();
+		}
+
 
 		void MenuTrainTexasAI() 
 		{
-			ui.ShowMsg($"Train Ai for 6 players, 100 rounds");
-			aiTexas.Learn(playrounds: 100, players: 6);
-			ui.ShowMsg($"Train Ai for 8 players, 100 rounds");
-			aiTexas.Learn(playrounds: 100, players: 8);
+			int rounds = 1000, players = 6;
+			aiTexas.OnProgress += AiTexas_OnProgress;
+
+			while (players <= 10) 
+			{
+				ui.ShowMsg($"Train Ai for {players} players, {rounds} rounds");
+				aiTexas.Learn(playrounds: rounds, players: players);
+				if (aiTexas.DbError) break;
+				players += 2;
+			}
+
 			if (aiTexas.DbError) ui.ShowErrMsg("Error saving entries to db");
+			aiTexas.OnProgress -= AiTexas_OnProgress;
+		}
+
+		private void AiTexas_OnProgress(object sender, Syslib.Events.ProgressEventArgs e)
+		{
+			this.ui.ShowProgress(e.Progress, e.Complete);
 		}
 
 		void MenuDeleteTexasDb()
