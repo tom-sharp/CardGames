@@ -116,8 +116,8 @@ namespace CardGames
 			}
 			else
 			{
-				// fallback on db error
-				if (!this.DB.AiDb.CanConnect()) {
+				// fallback on empty db (or db error)
+				if (this.DB.AiDb.IsEmpty()) {
 					if (settings.Seats < players) players = settings.Seats;
 					this.AI.Learn(settings.LearnAiFallback, players);
 					if (this.AI.DbError) UI.ShowErrMsg("Error saving entries to db");

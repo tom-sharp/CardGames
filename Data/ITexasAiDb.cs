@@ -13,21 +13,11 @@ namespace Games.Card.TexasHoldEm.Data
 
 		/// <summary>
 		/// 
-		///		CanConnect
+		///		IsEmpty
 		///		Return true if there is at least 1 entity in db
 		///		
 		/// </summary>
-		public bool CanConnect();
-
-
-		/// <summary>
-		/// 
-		///		UpdateAndSave
-		///		Will update or create entities in Db ánd save it
-		///		return true of all succeded
-		///		
-		/// </summary>
-		public bool UpdateAndSave(ICollection<IAiEntry> aiEntries);
+		public bool IsEmpty();
 
 
 		/// <summary>
@@ -48,6 +38,7 @@ namespace Games.Card.TexasHoldEm.Data
 		/// </summary>
 		public Task<IEnumerable<IAiEntry>> GetAllAsync();
 
+
 		/// <summary>
 		/// 
 		///		UpdateEntryAsync
@@ -59,7 +50,17 @@ namespace Games.Card.TexasHoldEm.Data
 		public Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry);
 
 
-		public Task UpdateAndSaveAsync(ICollection<IAiEntry> aiEntries);
+		/// <summary>
+		/// 
+		///		UpdateAndSave
+		///		Will update or create entities in Db ánd save it
+		///		return true of all succeded
+		///		
+		/// </summary>
+		public bool Update(ICollection<IAiEntry> aiEntries);
+
+
+		public Task<bool> UpdateAsync(ICollection<IAiEntry> aiEntries);
 
 
 		/// <summary>

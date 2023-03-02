@@ -109,14 +109,16 @@ namespace CardGames
 
 		void MenuDeleteTexasDb()
 		{
-			dbTexas.DeleteDb();
-			ui.ShowMsg("Db deleted");
+			ui.ShowMsg("delete...");
+			if (dbTexas.DeleteDb())	ui.ShowMsg("Db deleted");
+			else ui.ShowErrMsg("Failed to delete Db");
 		}
 
 		void MenuCreateTexasDb()
 		{
-			dbTexas.MigrateDb();
-			ui.ShowMsg("Db created");
+			ui.ShowMsg("create...");
+			if (dbTexas.MigrateDb()) ui.ShowMsg("Db created/migrated");
+			else ui.ShowErrMsg("Failed to create Db");
 		}
 
 		ITexasDb dbTexas;

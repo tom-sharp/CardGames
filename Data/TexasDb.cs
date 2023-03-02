@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Games.Card.TexasHoldEm.Models;
 
+
 namespace Games.Card.TexasHoldEm.Data
 {
 	public class TexasDb : ITexasDb
@@ -57,7 +58,7 @@ namespace Games.Card.TexasHoldEm.Data
 
 		public int SaveChanges()
 		{
-			int res =0;
+			int res;
 			try
 			{
 				res = this.db.SaveChanges();
@@ -65,24 +66,39 @@ namespace Games.Card.TexasHoldEm.Data
 			catch (DbUpdateConcurrencyException ex) {
 
 				Console.WriteLine($"Error: Concurr {ex.Message}");
+				res = -1;
 			}
 			catch (DbUpdateException ex)
 			{
 				Console.WriteLine($"Error: Update {ex.Message}");
+				res = -1;
 			}
-
-			// ADD ERROR HANDLE FOR UPDATE ERROR
 
 			return res;
 		}
 
-		public void MigrateDb() {
-			this.db.Database.Migrate();
+		public bool MigrateDb() {
+			try 
+			{
+				this.db.Database.Migrate();
+			}
+			catch 
+			{ 
+				return false; 
+			}
+			return true;
 		}
 
-		public void DeleteDb()
+		public bool DeleteDb()
 		{
-			this.db.Database.EnsureDeleted();
+			try
+			{
+				return this.db.Database.EnsureDeleted();
+			}
+			catch 
+			{ 
+				return false;
+			}
 		}
 
 		public bool ConnectDb()

@@ -21,6 +21,28 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
+		public bool IsEmpty()
+		{
+			return this.IsEmptyAsync().Result;
+		}
+
+		public async Task<bool> IsEmptyAsync()
+		{
+			IAiEntry result;
+			try
+			{
+				result = await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id != 0);
+			}
+			catch
+			{
+				return true;
+			}
+
+			if (result == null) return true;
+			return false;
+		}
+
+
 		public IAiEntry GetEntry(int id)
 		{
 			IAiEntry result = null;
@@ -36,83 +58,10 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
-
-		// Will Update or Add entity if not exist and return the updated Entry
-		public IAiEntry UpdateEntry(IAiEntry aiEntry)
-		{
-			if (aiEntry == null) return null;
-			IAiEntry result = null;
-			try {
-				result = this.UpdateEntryAsync(aiEntry).Result;
-			}
-			catch (AggregateException) {
-				return result;
-			}
-			return result;
-		}
-
-
-		public bool UpdateAndSave(ICollection<IAiEntry> aiEntries) {
-			if (aiEntries == null) return true;
-			foreach (var entity in aiEntries) { 
-				if (this.UpdateEntry(entity) == null) return false; 
-			}
-			if (this.SaveChanges() < 0) return false;
-			return true;
-		}
-
-
-		public int SaveChanges()
-		{
-			int result;
-			try
-			{
-				result = this.SaveChangesAsync().Result;
-			}
-			catch (AggregateException) 
-			{
-				return -1;
-			}
-			return result;
-		}
-
-
-		public async Task UpdateAndSaveAsync(ICollection<IAiEntry> aiEntries)
-		{
-			if (aiEntries == null) return;
-			foreach (var entity in aiEntries)
-			{
-				await this.UpdateEntryAsync(entity);
-			}
-			await this.SaveChangesAsync();
-		}
-
-
-		public bool CanConnect() 
-		{
-			return this.CanConnectAsync().Result;
-		}
-
-		public async Task<bool> CanConnectAsync()
-		{
-			IAiEntry result;
-			try 
-			{
-				result = await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id != 0);
-			}
-			catch { return false; }
-			if (result == null) return false;
-			return true;
-		}
-
-
-
 		public async Task<IAiEntry> GetEntryAsync(int id)
 		{
 			return await db.TexasAI.AsNoTracking().FirstOrDefaultAsync(o => o.Id == id);
 		}
-
-
 
 
 		public async Task<IEnumerable<IAiEntry>> GetAllAsync()
@@ -121,16 +70,36 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
+
+
+		// Will Update or Add entity if not exist and return the updated Entry
+		public IAiEntry UpdateEntry(IAiEntry aiEntry)
+		{
+			if (aiEntry == null) return null;
+			IAiEntry result = null;
+			try 
+			{
+				result = this.UpdateEntryAsync(aiEntry).Result;
+			}
+			catch (AggregateException) 
+			{
+				return result;
+			}
+			return result;
+		}
+
 		public async Task<IAiEntry> UpdateEntryAsync(IAiEntry aiEntry)
 		{
 			if (aiEntry == null) return null;
 			var exist = await db.TexasAI.FirstOrDefaultAsync(o => o.Id == aiEntry.Id);
 			if (exist != null)
 			{
-				exist.PCount += aiEntry.PCount;
-				exist.WCount += aiEntry.WCount;
-				aiEntry.PCount = exist.PCount;
-				aiEntry.WCount = exist.WCount;
+				if (exist.PCount < 100000) {
+					exist.PCount += aiEntry.PCount;
+					exist.WCount += aiEntry.WCount;
+					aiEntry.PCount = exist.PCount;
+					aiEntry.WCount = exist.WCount;
+				}
 			}
 			else
 			{
@@ -141,9 +110,53 @@ namespace Games.Card.TexasHoldEm.Data
 		}
 
 
+
+
+		public bool Update(ICollection<IAiEntry> aiEntries) {
+			if (aiEntries == null) return true;
+			foreach (var aientry in aiEntries) 
+			{ 
+				if (this.UpdateEntry(aientry) == null) return false; 
+			}
+			return true;
+		}
+
+
+
+
+		public async Task<bool> UpdateAsync(ICollection<IAiEntry> aiEntries)
+		{
+			if (aiEntries == null) return true;
+			foreach (var entity in aiEntries)
+			{
+				try
+				{
+					if (await this.UpdateEntryAsync(entity) == null) return false;
+				}
+				catch 
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+
+
+
+
+
+
+
+
+		public int SaveChanges()
+		{
+			return this.SaveChangesAsync().Result;
+		}
+
 		public async Task<int> SaveChangesAsync()
 		{
-			int result = 0;
+			int result;
 			try
 			{
 				result = await this.db.SaveChangesAsync();

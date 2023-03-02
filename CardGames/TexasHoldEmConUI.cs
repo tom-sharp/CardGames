@@ -296,7 +296,7 @@ namespace Games.Card.TexasHoldEm
 		{
 			if (SupressOutput) return 0;
 			this.BuildMenus(requestedtokens, canraisetokens);
-			int result = 0;
+			int result;
 			this.ui.PushColor();
 			while (true) {
 				var selected = this.mainmenu.Select();
