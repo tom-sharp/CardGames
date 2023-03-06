@@ -52,8 +52,8 @@ namespace Games.Card.TexasHoldEm.Data
 
 		/// <summary>
 		/// 
-		///		UpdateAndSave
-		///		Will update or create entities in Db ánd save it
+		///		Update
+		///		Will update db with by create or update entities in Db
 		///		return true of all succeded
 		///		
 		/// </summary>
