@@ -94,11 +94,10 @@ namespace CardGames
 			{
 				ui.ShowMsg($"Train Ai for {players} players, {rounds} rounds");
 				aiTexas.Learn(playrounds: rounds, players: players);
-				if (aiTexas.DbError) break;
 				players += 2;
 			}
 
-			if (aiTexas.DbError) ui.ShowErrMsg("Error saving entries to db");
+			if (aiTexas.DbError) ui.ShowErrMsg("Could not save entries to persistant db");
 			aiTexas.OnProgress -= AiTexas_OnProgress;
 		}
 

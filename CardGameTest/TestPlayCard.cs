@@ -76,12 +76,13 @@ namespace CardGameTest
 		[TestMethod]
 		public void PlayCardJoker_InCollection_ChangeProps()
 		{
-			var playcards = new PlayCards();
-			
-			playcards.Add(new PlayCardClub(3));
-			playcards.Add(new PlayCardHeart(12));
-			playcards.Add(new PlayCardJoker());
-			playcards.Add(new PlayCardHeart(8));
+			var playcards = new PlayCards
+			{
+				new PlayCardClub(3),
+				new PlayCardHeart(12),
+				new PlayCardJoker(),
+				new PlayCardHeart(8)
+			};
 
 			var expectedrankid = 2;
 
