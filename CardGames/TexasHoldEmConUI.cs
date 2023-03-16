@@ -28,8 +28,8 @@ namespace Games.Card.TexasHoldEm
 			this.progressbar.InCompleteCharacter = ConGraphics.BlockShadeMedium;
 			this.msg = new ConText(consoletable);
 			this.errmsg = new ConText(consoletable);
-			this.msg.Position(0,3);
-			this.errmsg.Position(0, 4);
+			this.msg.Position(0,3).Size(0, 1);
+			this.errmsg.Position(0, 4).Size(0, 1);
 			this.SetUpColors();
 		}
 
