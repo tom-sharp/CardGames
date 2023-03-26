@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data", "Data\Data.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexasModels", "TexasModels\TexasModels.csproj", "{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TexasQuery", "TexasQuery\TexasQuery.csproj", "{2EC804D9-CA90-4F81-9691-C6B685EAAB83}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,18 +69,6 @@ Global
 		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Release|x64.Build.0 = Release|Any CPU
 		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Release|x86.ActiveCfg = Release|Any CPU
 		{6CDF5EFD-3EE7-499F-B6E3-82038CC3BF1D}.Release|x86.Build.0 = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|x64.Build.0 = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Debug|x86.Build.0 = Debug|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|x64.ActiveCfg = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|x64.Build.0 = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|x86.ActiveCfg = Release|Any CPU
-		{2EC804D9-CA90-4F81-9691-C6B685EAAB83}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
