@@ -320,6 +320,7 @@ namespace Games.Card.TexasHoldEm
 		public void ShowMsg(string msg)
 		{
 			this.msg.Text = msg;
+			this.errmsg.Text = "";
 		}
 
 		public void ShowErrMsg(string msg)
