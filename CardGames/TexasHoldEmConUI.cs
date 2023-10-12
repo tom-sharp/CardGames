@@ -260,12 +260,12 @@ namespace Games.Card.TexasHoldEm
 		}
 
 
-		public int AskMainMenu(IForEach<Syslib.ISelectItem> list)
+		public int AskMainMenu(IForEach<Syslib.BaseInterfaces.ISelectItem> list)
 		{
 			if (SupressOutput) return 0;
 
 			this.mainmenu.Clear();
-			list.ForEach(o=> this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = o.Id, Text = o.Text}));
+			list.ForEach(o=> this.mainmenu.AddItem(new Syslib.ConUI.SelectItem() { Id = o.Id, Text = o.Name}));
 
 			var answer = this.mainmenu.Select();
 			this.mainmenu.ClearArea();

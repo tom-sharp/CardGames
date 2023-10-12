@@ -36,7 +36,7 @@ namespace CardGames
 		///		and return selected option
 		///		
 		/// </summary>
-		public int AskMainMenu(IForEach<Syslib.ISelectItem> list);
+		public int AskMainMenu(IForEach<Syslib.BaseInterfaces.ISelectItem> list);
 
 		/// <summary>
 		/// 

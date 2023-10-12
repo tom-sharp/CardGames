@@ -20,7 +20,7 @@ namespace CardGameTest
 			return 0;
 		}
 
-		public int AskMainMenu(IForEach<ISelectItem> list)
+		public int AskMainMenu(IForEach<Syslib.BaseInterfaces.ISelectItem> list)
 		{
 			return 0;
 		}

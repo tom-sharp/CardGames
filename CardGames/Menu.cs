@@ -36,14 +36,14 @@ namespace CardGames
 
 			while (runmenu)
 			{
-				var menu = new CList<Syslib.ISelectItem>()
-				.Add(new Syslib.SelectItem() { Id = 1, Text = "Play Texas 6 players" })
-				.Add(new Syslib.SelectItem() { Id = 2, Text = "Play Texas 8 players" })
-				.Add(new Syslib.SelectItem() { Id = 6, Text = "Play Texas 10 players" })
-				.Add(new Syslib.SelectItem() { Id = 3, Text = "Learn Texas Ai" })
-				.Add(new Syslib.SelectItem() { Id = 4, Text = "Delete Db" })
-				.Add(new Syslib.SelectItem() { Id = 5, Text = "Create Db" })
-				.Add(new Syslib.SelectItem() { Id = 0, Text = "Quit" });
+				var menu = new CList<Syslib.BaseInterfaces.ISelectItem>()
+				.Add(new Syslib.SelectItem() { Id = 1, Name = "Play Texas 6 players" })
+				.Add(new Syslib.SelectItem() { Id = 2, Name = "Play Texas 8 players" })
+				.Add(new Syslib.SelectItem() { Id = 6, Name = "Play Texas 10 players" })
+				.Add(new Syslib.SelectItem() { Id = 3, Name = "Learn Texas Ai" })
+				.Add(new Syslib.SelectItem() { Id = 4, Name = "Delete Db" })
+				.Add(new Syslib.SelectItem() { Id = 5, Name = "Create Db" })
+				.Add(new Syslib.SelectItem() { Id = 0, Name = "Quit" });
 
 				switch (this.ui.AskMainMenu(menu))
 				{
